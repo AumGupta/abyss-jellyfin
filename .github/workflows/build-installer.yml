@@ -31,8 +31,11 @@ jobs:
       - name: Get version
         id: version
         run: |
-          $tag = "${{ github.ref_name }}"
-          $version = $tag -replace '^v', ''
+          $release = Invoke-RestMethod -Uri "https://api.github.com/repos/${{ github.repository }}/releases/latest" -ErrorAction SilentlyContinue
+          $tag = if ($release) { $release.tag_name -replace '^v', '' } else { "0.0.0" }
+          $parts = $tag.Split('.')
+          while ($parts.Count -lt 4) { $parts += '0' }
+          $version = $parts[0..3] -join '.'
           echo "VERSION=$version" >> $env:GITHUB_OUTPUT
         shell: powershell
 
