@@ -1,4 +1,4 @@
-name: Build Installer
+name: build-installer
 
 on:
   push:
@@ -51,4 +51,3 @@ jobs:
         with:
           name: abyss-setup-v${{ steps.version.outputs.VERSION }}
           path: abyss-setup-v${{ steps.version.outputs.VERSION }}.exe
-          

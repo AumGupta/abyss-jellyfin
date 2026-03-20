@@ -1,4 +1,4 @@
-name: Purge jsDelivr CDN
+name: purge-jsdelivr-cdn
 
 on:
   push:
