@@ -3,7 +3,7 @@ window.addEventListener('scroll', () => {
   nav.classList.toggle('scrolled', window.scrollY > 20);
 }, { passive: true });
 
-//Scroll reveal
+// Scroll reveal
 const revealEls = document.querySelectorAll('.reveal');
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
@@ -15,7 +15,7 @@ const observer = new IntersectionObserver((entries) => {
 }, { threshold: 0.12 });
 revealEls.forEach(el => observer.observe(el));
 
-//Copy buttons
+// Copy buttons
 document.querySelectorAll('.copy-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     const targetId = btn.getAttribute('data-target');
@@ -33,7 +33,65 @@ document.querySelectorAll('.copy-btn').forEach(btn => {
   });
 });
 
-//Accent swatch - update code block on click
+// Fetch latest release from GitHub API and update download button
+(async () => {
+  const btn = document.getElementById('download-btn');
+  const label = document.getElementById('download-label');
+  if (!btn || !label) return;
+
+  try {
+    const res = await fetch('https://api.github.com/repos/AumGupta/abyss-jellyfin/releases/latest');
+    if (!res.ok) return;
+    const data = await res.json();
+
+    const tag = data.tag_name || '';
+    const asset = (data.assets || []).find(a => a.name.endsWith('.exe'));
+
+    if (asset) {
+      btn.href = asset.browser_download_url;
+      label.textContent = `Download ${asset.name}`;
+    } else {
+      btn.href = data.html_url || btn.href;
+      if (tag) label.textContent = `Download Installer ${tag}`;
+    }
+  } catch (e) {
+    // Silently fall back to releases/latest link already set in href
+  }
+})();
+
+// Hamburger menu
+const hamburger = document.getElementById('nav-hamburger');
+const mobileMenu = document.getElementById('nav-mobile');
+
+hamburger.addEventListener('click', () => {
+  const isOpen = hamburger.classList.toggle('open');
+  mobileMenu.classList.toggle('open', isOpen);
+  hamburger.setAttribute('aria-expanded', isOpen);
+  mobileMenu.setAttribute('aria-hidden', !isOpen);
+});
+
+// Close mobile menu when a link is clicked
+mobileMenu.querySelectorAll('a').forEach(link => {
+  link.addEventListener('click', () => {
+    hamburger.classList.remove('open');
+    mobileMenu.classList.remove('open');
+    hamburger.setAttribute('aria-expanded', 'false');
+    mobileMenu.setAttribute('aria-hidden', 'true');
+  });
+});
+
+// Scroll to top button
+const scrollTopBtn = document.getElementById('scroll-top');
+
+window.addEventListener('scroll', () => {
+  scrollTopBtn.classList.toggle('visible', window.scrollY > 400);
+}, { passive: true });
+
+scrollTopBtn.addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// Accent swatch - update code block on click
 const swatches = document.querySelectorAll('.swatch');
 const accentValEl = document.querySelector('.accent-val');
 
@@ -53,7 +111,6 @@ swatches.forEach(swatch => {
       accentValEl.style.color = `rgb(${rgb})`;
       setTimeout(() => { accentValEl.style.color = ''; }, 600);
 
-      // Update live preview accent colour
       const navActive = document.getElementById('prev-nav-active');
       const listIcon = document.getElementById('prev-listitem-icon');
       const playBtn = document.getElementById('prev-play-btn');
@@ -69,14 +126,13 @@ swatches.forEach(swatch => {
   });
 });
 
-//Radius slider
+// Radius slider
 const SNAP_STOPS = [0, 4, 8, 12, 16, 18, 20, 24];
-const SNAP_RADIUS = 1.5; // px - snap zone around each stop
+const SNAP_RADIUS = 1.5;
 
 const slider = document.getElementById('radius-slider');
 const radiusValEl = document.querySelector('.radius-val');
 const radiusDisplay = document.querySelector('.radius-display');
-const previewCard = document.getElementById('radius-preview-card');
 const stopLabels = document.querySelectorAll('.radius-stops span');
 
 function updateRadiusUI(val) {
@@ -86,12 +142,10 @@ function updateRadiusUI(val) {
   if (radiusDisplay) radiusDisplay.textContent = px;
   if (slider) slider.setAttribute('aria-valuenow', val);
 
-  // Update stop labels
   stopLabels.forEach(label => {
     label.classList.toggle('active', parseInt(label.dataset.val) === val);
   });
 
-  // Update slider track fill
   if (slider) {
     const pct = (val / 24) * 100;
     slider.style.background = `linear-gradient(to right,
@@ -101,12 +155,9 @@ function updateRadiusUI(val) {
       rgba(255,255,255,0.08) 100%)`;
   }
 
-  // Update border-radius on card and list item (not nav pill — stays 50px)
   const card = document.getElementById('prev-card');
-  // const listitem = document.getElementById('prev-listitem');
   const playBtn = document.getElementById('prev-play-btn');
   if (card) card.style.borderRadius = px;
-  // if (listitem) listitem.style.borderRadius = px;
   if (playBtn) playBtn.style.borderRadius = px;
 }
 
@@ -124,7 +175,6 @@ if (slider) {
     updateRadiusUI(snapped);
   });
 
-  // Clicking a stop label jumps directly to that value
   stopLabels.forEach(label => {
     label.addEventListener('click', () => {
       const val = parseInt(label.dataset.val);
@@ -133,11 +183,10 @@ if (slider) {
     });
   });
 
-  // Initialise on load
   updateRadiusUI(parseInt(slider.value));
 }
 
-//Smooth anchor scroll with fixed nav offset
+// Smooth anchor scroll with fixed nav offset
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener('click', (e) => {
     const href = anchor.getAttribute('href');
@@ -145,7 +194,13 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     const target = document.querySelector(href);
     if (!target) return;
     e.preventDefault();
-    const top = target.getBoundingClientRect().top + window.scrollY - 72;
+    const top = target.getBoundingClientRect().top + window.scrollY + 10;
     window.scrollTo({ top, behavior: 'smooth' });
+    setTimeout(() => {
+      const refined = target.getBoundingClientRect().top + window.scrollY + 10;
+      if (Math.abs(refined - window.scrollY) > 10) {
+        window.scrollTo({ top: refined, behavior: 'smooth' });
+      }
+    }, 600);
   });
 });

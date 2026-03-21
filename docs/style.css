@@ -16,8 +16,8 @@
   --accent: #f5f5f7;
   --accent-dim: rgba(245, 245, 247, 0.6);
   --muted: rgba(255, 255, 255, 0.38);
-  --radius: 14px;
-  --radius-lg: 20px;
+  --radius: 12px;
+  --radius-lg: 24px;
   --font: "Google Sans", -apple-system, sans-serif;
   --ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   --transition: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -178,6 +178,79 @@ code {
   background: var(--surface) !important;
 }
 
+/* Hamburger button */
+.nav-hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 0;
+  transition: border-color var(--transition), background var(--transition);
+}
+
+.nav-hamburger:hover {
+  border-color: var(--border-hi);
+  background: var(--surface);
+}
+
+.nav-hamburger span {
+  display: block;
+  width: 16px;
+  height: 1.5px;
+  background: var(--accent-dim);
+  border-radius: 2px;
+  transition: transform var(--transition), opacity var(--transition), width var(--transition);
+}
+
+.nav-hamburger.open span:nth-child(1) {
+  transform: translateY(6.5px) rotate(45deg);
+}
+
+.nav-hamburger.open span:nth-child(2) {
+  opacity: 0;
+  width: 0;
+}
+
+.nav-hamburger.open span:nth-child(3) {
+  transform: translateY(-6.5px) rotate(-45deg);
+}
+
+/* Mobile menu */
+.nav-mobile {
+  display: none;
+  flex-direction: column;
+  padding: 8px 16px 16px;
+  gap: 2px;
+  border-top: 1px solid var(--border);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 24px;
+  margin-bottom: 24px;
+}
+
+.nav-mobile a {
+  font-size: 0.9rem;
+  color: var(--accent-dim);
+  padding: 10px 12px;
+  border-radius: 8px;
+  transition: color var(--transition), background var(--transition);
+}
+
+.nav-mobile a:hover {
+  color: var(--accent);
+  background: var(--surface);
+}
+
+.nav-mobile.open {
+  display: flex;
+}
 
 .hero {
   position: relative;
@@ -276,6 +349,11 @@ code {
   cursor: pointer;
   transition: all var(--transition);
   white-space: nowrap;
+}
+
+.btn-large {
+  padding: 14px 32px;
+  font-size: 1rem;
 }
 
 .btn-primary {
@@ -439,7 +517,7 @@ code {
 
 .preview-item {
   position: relative;
-  border-radius: var(--radius);
+  border-radius: var(--radius-lg);
   overflow: hidden;
   border: 1px solid var(--border);
   cursor: pointer;
@@ -456,7 +534,7 @@ code {
   width: 100%;
   height: 100%;
   display: block;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .preview-caption {
@@ -505,7 +583,6 @@ code {
   gap: 6px;
 }
 
-/* Swatches */
 .accent-swatches {
   display: flex;
   gap: 10px;
@@ -605,7 +682,6 @@ code {
   background: var(--border);
 }
 
-/* Stop markers */
 .radius-stops {
   position: absolute;
   bottom: 6px;
@@ -643,7 +719,6 @@ code {
   background: var(--accent);
 }
 
-/* Live preview components */
 .radius-preview-row {
   margin-top: 18px;
   display: flex;
@@ -651,12 +726,11 @@ code {
   gap: 10px;
 }
 
-/* 1. Nav pill bar */
 .prev-nav {
   display: flex;
   align-items: center;
   gap: 4px;
-  background: rgba(30,30,30,0.8);
+  background: rgba(30, 30, 30, 0.8);
   border: 1px solid var(--border);
   border-radius: 50px;
   padding: 4px;
@@ -678,17 +752,16 @@ code {
   color: #121212;
 }
 
-/* 2. List item */
 .prev-listitem {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: rgba(255,255,255,0.06);
+  background: rgba(255, 255, 255, 0.06);
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 10px 14px;
   font-size: 0.8rem;
-  color: rgb(245,245,247);
+  color: rgb(245, 245, 247);
   transition: background 0.2s var(--ease), border-radius 0.2s var(--ease);
 }
 
@@ -696,16 +769,15 @@ code {
   width: 28px;
   height: 28px;
   border-radius: 50px;
-  background: rgba(245,245,247,0.15);
+  background: rgba(245, 245, 247, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: rgb(245,245,247);
+  color: rgb(245, 245, 247);
   flex-shrink: 0;
   transition: background 0.2s var(--ease);
 }
 
-/* 3. Card */
 .prev-card {
   border-radius: 10px;
   overflow: hidden;
@@ -735,12 +807,12 @@ code {
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  background: rgba(245,245,247,0.15);
+  background: rgba(245, 245, 247, 0.15);
   backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: rgb(245,245,247);
+  color: rgb(245, 245, 247);
   transition: background 0.2s var(--ease), border-radius 0.2s var(--ease), color 0.2s var(--ease);
 }
 
@@ -750,17 +822,16 @@ code {
   left: 0;
   right: 0;
   height: 3px;
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .prev-card-progress {
   width: 35%;
   height: 100%;
-  background: rgb(245,245,247);
+  background: rgb(245, 245, 247);
   transition: background 0.2s var(--ease);
 }
 
-/* Variable table */
 .var-table {
   width: 100%;
   border-collapse: collapse;
@@ -884,11 +955,148 @@ pre .str {
   color: #f48fb1;
 }
 
+/* Install section */
+.install-download {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.install-note {
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.install-note a {
+  color: var(--accent-dim);
+  border-bottom: 1px solid var(--border);
+  transition: color var(--transition), border-color var(--transition);
+}
+
+.install-note a:hover {
+  color: var(--accent);
+  border-color: var(--border-hi);
+}
+
+.install-details {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 0;
+  margin-bottom: 40px;
+  max-width: 680px;
+  transition: border-color var(--transition);
+}
+
+.install-details[open] {
+  border-color: var(--border-hi);
+}
+
+.install-details summary {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--accent-dim);
+  padding: 16px 20px;
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: color var(--transition);
+}
+
+.install-details summary::-webkit-details-marker {
+  display: none;
+}
+
+.install-details summary::before {
+  content: '';
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='rgba(245,245,247,0.6)' stroke-width='2'%3E%3Cpath d='M9 18l6-6-6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  transition: transform var(--transition);
+}
+
+.install-details[open] summary::before {
+  transform: rotate(90deg);
+}
+
+.install-details summary:hover {
+  color: var(--accent);
+}
+
+.install-details-body {
+  padding: 0 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+}
+
+.install-details-body p {
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.install-details-body a {
+  color: var(--accent-dim);
+  border-bottom: 1px solid var(--border);
+  transition: color var(--transition);
+}
+
+.install-details-body a:hover {
+  color: var(--accent);
+}
+
+.install-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 40px 0 24px;
+  max-width: 680px;
+}
+
+.install-divider::before,
+.install-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.install-divider span {
+  font-size: 0.78rem;
+  color: var(--muted);
+  white-space: nowrap;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+
+.install-manual-desc {
+  font-size: 0.9rem;
+  color: var(--accent-dim);
+  margin-bottom: 16px;
+  line-height: 1.6;
+  max-width: 680px;
+}
+
+.install-manual-desc strong {
+  color: var(--accent);
+}
+
 .install-links {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
-  margin-top: 12px;
+  margin-top: 20px;
 }
 
 .footer {
@@ -956,6 +1164,42 @@ pre .str {
   color: var(--accent-dim);
 }
 
+/* Scroll to top button */
+.scroll-top {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 90;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(20, 20, 20, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  color: var(--accent-dim);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(12px);
+  transition: opacity var(--transition), transform var(--transition),
+    border-color var(--transition), color var(--transition);
+}
+
+.scroll-top.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.scroll-top:hover {
+  border-color: var(--border-hi);
+  color: var(--accent);
+}
+
 .reveal {
   opacity: 0;
   transform: translateY(22px);
@@ -975,11 +1219,14 @@ pre .str {
   transition-delay: 0.24s;
 }
 
-/*RESPONSIVE*/
-
+/* Responsive */
 @media (max-width: 768px) {
-  .nav-links a:not(.nav-github) {
+  .nav-links {
     display: none;
+  }
+
+  .nav-hamburger {
+    display: flex;
   }
 
   .hero {
@@ -1034,6 +1281,19 @@ pre .str {
     flex-direction: column;
     gap: 24px;
   }
+
+  .install-details {
+    max-width: 100%;
+  }
+
+  .install-manual-desc {
+    max-width: 100%;
+  }
+
+  .scroll-top {
+    bottom: 20px;
+    right: 20px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -1044,5 +1304,14 @@ pre .str {
 
   .install-links {
     flex-direction: column;
+  }
+
+  .install-download {
+    align-items: stretch;
+  }
+
+  .btn-large {
+    text-align: center;
+    justify-content: center;
   }
 }
