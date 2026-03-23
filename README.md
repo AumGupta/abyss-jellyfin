@@ -9,12 +9,16 @@
 
 <img alt="Abyss Logo" src="docs/assets/favicon/apple-touch-icon.png" style="width: 72px;">
 
-A clean and minimal theme for Jellyfin with frosted glass surfaces, refined typography, smooth animations and a minimal design language that re-skins JellyFin almost exhaustively.
+A clean and minimal theme for Jellyfin with frosted glass surfaces, refined typography, smooth animations and a minimal design language that re-skins JellyFin almost exhaustively. [Video Demo](https://youtu.be/wgiHWH2oj3M)
+
 
 <a href="https://aumgupta.github.io/abyss-jellyfin/">
   <img src="https://img.shields.io/badge/View%20%26%20Install-→-f5f5f7?style=for-the-badge&labelColor=2f2f2f" alt="Install" width=273.5 />
 </a>
 </div>
+
+<!-- [![Abyss Demo](docs/assets/images/demo-thumbnail.png)](https://youtu.be/wgiHWH2oj3M) -->
+<!-- ## Preview -->
 
 <img src="docs/assets/images/preview.png" style="width:100%;"/>
 
@@ -88,6 +92,8 @@ Download the latest **`abyss-setup-vX.X.X.exe`** from the [Releases](https://git
 - Configure your home screen sections in the correct order
 - Install the Spotlight add-on (cinematic home banner)
 - Restart Jellyfin when done
+
+For detailed steps go to the [Setup Guide](SETUP.md).
 
 > [!NOTE]
 > If you are on Windows.

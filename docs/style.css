@@ -334,6 +334,41 @@ code {
 .screenshot-frame img {
   width: 100%;
   display: block;
+  height: auto;
+}
+
+.screenshot-link {
+    display: block;
+    position: relative;
+}
+
+.screenshot-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.screenshot-overlay span {
+    color: #fff;
+    font-size: 14px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.9;
+}
+
+.screenshot-link:hover .screenshot-overlay {
+    opacity: 1;
+}
+
+.screenshot-link:hover img {
+    transform: scale(1.02);
+    transition: transform 0.4s ease;
 }
 
 .btn {

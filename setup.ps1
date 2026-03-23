@@ -332,6 +332,8 @@ function Install-Abyss {
     }
 
     Write-Host ""
+    Write-Host "  Tip: Turn on 'Show Backdrops' in display settings for best experience." -ForegroundColor Green
+    Write-Host ""
     Write-Host "  Customise your theme:" -ForegroundColor White
     Write-Host "    https://aumgupta.github.io/abyss-jellyfin/" -ForegroundColor Cyan
     Write-Host ""
@@ -352,7 +354,6 @@ function Uninstall-Abyss {
     Write-Host ""
 
     # Authenticate
-    Write-Step "Authenticating..."
     Write-Host ""
     $auth       = Connect-Jellyfin $serverUrl
     $token      = $auth.AccessToken
