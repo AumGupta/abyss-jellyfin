@@ -169,7 +169,8 @@ connect_jellyfin() {
         local body
         body=$(printf '%s\n%s' "$_username" "$_password" | python3 -c "
 import json, sys
-u, p = sys.stdin.read().splitlines()
+lines = sys.stdin.read().split('\n', 1)
+u, p = lines[0], lines[1] if len(lines) > 1 else ''
 print(json.dumps({'Username': u, 'Pw': p}))
 ")
 
