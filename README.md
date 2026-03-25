@@ -20,13 +20,17 @@ A clean and minimal theme for Jellyfin with frosted glass surfaces, refined typo
 <!-- [![Abyss Demo](docs/assets/images/demo-thumbnail.png)](https://youtu.be/wgiHWH2oj3M) -->
 <!-- ## Preview -->
 
-<img src="docs/assets/images/preview.png" style="width:100%;"/>
+<a href="https://youtu.be/wgiHWH2oj3M">
+  <img src="docs/assets/images/preview.png" style="width:100%;"/>
+</a>
 
 <details>
 
 <summary><h2>See full preview</h2></summary>
 
-<img src="docs/assets/images/preview-full.png" style="width:100%;"/>
+<a href="https://youtu.be/wgiHWH2oj3M">
+  <img src="docs/assets/images/preview-full.png" style="width:100%;"/>
+</a>
 
 <!-- 
 ### Cards & UI Details
@@ -97,6 +101,8 @@ sudo ./abyss-setup-vX.X.X.sh
 > [!NOTE]
 > Requires `curl` and `python3`, which are available by default on most Linux distributions.
 
+For detailed steps go to the [Setup Guide](SETUP.md).
+
 ### Windows
 
 Download the latest **`abyss-setup-vX.X.X.exe`** from the [Releases](https://github.com/AumGupta/abyss-jellyfin/releases/latest) page and run it. The installer will:
@@ -129,49 +135,10 @@ For detailed steps go to the [Setup Guide](SETUP.md).
 >
 > </details>
 
----
 
-<details>
+### Manual Install
 
-<summary><h2>Manual Install</h2></summary>
-
-
-If you prefer not to use the installer, paste this single line into **Dashboard > Branding > Custom CSS** and save:
-
-```css
-@import url('https://cdn.jsdelivr.net/gh/AumGupta/abyss-jellyfin@main/abyss.css');
-```
-
-After applying, go to **Settings > Home** and arrange your home sections in this order: Continue Watching, Next Up, My Media, Recently Added. This is required because Abyss hides the card text of the third section (`section2`) to give the My Media row a clean, cover-only look.
-
-<details>
-<summary><em>How to override the section2 card text hiding</em></summary>
-
-<br>
-
-If you'd prefer to keep card text visible, or if you use a different section in position 3, add this after the `@import` line:
-
-```css
-/* Show card text in the third home section */
-.section2 .cardText {
-    display: unset;
-}
-```
-
-Or if "My Media" is in a different position, target that section instead:
-
-```css
-/* Hide card text in section0 instead */
-.section0 .cardText {
-    display: none;
-}
-```
-
-</details>
-
-</details>
-
----
+The steps to apply Abyss etirely manually can be found the detailed [SETUP](SETUP.md) guide.
 
 <details>
 
