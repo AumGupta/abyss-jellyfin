@@ -59,6 +59,41 @@ sudo ./abyss-setup-vX.X.X.sh
 
 </details>
 
+<!-- Docker -->
+<details>
+<summary><h2>Docker</h2></summary>
+
+> ## NOTE
+> This will work for all jellyfin docker images including:
+> * jellyfin/jellyfin 
+> * linuxserver/jellyfin
+> * ghcr.io/hotio/jellyfin
+
+Download the latest **`abyss-setup-vX.X.X.sh`** from the [Releases](https://github.com/AumGupta/abyss-jellyfin/releases/latest)
+
+Copy it to the mounted config folder for your jellyfin container
+
+Enter the container using the following command:
+
+```bash
+docker exec -it {container_name} bash
+```
+> Replace {container_name} with the name or id of your jellyfin container
+
+Then run the following commands:
+
+```bash
+chmod +x abyss-setup-vX.X.X.sh
+./abyss-setup-vX.X.X.sh
+```
+> Make sure to run these from within the container
+> You have to be in the container as the root user
+
+> ## NOTE
+> Requires `curl` and `python3`, which are available by default on most Linux distributions.
+
+</details>
+
 <!-- Manual -->
 <details>
 <summary><h2>Manual Setup</h2><br>If you prefer not to use the installers, follow these steps to manually install Abyss with the Spotlight feature.</summary>

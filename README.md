@@ -135,6 +135,9 @@ For detailed steps go to the [Setup Guide](SETUP.md).
 >
 > </details>
 
+### Docker Install
+
+The steps to install Abyss inside a docker container can be found the detailed [SETUP](SETUP.md) guide.
 
 ### Manual Install
 
