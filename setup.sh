@@ -88,6 +88,11 @@ get_jellyfin_web_dir() {
         "/opt/homebrew/share/jellyfin/web"
         "/opt/homebrew/opt/jellyfin/web"
         "/usr/local/opt/jellyfin/web"
+        # macOS; app bundle
+        "/Applications/Jellyfin.app/Contents/Resources/jellyfin-web"
+        "$HOME/Applications/Jellyfin.app/Contents/Resources/jellyfin-web"
+        "/Applications/Jellyfin.app/Contents/Resources/web"
+        "$HOME/Applications/Jellyfin.app/Contents/Resources/web"
         # Docker; jellyfin/jellfin (official image) 
         "/jellyfin/jellyfin-web" # Note: this is the path inside the container, not on the host
     )
@@ -105,6 +110,7 @@ get_jellyfin_web_dir() {
         info "Example: /opt/homebrew/share/jellyfin/web"
     else
         info "Example: /usr/share/jellyfin/web"
+        info "/Applications/Jellyfin.app/Contents/Resources/jellyfin-web"
     fi
     read -rp "  Path: " path
     if [[ ! -d "$path" ]]; then
