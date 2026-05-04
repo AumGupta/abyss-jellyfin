@@ -17,6 +17,7 @@ body {
 	height: 100vh;
 	color: #fff;
 	-webkit-font-smoothing: antialiased;
+	touch-action: pan-y;
 }
 
 #backdrop {
