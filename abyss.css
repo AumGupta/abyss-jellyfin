@@ -366,10 +366,12 @@ input[type="radio"]:checked {
 
 /* Main content */
 .withSectionTabs .backdropImage {
+    -webkit-filter: blur(23px) saturate(120%) contrast(120%) brightness(25%);
     filter: blur(23px) saturate(120%) contrast(120%) brightness(25%);
 }
 
 body:has(#itemDetailPage) .backdropImage {
+    -webkit-filter: blur(23px) saturate(120%) contrast(120%) brightness(25%);
     filter: blur(23px) saturate(120%) contrast(120%) brightness(25%);
 }
 
@@ -496,6 +498,7 @@ body:has(#itemDetailPage) .backdropImage {
 
 /* Blurhash canvas */
 .blurhash-canvas {
+   -webkit-filter: blur(23px) saturate(120%) contrast(120%) brightness(25%);
     filter: opacity(60%) saturate(60%);
 }
 
