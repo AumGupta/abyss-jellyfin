@@ -102,3 +102,9 @@
         abyss-heart-glow 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     color: rgb(249, 38, 114) !important;
 }
+
+@media all and (max-width: 40em) {
+    #slides-container .play-text, #slides-container .trailer-text {
+        display: none;
+    }
+}
