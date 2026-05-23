@@ -281,7 +281,7 @@ You can tweak colors, radius, and more here:
 
 
 <details>
-<summary><h2>Plugin Support</h2><br>If you use additional plugins, like <em>Jellyfin Enhanced</em>, <em>Media Bar Enhanced</em>, etc, then you can import it's <code>abyss-*css</code> override file.</summary>
+<summary><h2>Plugin Support</h2><br>If you use additional plugins, like <em>Jellyfin Enhanced</em>, <em>Media Bar Enhanced</em>, etc, then you can import its <code>abyss-*css</code> override file.</summary>
 
 Just copy the plugin specific import from the list and paste below the `@import` line of `abyss.css` in a series:
 
