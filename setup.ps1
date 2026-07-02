@@ -225,7 +225,8 @@ function Install-Abyss {
         Write-Info "Recommended order: Continue Watching, Next Up, My Media, Recently Added."
         Write-Info "(Recommended for best experience with Abyss)"
         $reorderChoice = Read-Host "  Reorder sections? [Y/n]"
-        if ($reorderChoice.Trim().ToUpper() -eq "Y") {
+        # [Y/n] convention: ENTER (empty) defaults to Yes
+        if ($reorderChoice.Trim() -eq "" -or $reorderChoice.Trim().ToUpper() -eq "Y") {
             $displayPrefs.CustomPrefs.homesection0 = "resume"
             $displayPrefs.CustomPrefs.homesection1 = "nextup"
             $displayPrefs.CustomPrefs.homesection2 = "smalllibrarytiles"

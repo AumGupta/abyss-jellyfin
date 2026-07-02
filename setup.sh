@@ -104,13 +104,16 @@ get_jellyfin_web_dir() {
         fi
     done
 
-    warn "Could not auto-detect Jellyfin web directory."
-    echo -e "${yellow}  Enter the full path to your jellyfin-web folder:${reset}"
+    # This function's stdout is captured by the caller ($(get_jellyfin_web_dir)),
+    # so all user-facing prompts must go to stderr or they get swallowed into
+    # the return value.
+    warn "Could not auto-detect Jellyfin web directory." >&2
+    echo -e "${yellow}  Enter the full path to your jellyfin-web folder:${reset}" >&2
     if [[ "$OS" == "Darwin" ]]; then
-        info "Example: /opt/homebrew/share/jellyfin/web"
+        info "Example: /opt/homebrew/share/jellyfin/web" >&2
     else
-        info "Example: /usr/share/jellyfin/web"
-        info "/Applications/Jellyfin.app/Contents/Resources/jellyfin-web"
+        info "Example: /usr/share/jellyfin/web" >&2
+        info "/Applications/Jellyfin.app/Contents/Resources/jellyfin-web" >&2
     fi
     read -rp "  Path: " path
     if [[ ! -d "$path" ]]; then
@@ -342,6 +345,8 @@ print(json.dumps(d))
         info "(Recommended for best experience with Abyss)"
         read -rp "  Reorder sections? [Y/n]: " reorder_choice
         echo ""
+        # [Y/n] convention: ENTER (empty) defaults to Yes
+        [[ -z "${reorder_choice// }" ]] && reorder_choice="Y"
 
         local updated_prefs
         if [[ "${reorder_choice^^}" == "Y" ]]; then
