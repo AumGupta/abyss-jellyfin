@@ -105,11 +105,11 @@ For detailed steps go to the [Setup Guide](SETUP.md).
 
 ### Docker Install
 
-The steps to install Abyss inside a docker container can be found the detailed [SETUP](SETUP.md) guide.
+The steps to install Abyss inside a docker container can be found in the detailed [SETUP](SETUP.md) guide.
 
 ### Manual Install
 
-The steps to apply Abyss etirely manually can be found the detailed [SETUP](SETUP.md) guide.
+The steps to apply Abyss entirely manually can be found in the detailed [SETUP](SETUP.md) guide.
 
 > Quick Preview: 
 > ```css
