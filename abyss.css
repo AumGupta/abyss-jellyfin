@@ -423,7 +423,7 @@ body:has(#itemDetailPage) .backdropImage {
     padding: 5px 2.5px;
     overflow: scroll;
     scrollbar-width: none;
-    background-color: rgba(var(--abyss-glass-tint), 0.35);
+    background-color: rgba(var(--abyss-glass-tint), 0.9);
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
     border: 1px solid rgba(87, 87, 87, 0.18);
 }
