@@ -116,6 +116,8 @@
 			}
 
 			let zoomRAF = null;
+			let activeBackdropUrl = null;
+			let activeLogoUrl = null;
 
 			function startZoom(imgEl, durationMs, fromScale, toScale) {
 				if (zoomRAF) cancelAnimationFrame(zoomRAF);
@@ -360,6 +362,9 @@
 					backdropImgEl.style.objectPosition = 'center 20%';
 				}
 
+				if (activeBackdropUrl) URL.revokeObjectURL(activeBackdropUrl);
+				activeBackdropUrl = backdropBlob;
+
 				if (backdropBlob) {
 					backdropImgEl.onload = () => {
 						backdropEl.classList.add('loaded');
@@ -374,6 +379,10 @@
 				const logoEl = $('logo');
 				const titleEl = $('title');
 				const logoBlobUrl = await fetchImageBlob(`${base}/Items/${logoId}/Images/Logo?quality=90`, headers);
+
+				if (activeLogoUrl) URL.revokeObjectURL(activeLogoUrl);
+				activeLogoUrl = logoBlobUrl;
+
 				if (logoBlobUrl) {
 					logoEl.src = logoBlobUrl;
 					logoEl.style.display = 'block';
