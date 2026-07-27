@@ -1,3 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
 # Abyss theme - docker init script
 # for use with linuxserver/jellyfin via custom-cont-init.d
 #
@@ -14,7 +17,7 @@ UI_DIR="${WEB_DIR}/ui"
 SPOTLIGHT_FILES=(
     "scripts/spotlight/spotlight.html"
     "scripts/spotlight/spotlight.css"
-    "scripts/spotlight/home-html.chunk.js"
+    "scripts/spotlight/spotlight-loader.js"
 )
 
 log() { echo "**** [abyss] $* ****"; }
@@ -28,7 +31,9 @@ if [ ! -d "$WEB_DIR" ]; then
 fi
 
 STAGE_DIR="/tmp/abyss-stage"
+rm -rf "$STAGE_DIR"
 mkdir -p "$STAGE_DIR"
+trap 'rm -rf "$STAGE_DIR"' EXIT
 
 for file in "${SPOTLIGHT_FILES[@]}"; do
     dest="${STAGE_DIR}/$(basename "$file")"
@@ -36,13 +41,12 @@ for file in "${SPOTLIGHT_FILES[@]}"; do
         log "Downloaded: $(basename "$file")"
     else
         log "ERROR: Failed to download $(basename "$file") - check internet connection"
-        rm -rf "$STAGE_DIR"
         exit 1
     fi
 done
 
 mkdir -p "$UI_DIR"
-for f in spotlight.html spotlight.css; do
+for f in spotlight.html spotlight.css spotlight-loader.js; do
     src="${STAGE_DIR}/${f}"
     dest="${UI_DIR}/${f}"
     if ! cmp -s "$src" "$dest" 2>/dev/null; then
@@ -53,24 +57,38 @@ for f in spotlight.html spotlight.css; do
     fi
 done
 
-CHUNK_FILE=$(find "$WEB_DIR" -maxdepth 1 -name "home-html.*.chunk.js" | head -1)
+for chunk_file in "$WEB_DIR"/home-html.*.chunk.js; do
+    [ -f "$chunk_file" ] || continue
+    if [ -f "${chunk_file}.bak" ] && grep -Eq "featurediframe|abyss-spotlight-frame" "$chunk_file"; then
+        cp -f "${chunk_file}.bak" "$chunk_file"
+        if cmp -s "${chunk_file}.bak" "$chunk_file"; then
+            rm -f "${chunk_file}.bak"
+            log "Restored legacy home chunk backup"
+        else
+            log "ERROR: Could not verify restored home chunk: ${chunk_file}"
+            exit 1
+        fi
+    fi
+done
 
-if [ -z "$CHUNK_FILE" ]; then
-    log "WARNING: Could not find home-html.*.chunk.js - skipping chunk patch"
-    rm -rf "$STAGE_DIR"
-    exit 0
+INDEX_FILE="${WEB_DIR}/index.html"
+LOADER_TAG='<script src="ui/spotlight-loader.js" data-abyss-spotlight></script>'
+if [ ! -f "$INDEX_FILE" ]; then
+    log "ERROR: Jellyfin index not found at ${INDEX_FILE}"
+    exit 1
 fi
 
-log "Found chunk: $(basename "$CHUNK_FILE")"
-
-if grep -q "abyss-spotlight-frame\|featurediframe" "$CHUNK_FILE" 2>/dev/null; then
-    log "Chunk already patched, skipping"
-else
-    cp -f "$CHUNK_FILE" "${CHUNK_FILE}.bak"
-    cp -f "${STAGE_DIR}/home-html.chunk.js" "$CHUNK_FILE"
-    log "Chunk patched successfully"
+html=$(<"$INDEX_FILE")
+html=${html//$LOADER_TAG/}
+if [[ "$html" != *"</body>"* ]]; then
+    log "ERROR: index.html has no closing body tag"
+    exit 1
 fi
-
-rm -rf "$STAGE_DIR"
+html=${html/<\/body>/${LOADER_TAG}<\/body>}
+temp_index="${INDEX_FILE}.abyss.tmp"
+cp -p "$INDEX_FILE" "$temp_index"
+printf '%s\n' "$html" > "$temp_index"
+mv -f "$temp_index" "$INDEX_FILE"
+log "Spotlight loader installed"
 
 log "Abyss Spotlight theme applied successfully"
