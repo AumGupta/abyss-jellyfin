@@ -27,34 +27,28 @@ if not exist "!JELLYFIN_WEB!" (
 :found_web
 echo  [+] Web directory: !JELLYFIN_WEB!
 
-echo  Restoring home-html chunk...
+set "ABYSS_INDEX=!JELLYFIN_WEB!\index.html"
+if exist "!ABYSS_INDEX!" (
+    powershell -NoProfile -Command "$p=$env:ABYSS_INDEX; $h=[IO.File]::ReadAllText($p); $h=[regex]::Replace($h,'<script[^>]*\bdata-abyss-spotlight\b[^>]*></script>','',[Text.RegularExpressions.RegexOptions]::IgnoreCase); $tmp=Join-Path (Split-Path $p) ('.abyss-index-'+[guid]::NewGuid().ToString('N')); try { [IO.File]::WriteAllText($tmp,$h,(New-Object Text.UTF8Encoding($false))); [IO.File]::Replace($tmp,$p,$null) } finally { if (Test-Path $tmp) { Remove-Item $tmp -Force } }"
+    if errorlevel 1 (
+        echo  [X] Failed to remove Spotlight loader.
+        exit /b 1
+    )
+    echo  [+] Spotlight loader removed.
+)
 
-set "CHUNK_NAME="
 for %%F in ("!JELLYFIN_WEB!\home-html.*.chunk.js") do (
-    set "CHUNK_NAME=%%~nxF"
-)
-
-if "!CHUNK_NAME!"=="" (
-    echo  [?] Could not find home-html.*.chunk.js automatically.
-    echo      Enter the exact filename:
-    set /p CHUNK_NAME="  Filename: "
-)
-
-set "CHUNK_FILE=!JELLYFIN_WEB!\!CHUNK_NAME!"
-
-if not exist "!CHUNK_FILE!" (
-    echo  [X] Chunk file not found: !CHUNK_FILE!
-    exit /b 1
-)
-
-if exist "!CHUNK_FILE!.bak" (
-    copy /y "!CHUNK_FILE!.bak" "!CHUNK_FILE!" >nul
-    del /f "!CHUNK_FILE!.bak" >nul
-    echo  [+] Chunk restored.
-    echo  [+] Backup removed.
-) else (
-    echo  [!] No backup found. Chunk could not be restored.
-    echo      You may need to reinstall Jellyfin.
+    if exist "%%~fF.bak" (
+        findstr /c:"featurediframe" /c:"abyss-spotlight-frame" "%%~fF" >nul
+        if not errorlevel 1 (
+            copy /y "%%~fF.bak" "%%~fF" >nul
+            if errorlevel 1 exit /b 1
+            fc /b "%%~fF.bak" "%%~fF" >nul
+            if errorlevel 1 exit /b 1
+            del /f "%%~fF.bak" >nul
+            echo  [+] Restored legacy home chunk backup.
+        )
+    )
 )
 
 echo  Removing spotlight files...
@@ -73,6 +67,13 @@ if exist "!UI_DIR!\spotlight.css" (
     echo  [+] Removed spotlight.css
 ) else (
     echo  [-] spotlight.css not found, skipping.
+)
+
+if exist "!UI_DIR!\spotlight-loader.js" (
+    del /f "!UI_DIR!\spotlight-loader.js" >nul
+    echo  [+] Removed spotlight-loader.js
+) else (
+    echo  [-] spotlight-loader.js not found, skipping.
 )
 
 for /f %%A in ('dir /b /a "!UI_DIR!" 2^>nul') do goto :ui_not_empty
