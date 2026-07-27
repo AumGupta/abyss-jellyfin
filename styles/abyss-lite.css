@@ -1,0 +1,35 @@
+/* Optional low-power override. Import after abyss.css. */
+:root {
+    --abyss-backdrop-blur: 12px;
+    --abyss-glass-blur: 8px;
+}
+
+.verticalSection,
+.ratingbutton-withrating .material-icons.favorite {
+    animation: none !important;
+}
+
+.backdropImage,
+.blurhash-canvas {
+    will-change: auto !important;
+}
+
+.mainDrawer,
+.dialog,
+.toast,
+.emby-tabs-slider,
+.videoOsdBottom .osdControls,
+.appfooter {
+    box-shadow: none !important;
+}
+
+.cardOverlayContainer,
+.cardOverlayButtonIcon,
+.paper-icon-button-light,
+.emby-tab-button,
+.button-flat,
+.navMenuOption,
+.listItem,
+.actionSheetMenuItem {
+    transition-duration: 0.15s !important;
+}
