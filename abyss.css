@@ -53,6 +53,10 @@
     /* Custom cubic-bezier */
     --abyss-ease: cubic-bezier(0.16, 1, 0.3, 1);
     --abyss-ease-snappy: cubic-bezier(0.4, 0.0, 0.2, 1);
+
+    /* Rendering controls used by the optional Lite override */
+    --abyss-backdrop-blur: 23px;
+    --abyss-glass-blur: 15px;
 }
 
 
@@ -86,7 +90,7 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-* {
+:root {
     scrollbar-color: rgba(var(--abyss-accent), 0.8) #0000 !important;
 }
 
@@ -193,7 +197,7 @@ input[type="radio"]:checked {
 }
 
 /* Override Chromium/Electron blue accent globally */
-* {
+:root {
     accent-color: rgb(var(--abyss-accent));
 }
 
@@ -370,13 +374,13 @@ input[type="radio"]:checked {
 
 /* Main content */
 .withSectionTabs .backdropImage {
-    -webkit-filter: blur(23px) saturate(120%) contrast(120%) brightness(25%);
-    filter: blur(23px) saturate(120%) contrast(120%) brightness(25%);
+    -webkit-filter: blur(var(--abyss-backdrop-blur)) saturate(120%) contrast(120%) brightness(25%);
+    filter: blur(var(--abyss-backdrop-blur)) saturate(120%) contrast(120%) brightness(25%);
 }
 
-body:has(#itemDetailPage) .backdropImage {
-    -webkit-filter: blur(23px) saturate(120%) contrast(120%) brightness(25%);
-    filter: blur(23px) saturate(120%) contrast(120%) brightness(25%);
+body:has(#itemDetailPage:not(.hide)) .backdropImage {
+    -webkit-filter: blur(var(--abyss-backdrop-blur)) saturate(120%) contrast(120%) brightness(25%);
+    filter: blur(var(--abyss-backdrop-blur)) saturate(120%) contrast(120%) brightness(25%);
 }
 
 .backdropContainer {
@@ -516,7 +520,7 @@ body:has(#itemDetailPage) .backdropImage {
 
 /* Blurhash canvas */
 .blurhash-canvas {
-   -webkit-filter: blur(23px) saturate(120%) contrast(120%) brightness(25%);
+    -webkit-filter: blur(var(--abyss-backdrop-blur)) saturate(120%) contrast(120%) brightness(25%);
     filter: opacity(60%) saturate(60%);
 }
 
@@ -974,9 +978,7 @@ div[data-role="controlgroup"] a[data-role="button"] {
 .listItem bdi:first-of-type {
     font-weight: 500;
     font-variation-settings: "wght" 500;
-    transition:
-        color 0.3s ease,
-        font-variation-settings 0.3s ease;
+    transition: color 0.3s ease;
 }
 
 .listItem bdi p {
@@ -2053,7 +2055,7 @@ div[data-role="controlgroup"] a[data-role="button"]:last-child {
 }
 
 /* Backdrop filter support */
-@supports (backdrop-filter: blur(15px)) {
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
 
     .manualLoginForm,
     .dialog,
@@ -2068,7 +2070,8 @@ div[data-role="controlgroup"] a[data-role="button"]:last-child {
     .selectionCommandsPanel,
     .playerStats-stats,
     .appfooter {
-        backdrop-filter: blur(15px) !important;
+        -webkit-backdrop-filter: blur(var(--abyss-glass-blur)) !important;
+        backdrop-filter: blur(var(--abyss-glass-blur)) !important;
         background-color: rgba(var(--abyss-glass-tint), 0.69) !important;
     }
 
@@ -2077,7 +2080,8 @@ div[data-role="controlgroup"] a[data-role="button"]:last-child {
     .pageTitle,
     .videoOsdBottom,
     .headerButton {
-        backdrop-filter: blur(15px) !important;
+        -webkit-backdrop-filter: blur(var(--abyss-glass-blur)) !important;
+        backdrop-filter: blur(var(--abyss-glass-blur)) !important;
     }
 
     .paper-icon-button-light:hover,
@@ -2104,8 +2108,9 @@ div[data-role="controlgroup"] a[data-role="button"]:last-child {
         background: rgba(0, 0, 0, 0.35) !important;
     }
 
-    body:has(.nowPlayingBar) .backgroundContainer.withBackdrop {
-        backdrop-filter: blur(15px);
+    body:has(.nowPlayingBar:not(.hide)) .backgroundContainer.withBackdrop {
+        -webkit-backdrop-filter: blur(var(--abyss-glass-blur));
+        backdrop-filter: blur(var(--abyss-glass-blur));
     }
 }
 
@@ -2223,16 +2228,12 @@ div[data-role="controlgroup"] a[data-role="button"]:last-child {
     transition: background 0.37s var(--abyss-ease),
         color 0.37s var(--abyss-ease),
         border-color 0.37s var(--abyss-ease),
-        border-radius 0.37s var(--abyss-ease),
         opacity 0.37s var(--abyss-ease),
-        box-shadow 0.37s var(--abyss-ease),
         transform 0.37s var(--abyss-ease) !important;
 }
 
 .mainDrawer {
-    transition: transform 0.18s var(--abyss-ease-snappy),
-        left 0.18s var(--abyss-ease-snappy),
-        width 0.18s var(--abyss-ease-snappy) !important;
+    transition: transform 0.18s var(--abyss-ease-snappy) !important;
 }
 
 /* Favourite button heart animation — all contexts */
@@ -2320,4 +2321,15 @@ div[data-role="controlgroup"] a[data-role="button"]:last-child {
 
 .verticalSection:nth-child(n+9) {
     animation: abyss-section-fade-up 0.7s var(--abyss-ease) both 0.45s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
 }
