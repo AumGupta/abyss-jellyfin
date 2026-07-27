@@ -1,19 +1,31 @@
 const nav = document.getElementById('nav');
+const scrollTopBtn = document.getElementById('scroll-top');
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+let scrollFrame = null;
 window.addEventListener('scroll', () => {
-  nav.classList.toggle('scrolled', window.scrollY > 20);
+  if (scrollFrame) return;
+  scrollFrame = requestAnimationFrame(() => {
+    nav.classList.toggle('scrolled', window.scrollY > 20);
+    scrollTopBtn.classList.toggle('visible', window.scrollY > 400);
+    scrollFrame = null;
+  });
 }, { passive: true });
 
 // Scroll reveal
 const revealEls = document.querySelectorAll('.reveal');
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-      observer.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.12 });
-revealEls.forEach(el => observer.observe(el));
+if (reducedMotion.matches) {
+  revealEls.forEach(el => el.classList.add('visible'));
+} else {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  revealEls.forEach(el => observer.observe(el));
+}
 
 // Copy buttons
 document.querySelectorAll('.copy-btn').forEach(btn => {
@@ -29,7 +41,7 @@ document.querySelectorAll('.copy-btn').forEach(btn => {
         btn.textContent = 'Copy';
         btn.classList.remove('copied');
       }, 2000);
-    });
+    }).catch(() => {});
   });
 });
 
@@ -43,15 +55,6 @@ const dlAssets = { win: null, lin: null };
     const data = await res.json();
     dlAssets.lin = (data.assets || []).find(a => a.name.endsWith('.sh')) || null;
     dlAssets.win = (data.assets || []).find(a => a.name.endsWith('.exe')) || null;
-    // Keep hidden anchors updated for any legacy references
-    const btnLin = document.getElementById('download-btn-lin');
-    const btnWin = document.getElementById('download-btn-win');
-    const lblLin = document.getElementById('download-label-lin');
-    const lblWin = document.getElementById('download-label-win');
-    if (btnLin && dlAssets.lin) { btnLin.href = dlAssets.lin.browser_download_url; }
-    if (btnWin && dlAssets.win) { btnWin.href = dlAssets.win.browser_download_url; }
-    if (lblLin && dlAssets.lin) { lblLin.textContent = dlAssets.lin.name; }
-    if (lblWin && dlAssets.win) { lblWin.textContent = dlAssets.win.name; }
     // Auto-detect platform and pre-select
     autoSelectOS();
   } catch (e) { }
@@ -97,6 +100,14 @@ document.querySelectorAll('.os-card').forEach(card => {
 // Hamburger menu
 const hamburger = document.getElementById('nav-hamburger');
 const mobileMenu = document.getElementById('nav-mobile');
+const mobileQuery = window.matchMedia('(max-width: 768px)');
+
+function closeMobileMenu() {
+  hamburger.classList.remove('open');
+  mobileMenu.classList.remove('open');
+  hamburger.setAttribute('aria-expanded', 'false');
+  mobileMenu.setAttribute('aria-hidden', 'true');
+}
 
 hamburger.addEventListener('click', () => {
   const isOpen = hamburger.classList.toggle('open');
@@ -107,23 +118,27 @@ hamburger.addEventListener('click', () => {
 
 // Close mobile menu when a link is clicked
 mobileMenu.querySelectorAll('a').forEach(link => {
-  link.addEventListener('click', () => {
-    hamburger.classList.remove('open');
-    mobileMenu.classList.remove('open');
-    hamburger.setAttribute('aria-expanded', 'false');
-    mobileMenu.setAttribute('aria-hidden', 'true');
-  });
+  link.addEventListener('click', closeMobileMenu);
 });
+mobileQuery.addEventListener('change', event => { if (!event.matches) closeMobileMenu(); });
+document.addEventListener('keydown', event => { if (event.key === 'Escape') closeMobileMenu(); });
 
 // Scroll to top button
-const scrollTopBtn = document.getElementById('scroll-top');
-
-window.addEventListener('scroll', () => {
-  scrollTopBtn.classList.toggle('visible', window.scrollY > 400);
-}, { passive: true });
-
 scrollTopBtn.addEventListener('click', () => {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  window.scrollTo({ top: 0, behavior: reducedMotion.matches ? 'auto' : 'smooth' });
+});
+
+// Load the YouTube player only after the visitor requests playback.
+document.querySelectorAll('.video-facade').forEach(facade => {
+  facade.addEventListener('click', () => {
+    const iframe = document.createElement('iframe');
+    const videoId = facade.dataset.videoId;
+    iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1&modestbranding=1&rel=0&playsinline=1`;
+    iframe.title = 'Abyss theme for Jellyfin';
+    iframe.allow = 'autoplay; encrypted-media; picture-in-picture';
+    iframe.allowFullscreen = true;
+    facade.replaceWith(iframe);
+  }, { once: true });
 });
 
 // Accent swatch - update code block on click
@@ -168,7 +183,7 @@ const SNAP_RADIUS = 1.5;
 const slider = document.getElementById('radius-slider');
 const radiusValEl = document.querySelector('.radius-val');
 const radiusDisplay = document.querySelector('.radius-display');
-const stopLabels = document.querySelectorAll('.radius-stops span');
+const stopLabels = document.querySelectorAll('.radius-stops button');
 
 function updateRadiusUI(val) {
   const px = `${val}px`;
@@ -220,22 +235,3 @@ if (slider) {
 
   updateRadiusUI(parseInt(slider.value));
 }
-
-// Smooth anchor scroll with fixed nav offset
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-  anchor.addEventListener('click', (e) => {
-    const href = anchor.getAttribute('href');
-    if (href === '#') return;
-    const target = document.querySelector(href);
-    if (!target) return;
-    e.preventDefault();
-    const top = target.getBoundingClientRect().top + window.scrollY + 10;
-    window.scrollTo({ top, behavior: 'smooth' });
-    setTimeout(() => {
-      const refined = target.getBoundingClientRect().top + window.scrollY + 10;
-      if (Math.abs(refined - window.scrollY) > 10) {
-        window.scrollTo({ top: refined, behavior: 'smooth' });
-      }
-    }, 600);
-  });
-});
