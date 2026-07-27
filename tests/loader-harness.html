@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Abyss Loader Test Harness</title>
+</head>
+<body style="margin:0;background:#080808;color:#fff">
+  <nav aria-label="Fixture controls">
+    <button id="show-home" type="button">Show home</button>
+    <button id="show-favorites" type="button">Show favorites</button>
+    <button id="show-other" type="button">Show other</button>
+    <button id="remount-home" type="button">Remount home</button>
+  </nav>
+  <div id="indexPage" data-role="page">
+    <div id="homeTab" class="tabContent is-active">
+      <div class="sections" data-test="original-sections"></div>
+    </div>
+    <div id="favoritesTab" class="tabContent">
+      <div class="sections"></div>
+    </div>
+  </div>
+  <script>
+    localStorage.setItem('jellyfin_credentials', JSON.stringify({
+      Servers: [{
+        AccessToken: 'test-token',
+        UserId: 'test-user',
+        ManualAddress: window.location.origin
+      }]
+    }));
+    document.getElementById('show-home').addEventListener('click', () => {
+      document.getElementById('homeTab').classList.add('is-active');
+      document.getElementById('favoritesTab').classList.remove('is-active');
+    });
+    document.getElementById('show-favorites').addEventListener('click', () => {
+      document.getElementById('homeTab').classList.remove('is-active');
+      document.getElementById('favoritesTab').classList.add('is-active');
+    });
+    document.getElementById('show-other').addEventListener('click', () => {
+      document.getElementById('homeTab').classList.remove('is-active');
+      document.getElementById('favoritesTab').classList.remove('is-active');
+    });
+    document.getElementById('remount-home').addEventListener('click', () => {
+      const replacement = document.createElement('div');
+      replacement.id = 'homeTab';
+      replacement.className = 'tabContent is-active';
+      replacement.innerHTML = '<div class="sections" data-test="remounted-sections"></div>';
+      document.getElementById('homeTab').replaceWith(replacement);
+      document.getElementById('favoritesTab').classList.remove('is-active');
+    });
+  </script>
+  <script src="../scripts/spotlight/spotlight-loader.js" data-abyss-spotlight></script>
+</body>
+</html>
