@@ -45,7 +45,6 @@ body {
 	object-position: center 20%;
 	display: block;
 	transform: scale(1);
-	will-change: transform;
 }
 
 #backdrop.loaded {
@@ -200,6 +199,8 @@ body {
 
 #buttons {
 	display: flex;
+	position: relative;
+	z-index: 4;
 	animation: fadeUp 0.8s var(--ease) both;
 	animation-delay: 0.75s;
 }
@@ -216,7 +217,8 @@ body {
 	border: none;
 	cursor: pointer;
 	text-decoration: none;
-	transition: all 0.5s var(--ease);
+	transition: background-color 0.5s var(--ease), color 0.5s var(--ease),
+		transform 0.5s var(--ease), box-shadow 0.5s var(--ease);
 	white-space: nowrap;
 }
 
@@ -271,50 +273,56 @@ body {
 	box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 	border: 0.5px solid rgba(87, 87, 87, 0.1);
 	backdrop-filter: blur(15px);
-	--webkit-backdrop-filter: blur(15px);
+	-webkit-backdrop-filter: blur(15px);
 }
 
 .dot {
+	position: relative;
+	width: 20px;
+	height: 20px;
 	border: none;
-	background: rgba(255, 255, 255, 0.9);
-	border-radius: 50%;
+	background: transparent;
 	cursor: pointer;
 	padding: 0;
-	margin: 0 5px;
-	transition:
-		width 0.35s var(--ease),
-		height 0.35s var(--ease),
-		opacity 0.35s var(--ease),
-		transform 0.35s var(--ease);
+	margin: 0;
 	flex-shrink: 0;
 }
 
-.dot-active {
+.dot::before {
+	content: '';
+	position: absolute;
+	left: 0;
+	top: 6.5px;
 	width: 20px;
 	height: 7px;
 	border-radius: 4px;
+	background: rgba(255, 255, 255, 0.9);
+	transition: opacity 0.35s var(--ease), transform 0.35s var(--ease);
+	transform: scaleX(0.25) scaleY(0.72);
+}
+
+.dot-active::before {
+	transform: scale(1);
 	opacity: 1;
 }
 
-.dot-near {
-	width: 7px;
-	height: 7px;
+.dot-near::before {
+	transform: scaleX(0.35);
 	opacity: 0.65;
 }
 
-.dot-far {
-	width: 6px;
-	height: 6px;
-	margin: 0 5.5px;
+.dot-far::before {
+	transform: scaleX(0.3) scaleY(0.86);
 	opacity: 0.35;
 }
 
-
-.dot-hidden {
-	width: 5px;
-	height: 5px;
-	margin: 0 6px;
+.dot-hidden::before {
 	opacity: 0.15;
+}
+
+.dot:focus-visible {
+	outline: 2px solid rgba(255, 255, 255, 0.8);
+	outline-offset: 1px;
 }
 
 
@@ -419,6 +427,14 @@ body {
 	height: 100%;
 	z-index: 3;
 	cursor: pointer;
+	border: 0;
+	padding: 0;
+	background: transparent;
+}
+
+#clickzone:focus-visible {
+	outline: 2px solid rgba(255, 255, 255, 0.8);
+	outline-offset: -4px;
 }
 
 @media (max-width: 600px) and (orientation: portrait) {
@@ -473,5 +489,19 @@ body {
 		max-width: 35vw;
 		max-height: 120px;
 		margin-bottom: 2px;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+	}
+
+	#backdrop img {
+		transform: none !important;
 	}
 }
