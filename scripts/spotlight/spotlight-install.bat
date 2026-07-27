@@ -55,41 +55,38 @@ if exist "!SRC!spotlight.css" (
     exit /b 1
 )
 
-echo  Patching home-html chunk...
+if exist "!SRC!spotlight-loader.js" (
+    copy /y "!SRC!spotlight-loader.js" "!UI_DIR!\spotlight-loader.js" >nul
+    echo  [+] spotlight-loader.js
+) else (
+    echo  [X] spotlight-loader.js not found. Aborting.
+    exit /b 1
+)
 
-set "CHUNK_NAME="
 for %%F in ("!JELLYFIN_WEB!\home-html.*.chunk.js") do (
-    set "CHUNK_NAME=%%~nxF"
+    if exist "%%~fF.bak" (
+        findstr /c:"featurediframe" /c:"abyss-spotlight-frame" "%%~fF" >nul
+        if not errorlevel 1 (
+            copy /y "%%~fF.bak" "%%~fF" >nul
+            if errorlevel 1 exit /b 1
+            fc /b "%%~fF.bak" "%%~fF" >nul
+            if errorlevel 1 exit /b 1
+            del /f "%%~fF.bak" >nul
+            echo  [+] Restored legacy home chunk backup.
+        )
+    )
 )
 
-if "!CHUNK_NAME!"=="" (
-    echo  [?] Could not find home-html.*.chunk.js automatically.
-    echo      Enter the exact filename:
-    set /p CHUNK_NAME="  Filename: "
-)
-
-set "CHUNK_FILE=!JELLYFIN_WEB!\!CHUNK_NAME!"
-
-if not exist "!CHUNK_FILE!" (
-    echo  [X] Chunk file not found: !CHUNK_FILE!
+set "ABYSS_INDEX=!JELLYFIN_WEB!\index.html"
+if not exist "!ABYSS_INDEX!" (
+    echo  [X] Jellyfin index not found: !ABYSS_INDEX!
     exit /b 1
 )
-
-echo  [+] Found: !CHUNK_NAME!
-
-if not exist "!CHUNK_FILE!.bak" (
-    copy /y "!CHUNK_FILE!" "!CHUNK_FILE!.bak" >nul
-    echo  [+] Backup created.
-) else (
-    echo  [-] Backup already exists, skipping.
-)
-
-if exist "!SRC!home-html.chunk.js" (
-    copy /y "!SRC!home-html.chunk.js" "!CHUNK_FILE!" >nul
-    echo  [+] Chunk patched.
-) else (
-    echo  [X] home-html.chunk.js not found. Patch manually - see README.
+powershell -NoProfile -Command "$p=$env:ABYSS_INDEX; $h=[IO.File]::ReadAllText($p); $h=[regex]::Replace($h,'<script[^>]*\bdata-abyss-spotlight\b[^>]*></script>','',[Text.RegularExpressions.RegexOptions]::IgnoreCase); if ($h -notmatch '(?i)</body>') { throw 'index.html has no closing body tag' }; $t='<script src='+[char]34+'ui/spotlight-loader.js'+[char]34+' data-abyss-spotlight></script>'; $r=[regex]::new('</body>',[Text.RegularExpressions.RegexOptions]::IgnoreCase); $h=$r.Replace($h,$t+'</body>',1); $tmp=Join-Path (Split-Path $p) ('.abyss-index-'+[guid]::NewGuid().ToString('N')); try { [IO.File]::WriteAllText($tmp,$h,(New-Object Text.UTF8Encoding($false))); [IO.File]::Replace($tmp,$p,$null) } finally { if (Test-Path $tmp) { Remove-Item $tmp -Force } }"
+if errorlevel 1 (
+    echo  [X] Failed to install Spotlight loader.
     exit /b 1
 )
+echo  [+] Spotlight loader installed.
 
 exit /b 0
