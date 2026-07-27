@@ -5,7 +5,7 @@ import vm from 'node:vm';
 
 const html = await readFile(new URL('../scripts/spotlight/spotlight.html', import.meta.url), 'utf8');
 const css = await readFile(new URL('../scripts/spotlight/spotlight.css', import.meta.url), 'utf8');
-const wrapper = await readFile(new URL('../scripts/spotlight/home-html.chunk.js', import.meta.url), 'utf8');
+const loader = await readFile(new URL('../scripts/spotlight/spotlight-loader.js', import.meta.url), 'utf8');
 const script = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
 
 test('spotlight inline script parses', () => {
@@ -23,8 +23,10 @@ test('spotlight lifecycle pauses hidden work', () => {
   assert.match(script, /visibilitychange/);
   assert.match(script, /pagehide/);
   assert.match(script, /action === 'pause'/);
-  assert.match(wrapper, /postMessage/);
-  assert.match(wrapper, /indexPage/);
+  assert.match(loader, /postMessage/);
+  assert.match(loader, /indexPage/);
+  assert.match(loader, /homeActive/);
+  assert.match(loader, /isConnected/);
 });
 
 test('image requests are bounded and cached', () => {
