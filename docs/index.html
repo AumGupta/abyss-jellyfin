@@ -114,38 +114,17 @@
         </div>
         <div class="hero-image reveal reveal-delay">
             <div class="screenshot-frame video-frame">
-                <iframe
-                    src="https://www.youtube.com/embed/CAjI7qgvJzo?autoplay=1&mute=1&loop=1&playlist=CAjI7qgvJzo&controls=0&modestbranding=1&rel=0&playsinline=1"
-                    title="Abyss theme for Jellyfin" allow="autoplay; encrypted-media" allowfullscreen loading="lazy"
-                    style="width:100%;aspect-ratio:16/9;display:block;border:0;"></iframe>
+                <button class="video-facade" type="button" data-video-id="CAjI7qgvJzo"
+                    aria-label="Play the Abyss theme demo">
+                    <picture>
+                        <source srcset="assets/images/demo-thumbnail.webp" type="image/webp" />
+                        <img src="assets/images/demo-thumbnail.png" alt="Abyss theme for Jellyfin" width="1280"
+                            height="684" fetchpriority="high" />
+                    </picture>
+                </button>
             </div>
         </div>
-        <!-- <div class="hero-image reveal reveal-delay">
-            <div class="screenshot-frame">
-                <a href="https://www.youtube.com/watch/CAjI7qgvJzo" target="_blank" rel="noopener noreferrer"
-                    class="screenshot-link">
-                    <img src="assets/images/1.png"
-                        alt="Abyss theme - Jellyfin home screen showing My Media section with frosted glass header"
-                        width="900" loading="eager" />
-                    <div class="screenshot-overlay">
-                        <span>See video ►</span>
-                    </div>
-                </a>
-            </div>
-        </div> -->
     </section>
-
-    <!--VIDEO-->
-    <!-- <section class="section section-video" id="video" aria-label="Theme preview video">
-        <div class="section-inner">
-            <div class="video-embed reveal">
-                <iframe
-                    src="https://www.youtube.com/embed/CAjI7qgvJzo?autoplay=1&mute=1&loop=1&playlist=CAjI7qgvJzo&controls=1&modestbranding=1&rel=0&playsinline=1"
-                    title="Abyss theme for Jellyfin — preview" allow="autoplay; encrypted-media" allowfullscreen
-                    loading="lazy" style="border:0;"></iframe>
-            </div>
-        </div>
-    </section> -->
 
     <!--FEATURES-->
     <section class="section" id="features" aria-labelledby="features-title">
@@ -246,33 +225,45 @@
             <div class="preview-grid">
 
                 <div class="preview-item preview-full reveal">
-                    <img src="assets/images/1.png" alt="Abyss theme home screen" loading="lazy" />
+                    <picture><source srcset="assets/images/1.webp" type="image/webp" /><img
+                            src="assets/images/1.png" alt="Abyss theme home screen" width="2857" height="1800"
+                            loading="lazy" decoding="async" /></picture>
                     <span class="preview-caption">Home</span>
                 </div>
 
                 <div class="preview-row reveal">
                     <div class="preview-item preview-sidebar">
-                        <img src="assets/images/2.png" alt="Abyss sidebar navigation" loading="lazy" />
+                        <picture><source srcset="assets/images/2.webp" type="image/webp" /><img
+                                src="assets/images/2.png" alt="Abyss sidebar navigation" width="671" height="1747"
+                                loading="lazy" decoding="async" /></picture>
                         <span class="preview-caption">Sidebar</span>
                     </div>
                     <div class="preview-item preview-stretch">
-                        <img src="assets/images/3.png" alt="Abyss Video player" loading="lazy" />
+                        <picture><source srcset="assets/images/3.webp" type="image/webp" /><img
+                                src="assets/images/3.png" alt="Abyss video player" width="2880" height="1800"
+                                loading="lazy" decoding="async" /></picture>
                         <span class="preview-caption">Player</span>
                     </div>
                 </div>
 
                 <div class="preview-row reveal">
                     <div class="preview-item preview-stretch">
-                        <img src="assets/images/5.png" alt="Abyss card layout" loading="lazy" />
+                        <picture><source srcset="assets/images/5.webp" type="image/webp" /><img
+                                src="assets/images/5.png" alt="Abyss card layout" width="806" height="1399"
+                                loading="lazy" decoding="async" /></picture>
                         <span class="preview-caption">Cards</span>
                     </div>
                     <div class="preview-col">
                         <div class="preview-item">
-                            <img src="assets/images/4.png" alt="Abyss card hover state" loading="lazy" />
+                            <picture><source srcset="assets/images/4.webp" type="image/webp" /><img
+                                    src="assets/images/4.png" alt="Abyss card hover state" width="1566" height="1159"
+                                    loading="lazy" decoding="async" /></picture>
                             <span class="preview-caption">Card Hover</span>
                         </div>
                         <div class="preview-item">
-                            <img src="assets/images/6.png" alt="Abyss UI detail" loading="lazy" />
+                            <picture><source srcset="assets/images/6.webp" type="image/webp" /><img
+                                    src="assets/images/6.png" alt="Abyss UI detail" width="517" height="136"
+                                    loading="lazy" decoding="async" /></picture>
                             <span class="preview-caption">UI Detail</span>
                         </div>
                     </div>
@@ -280,32 +271,44 @@
 
                 <div class="preview-row reveal">
                     <div class="preview-item preview-half">
-                        <img src="assets/images/movies-1.png" alt="Abyss movies library" loading="lazy" />
+                        <picture><source srcset="assets/images/movies-1.webp" type="image/webp" /><img
+                                src="assets/images/movies-1.png" alt="Abyss movies library" width="2823" height="1799"
+                                loading="lazy" decoding="async" /></picture>
                         <span class="preview-caption">Movies</span>
                     </div>
                     <div class="preview-item preview-half">
-                        <img src="assets/images/shows-1.png" alt="Abyss shows library" loading="lazy" />
+                        <picture><source srcset="assets/images/shows-1.webp" type="image/webp" /><img
+                                src="assets/images/shows-1.png" alt="Abyss shows library" width="2852" height="1799"
+                                loading="lazy" decoding="async" /></picture>
                         <span class="preview-caption">Shows</span>
                     </div>
                 </div>
 
                 <div class="preview-row reveal">
                     <div class="preview-item preview-half">
-                        <img src="assets/images/music1.png" alt="Abyss music suggestions" loading="lazy" />
+                        <picture><source srcset="assets/images/music1.webp" type="image/webp" /><img
+                                src="assets/images/music1.png" alt="Abyss music suggestions" width="2861" height="1800"
+                                loading="lazy" decoding="async" /></picture>
                         <span class="preview-caption">Music</span>
                     </div>
                     <div class="preview-item preview-half">
-                        <img src="assets/images/music2.png" alt="Abyss music albums grid" loading="lazy" />
+                        <picture><source srcset="assets/images/music2.webp" type="image/webp" /><img
+                                src="assets/images/music2.png" alt="Abyss music albums grid" width="2859" height="1800"
+                                loading="lazy" decoding="async" /></picture>
                         <span class="preview-caption">Music Albums</span>
                     </div>
                 </div>
                 <div class="preview-row reveal">
                     <div class="preview-item preview-half">
-                        <img src="assets/images/music3.png" alt="Abyss now playing screen" loading="lazy" />
+                        <picture><source srcset="assets/images/music3.webp" type="image/webp" /><img
+                                src="assets/images/music3.png" alt="Abyss now playing screen" width="2854" height="1800"
+                                loading="lazy" decoding="async" /></picture>
                         <span class="preview-caption">Now Playing</span>
                     </div>
                     <div class="preview-item preview-half">
-                        <img src="assets/images/music4.png" alt="Abyss music queue" loading="lazy" />
+                        <picture><source srcset="assets/images/music4.webp" type="image/webp" /><img
+                                src="assets/images/music4.png" alt="Abyss music queue" width="2856" height="1800"
+                                loading="lazy" decoding="async" /></picture>
                         <span class="preview-caption">Queue</span>
                     </div>
                 </div>
@@ -373,14 +376,14 @@
                             <input type="range" id="radius-slider" class="radius-slider" min="0" max="24" step="1"
                                 value="12" aria-label="Corner radius" aria-valuemin="0" aria-valuemax="24"
                                 aria-valuenow="12" />
-                            <div class="radius-stops" aria-hidden="true">
-                                <span data-val="0">0</span>
-                                <span data-val="4">4</span>
-                                <span data-val="8">8</span>
-                                <span data-val="12">12</span>
-                                <span data-val="16">16</span>
-                                <span data-val="20">20</span>
-                                <span data-val="24">24</span>
+                            <div class="radius-stops" aria-label="Corner radius presets">
+                                <button type="button" data-val="0" aria-label="Set corner radius to 0 pixels">0</button>
+                                <button type="button" data-val="4" aria-label="Set corner radius to 4 pixels">4</button>
+                                <button type="button" data-val="8" aria-label="Set corner radius to 8 pixels">8</button>
+                                <button type="button" data-val="12" aria-label="Set corner radius to 12 pixels">12</button>
+                                <button type="button" data-val="16" aria-label="Set corner radius to 16 pixels">16</button>
+                                <button type="button" data-val="20" aria-label="Set corner radius to 20 pixels">20</button>
+                                <button type="button" data-val="24" aria-label="Set corner radius to 24 pixels">24</button>
                             </div>
                         </div>
                     </div>
@@ -493,15 +496,6 @@
                 </a>
                 <p class="install-note" id="install-note-active">&nbsp;</p>
             </div>
-
-            <!-- Hidden anchors used by JS to resolve URLs -->
-            <a id="download-btn-win" href="https://github.com/AumGupta/abyss-jellyfin/releases/latest"
-                style="display:none" aria-hidden="true"></a>
-            <a id="download-btn-lin" href="https://github.com/AumGupta/abyss-jellyfin/releases/latest"
-                style="display:none" aria-hidden="true"></a>
-            <span id="download-label-win" style="display:none"></span>
-            <span id="download-label-lin" style="display:none"></span>
-
             <details class="install-details reveal">
                 <summary>Download blocked? Here's why abyss-setup files are 100% safe.</summary>
                 <div class="install-details-body">
