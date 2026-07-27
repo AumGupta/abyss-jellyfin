@@ -77,9 +77,10 @@ Download the [`abyss-spotlight.sh`](https://raw.githubusercontent.com/AumGupta/a
 
 ```bash
 mkdir -p ./jellyfin/config/custom-cont-init.d
-curl -o ./jellyfin/config/custom-cont-init.d/abyss-spotlight.sh
+curl -fsSL https://raw.githubusercontent.com/AumGupta/abyss-jellyfin/main/scripts/docker/abyss-spotlight.sh \
+  -o ./jellyfin/config/custom-cont-init.d/abyss-spotlight.sh
 chmod +x ./jellyfin/config/custom-cont-init.d/abyss-spotlight.sh
-````
+```
 
 **2. Mount the Volume in Docker Compose**
 You must explicitly mount the init script directory in your `docker-compose.yml` for the container to detect it:
@@ -226,7 +227,7 @@ Download these files from the repo:
 
 * [`scripts/spotlight/spotlight.html`](https://github.com/AumGupta/abyss-jellyfin/blob/main/scripts/spotlight/spotlight.html)
 * [`scripts/spotlight/spotlight.css`](https://github.com/AumGupta/abyss-jellyfin/blob/main/scripts/spotlight/spotlight.css)
-* [`scripts/spotlight/home-html.chunk.js`](https://github.com/AumGupta/abyss-jellyfin/blob/main/scripts/spotlight/home-html.chunk.js)
+* [`scripts/spotlight/spotlight-loader.js`](https://github.com/AumGupta/abyss-jellyfin/blob/main/scripts/spotlight/spotlight-loader.js)
 
 Place them in:
 
@@ -234,18 +235,13 @@ Place them in:
 jellyfin-web/ui/
 ```
 
-### Step 4.5: Patch Jellyfin home screen
+### Step 4.4: Load Spotlight
 
-1. In `jellyfin-web`, find a file like:
+Open `jellyfin-web/index.html` and add this line immediately before `</body>`:
 
+```html
+<script src="ui/spotlight-loader.js" data-abyss-spotlight></script>
 ```
-home-html.*.chunk.js
-```
-> (* will be a string of random characters like `home-html.83458cf8d6dc173356g4.chunk`)
-
-2. **Create a backup** of this file: Simply copy the orginal file somewhere for your backup.
-
-3. Replace the original file with: Copy content from `home-html.chunk.js (from /ui)` to the `home-html.*.chunk.js` file you found in `./jellyfin-web/`.
 
 ## 5. Restart Jellyfin
 
@@ -258,9 +254,9 @@ Restart your Jellyfin server.
 * Restart Jellyfin Media Player (if using desktop app)
 
 > ## NOTE
-> * The Spotlight feature requires modifying Jellyfin’s web files
+> * The Spotlight feature adds one marked script tag to Jellyfin's `index.html`
 > * Updates to Jellyfin may overwrite these changes
-> * If something breaks, restore your `.bak` file
+> * Re-run the installer after a Jellyfin update to restore Spotlight
 
 
 ## Tip
