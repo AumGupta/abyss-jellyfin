@@ -33,7 +33,7 @@
   </style>
 
   <div class="tabContent pageTabContent" id="homeTab" data-index="0">
-    <iframe class="featurediframe" src="ui/spotlight.html"></iframe>
+    <iframe class="featurediframe" src="ui/spotlight.html" title="Abyss Spotlight"></iframe>
     <div class="sections"></div>
   </div>
 
@@ -58,15 +58,38 @@
   };
 })();
 
-document.addEventListener("DOMContentLoaded", () => {
-
+function setupAbyssSpotlightLifecycle() {
+  const indexPage = document.getElementById("indexPage");
   const homeTab = document.getElementById("homeTab");
-  if (!homeTab) return;
+  const favoritesTab = document.getElementById("favoritesTab");
+  const iframe = homeTab?.querySelector(".featurediframe");
+  if (!indexPage || !homeTab || !iframe) return;
 
-  const iframe = homeTab.querySelector(".featurediframe");
-  if (!iframe) return;
+  let lastAction = "";
+  const sync = () => {
+    const favoritesActive = favoritesTab?.classList.contains("is-active");
+    const pageHidden = indexPage.classList.contains("hide") || indexPage.hidden;
+    const active = !document.hidden && !pageHidden && !favoritesActive;
+    const action = active ? "resume" : "pause";
+    iframe.style.display = active ? "block" : "none";
+    if (action !== lastAction && iframe.contentWindow) {
+      iframe.contentWindow.postMessage({ type: "abyss-spotlight", action }, window.location.origin);
+      lastAction = action;
+    }
+  };
 
-  new MutationObserver(() => {
-    iframe.style.display = homeTab.classList.contains("is-active") ? "block" : "none";
-  }).observe(homeTab, { attributes: true, attributeFilter: ["class"] });
-});
+  const observer = new MutationObserver(sync);
+  observer.observe(indexPage, { attributes: true, attributeFilter: ["class", "hidden"] });
+  observer.observe(homeTab, { attributes: true, attributeFilter: ["class"] });
+  if (favoritesTab) observer.observe(favoritesTab, { attributes: true, attributeFilter: ["class"] });
+  iframe.addEventListener("load", () => { lastAction = ""; sync(); });
+  document.addEventListener("visibilitychange", sync);
+  window.addEventListener("pagehide", () => observer.disconnect(), { once: true });
+  sync();
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", setupAbyssSpotlightLifecycle, { once: true });
+} else {
+  setupAbyssSpotlightLifecycle();
+}

@@ -155,6 +155,17 @@ Override any of these variables at the top of your **Custom CSS** field, after t
 | Teal | `50, 200, 180` |
 | Rose | `255, 100, 120` |
 
+### Lite mode
+
+For lower-power mobile, TV, and embedded clients, import the optional Lite override after the main theme:
+
+```css
+@import url('https://cdn.jsdelivr.net/gh/AumGupta/abyss-jellyfin@main/abyss.css');
+@import url('https://cdn.jsdelivr.net/gh/AumGupta/abyss-jellyfin@main/styles/abyss-lite.css');
+```
+
+Lite mode keeps the same colours, typography, spacing, and component styling while reducing blur, shadows, and entrance motion.
+
 > NOTE:
 > 
 > You can also change the font by adding a *Google Fonts* (or any other source) `@import` and overriding the `body` font-family after your theme import. For example, to use [Inter](https://fonts.google.com/specimen/Inter):

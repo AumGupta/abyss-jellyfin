@@ -10,8 +10,11 @@ $REPO_URL = "https://github.com/$REPO"
 $SPOTLIGHT_FILES = @(
     "scripts/spotlight/spotlight.html",
     "scripts/spotlight/spotlight.css",
-    "scripts/spotlight/home-html.chunk.js"
+    "scripts/spotlight/spotlight-loader.js"
 )
+
+$ABYSS_CSS_START = "/* ABYSS THEME START */"
+$ABYSS_CSS_END   = "/* ABYSS THEME END */"
 
 # Helpers 
 
@@ -100,6 +103,59 @@ function Sync-SpotlightFiles {
         Get-AbyssFile $file $destPath
     }
     Write-Host ""
+}
+
+function Remove-AbyssCssText {
+    param([AllowEmptyString()][string]$css)
+    $start = [regex]::Escape($ABYSS_CSS_START)
+    $end = [regex]::Escape($ABYSS_CSS_END)
+    $repo = [regex]::Escape($REPO)
+    $css = [regex]::Replace($css, "$start.*?$end(?:\r?\n)?", "", [Text.RegularExpressions.RegexOptions]::Singleline)
+    $css = [regex]::Replace($css, "(?im)^[ \t]*@import\s+url\([`"']?https://cdn\.jsdelivr\.net/gh/$repo@[^/`"')]+/abyss\.css[`"']?\);[ \t]*(?:\r?\n)?", "")
+    return [regex]::Replace($css, "(?im)^[ \t]*/\* Customise Abyss: https://aumgupta\.github\.io/abyss-jellyfin/ \*/[ \t]*(?:\r?\n)?", "")
+}
+
+function Add-AbyssCssText {
+    param([AllowEmptyString()][string]$css)
+    $css = Remove-AbyssCssText $css
+    $block = "$ABYSS_CSS_START`n@import url('https://cdn.jsdelivr.net/gh/$REPO@$BRANCH/abyss.css');`n/* Customise Abyss: https://aumgupta.github.io/abyss-jellyfin/ */`n$ABYSS_CSS_END"
+    return $block + $(if ($css) { "`n$css" } else { "" })
+}
+
+function Restore-LegacyChunk {
+    param($webDir)
+    foreach ($chunkFile in Get-ChildItem "$webDir\home-html.*.chunk.js" -ErrorAction SilentlyContinue) {
+        $legacyAbyssChunk = Select-String -Path $chunkFile.FullName -Pattern "featurediframe|abyss-spotlight-frame" -Quiet
+        if ((Test-Path "$($chunkFile.FullName).bak") -and $legacyAbyssChunk) {
+            Copy-Item "$($chunkFile.FullName).bak" $chunkFile.FullName -Force
+            if ((Get-FileHash "$($chunkFile.FullName).bak").Hash -ne (Get-FileHash $chunkFile.FullName).Hash) {
+                Exit-WithError "Could not verify restored home chunk: $($chunkFile.FullName)"
+            }
+            Remove-Item "$($chunkFile.FullName).bak" -Force
+            Write-Ok "Restored legacy home chunk backup."
+        }
+    }
+}
+
+function Set-SpotlightLoader {
+    param($webDir, [bool]$install)
+    $indexFile = Join-Path $webDir "index.html"
+    if (-not (Test-Path $indexFile)) { Exit-WithError "Missing Jellyfin index: $indexFile" }
+    $html = [IO.File]::ReadAllText($indexFile)
+    $html = [regex]::Replace($html, "<script[^>]*\bdata-abyss-spotlight\b[^>]*></script>", "", [Text.RegularExpressions.RegexOptions]::IgnoreCase)
+    if ($install) {
+        if ($html -notmatch "(?i)</body>") { Exit-WithError "Jellyfin index.html has no closing body tag." }
+        $tag = '<script src="ui/spotlight-loader.js" data-abyss-spotlight></script>'
+        $bodyEnd = [regex]::new("</body>", [Text.RegularExpressions.RegexOptions]::IgnoreCase)
+        $html = $bodyEnd.Replace($html, "$tag</body>", 1)
+    }
+    $tempFile = Join-Path (Split-Path $indexFile) (".abyss-index-" + [guid]::NewGuid().ToString("N"))
+    try {
+        [IO.File]::WriteAllText($tempFile, $html, (New-Object Text.UTF8Encoding($false)))
+        [IO.File]::Replace($tempFile, $indexFile, $null)
+    } finally {
+        if (Test-Path $tempFile) { Remove-Item $tempFile -Force }
+    }
 }
 
 # Authenticate 
@@ -198,11 +254,22 @@ function Install-Abyss {
     # Download spotlight files (always fresh)
     Sync-SpotlightFiles $abyssDir
 
+    $indexFile = Join-Path $webDir "index.html"
+    if (-not (Test-Path $indexFile)) { Exit-WithError "Missing Jellyfin index: $indexFile" }
+    if ([IO.File]::ReadAllText($indexFile) -notmatch "(?i)</body>") {
+        Exit-WithError "Jellyfin index.html has no closing body tag."
+    }
+
     # Apply Abyss CSS
     Write-Step "Applying Abyss CSS..."
     try {
-        $branding           = Invoke-RestMethod -Uri "$serverUrl/Branding/Configuration" -Method Get -Headers $apiHeaders
-        $branding.CustomCss = "@import url('https://cdn.jsdelivr.net/gh/$REPO@$BRANCH/abyss.css');`n/* Customise Abyss: https://aumgupta.github.io/abyss-jellyfin/ */"
+        $branding = Invoke-RestMethod -Uri "$serverUrl/Branding/Configuration" -Method Get -Headers $apiHeaders
+        $customCss = if ($branding.CustomCss) { $branding.CustomCss } else { "" }
+        if ($branding.PSObject.Properties.Name -contains "CustomCss") {
+            $branding.CustomCss = Add-AbyssCssText $customCss
+        } else {
+            $branding | Add-Member -NotePropertyName CustomCss -NotePropertyValue (Add-AbyssCssText $customCss)
+        }
         Invoke-RestMethod -Uri "$serverUrl/System/Configuration/Branding" -Method Post -Headers $apiHeaders -Body ($branding | ConvertTo-Json -Depth 10) | Out-Null
         Write-Ok "Abyss CSS applied."
     } catch {
@@ -216,7 +283,10 @@ function Install-Abyss {
     Write-Step "Configuring theme settings..."
     try {
         $displayPrefs = Invoke-RestMethod -Uri "$serverUrl/DisplayPreferences/usersettings?userId=$userId&client=emby" -Method Get -Headers $apiHeaders
-        $displayPrefs.CustomPrefs.dashboardTheme = "dark"
+        if (-not $displayPrefs.CustomPrefs) {
+            $displayPrefs | Add-Member -NotePropertyName CustomPrefs -NotePropertyValue ([pscustomobject]@{}) -Force
+        }
+        $displayPrefs.CustomPrefs | Add-Member -NotePropertyName dashboardTheme -NotePropertyValue "dark" -Force
         Write-Ok "Dashboard theme set to Dark."
 
         # Ask before reordering home sections
@@ -227,16 +297,13 @@ function Install-Abyss {
         $reorderChoice = Read-Host "  Reorder sections? [Y/n]"
         # [Y/n] convention: ENTER (empty) defaults to Yes
         if ($reorderChoice.Trim() -eq "" -or $reorderChoice.Trim().ToUpper() -eq "Y") {
-            $displayPrefs.CustomPrefs.homesection0 = "resume"
-            $displayPrefs.CustomPrefs.homesection1 = "nextup"
-            $displayPrefs.CustomPrefs.homesection2 = "smalllibrarytiles"
-            $displayPrefs.CustomPrefs.homesection3 = "latestmedia"
-            $displayPrefs.CustomPrefs.homesection4 = "none"
-            $displayPrefs.CustomPrefs.homesection5 = "none"
-            $displayPrefs.CustomPrefs.homesection6 = "none"
-            $displayPrefs.CustomPrefs.homesection7 = "none"
-            $displayPrefs.CustomPrefs.homesection8 = "none"
-            $displayPrefs.CustomPrefs.homesection9 = "none"
+            $displayPrefs.CustomPrefs | Add-Member -NotePropertyName homesection0 -NotePropertyValue "resume" -Force
+            $displayPrefs.CustomPrefs | Add-Member -NotePropertyName homesection1 -NotePropertyValue "nextup" -Force
+            $displayPrefs.CustomPrefs | Add-Member -NotePropertyName homesection2 -NotePropertyValue "smalllibrarytiles" -Force
+            $displayPrefs.CustomPrefs | Add-Member -NotePropertyName homesection3 -NotePropertyValue "latestmedia" -Force
+            for ($i = 4; $i -lt 10; $i++) {
+                $displayPrefs.CustomPrefs | Add-Member -NotePropertyName "homesection$i" -NotePropertyValue "none" -Force
+            }
             Write-Ok "Home screen sections configured."
         } else {
             Write-Skip "Home screen sections left unchanged."
@@ -261,7 +328,7 @@ function Install-Abyss {
         Write-Skip "ui folder exists."
     }
 
-    foreach ($f in @("spotlight.html", "spotlight.css")) {
+    foreach ($f in @("spotlight.html", "spotlight.css", "spotlight-loader.js")) {
         $src  = Join-Path $abyssDir $f
         $dest = Join-Path $uiDir $f
         if (-not (Test-Path $src)) { Exit-WithError "Missing file: $f - try running setup again to re-download." }
@@ -269,26 +336,9 @@ function Install-Abyss {
         Write-Ok "Copied: $f"
     }
 
-    $chunkFile = Get-ChildItem "$webDir\home-html.*.chunk.js" | Select-Object -First 1 -ExpandProperty FullName
-    if (-not $chunkFile) {
-        Write-Warn "Could not find home-html.*.chunk.js automatically."
-        $chunkName = Read-Host "  Enter the exact filename"
-        $chunkFile = Join-Path $webDir $chunkName
-        if (-not (Test-Path $chunkFile)) { Exit-WithError "Chunk file not found: $chunkFile" }
-    }
-    Write-Ok "Found chunk: $(Split-Path $chunkFile -Leaf)"
-
-    if (-not (Test-Path "$chunkFile.bak")) {
-        Copy-Item $chunkFile "$chunkFile.bak" -Force
-        Write-Ok "Backup created."
-    } else {
-        Write-Skip "Backup already exists."
-    }
-
-    $chunkSrc = Join-Path $abyssDir "home-html.chunk.js"
-    if (-not (Test-Path $chunkSrc)) { Exit-WithError "Missing home-html.chunk.js - try running setup again to re-download." }
-    Copy-Item $chunkSrc $chunkFile -Force
-    Write-Ok "Chunk patched."
+    Restore-LegacyChunk $webDir
+    Set-SpotlightLoader $webDir $true
+    Write-Ok "Spotlight loader installed."
     Write-Host ""
 
     # Restart
@@ -361,44 +411,32 @@ function Uninstall-Abyss {
     Write-Ok "Found: $webDir"
     Write-Host ""
 
-    # Clear CSS
-    Write-Step "Clearing custom CSS..."
+    # Remove Abyss CSS
+    Write-Step "Removing Abyss CSS..."
     try {
-        $branding           = Invoke-RestMethod -Uri "$serverUrl/Branding/Configuration" -Method Get -Headers $apiHeaders
-        $branding.CustomCss = ""
+        $branding = Invoke-RestMethod -Uri "$serverUrl/Branding/Configuration" -Method Get -Headers $apiHeaders
+        $customCss = if ($branding.CustomCss) { $branding.CustomCss } else { "" }
+        if ($branding.PSObject.Properties.Name -contains "CustomCss") {
+            $branding.CustomCss = Remove-AbyssCssText $customCss
+        }
         Invoke-RestMethod -Uri "$serverUrl/System/Configuration/Branding" -Method Post -Headers $apiHeaders -Body ($branding | ConvertTo-Json -Depth 10) | Out-Null
-        Write-Ok "Custom CSS cleared."
+        Write-Ok "Abyss CSS removed."
     } catch {
-        Write-Fail "Failed to clear CSS."
-        Write-Info "Clear it manually in Dashboard > General > Custom CSS."
+        Write-Fail "Failed to remove Abyss CSS."
+        Write-Info "Remove the marked Abyss block manually in Dashboard > General > Custom CSS."
     }
     Write-Host ""
 
-    # Restore chunk
-    Write-Step "Restoring home-html chunk..."
-    $chunkFile = Get-ChildItem "$webDir\home-html.*.chunk.js" | Select-Object -First 1 -ExpandProperty FullName
-    if (-not $chunkFile) {
-        Write-Warn "Could not find home-html.*.chunk.js automatically."
-        $chunkName = Read-Host "  Enter the exact filename"
-        $chunkFile = Join-Path $webDir $chunkName
-        if (-not (Test-Path $chunkFile)) { Exit-WithError "Chunk file not found: $chunkFile" }
-    }
-
-    if (Test-Path "$chunkFile.bak") {
-        Copy-Item "$chunkFile.bak" $chunkFile -Force
-        Remove-Item "$chunkFile.bak" -Force
-        Write-Ok "Chunk restored."
-        Write-Ok "Backup removed."
-    } else {
-        Write-Warn "No backup found. Chunk could not be restored."
-        Write-Info "You may need to reinstall Jellyfin."
-    }
+    Write-Step "Removing Spotlight loader..."
+    Set-SpotlightLoader $webDir $false
+    Restore-LegacyChunk $webDir
+    Write-Ok "Spotlight loader removed."
     Write-Host ""
 
     # Remove spotlight files
     Write-Step "Removing spotlight files..."
     $uiDir = Join-Path $webDir "ui"
-    foreach ($f in @("spotlight.html", "spotlight.css")) {
+    foreach ($f in @("spotlight.html", "spotlight.css", "spotlight-loader.js")) {
         $path = Join-Path $uiDir $f
         if (Test-Path $path) {
             Remove-Item $path -Force
@@ -443,32 +481,34 @@ function Uninstall-Abyss {
 
 # Entry point 
 
-$isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
-if (-not $isAdmin) {
-    $exePath = [System.Diagnostics.Process]::GetCurrentProcess().MainModule.FileName
-    if ($exePath -like "*.exe") {
-        Start-Process -FilePath $exePath -Verb RunAs
-    } elseif ($PSCommandPath) {
-        Start-Process powershell -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs
-    } else {
-        Start-Process powershell -ArgumentList "-NoProfile -ExecutionPolicy Bypass -Command `"irm https://raw.githubusercontent.com/AumGupta/abyss-jellyfin/main/setup.ps1 | iex`"" -Verb RunAs
+if ($env:ABYSS_SETUP_LIB_ONLY -ne "1") {
+    $isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+    if (-not $isAdmin) {
+        $exePath = [System.Diagnostics.Process]::GetCurrentProcess().MainModule.FileName
+        if ($exePath -like "*.exe") {
+            Start-Process -FilePath $exePath -Verb RunAs
+        } elseif ($PSCommandPath) {
+            Start-Process powershell -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs
+        } else {
+            Start-Process powershell -ArgumentList "-NoProfile -ExecutionPolicy Bypass -Command `"irm https://raw.githubusercontent.com/AumGupta/abyss-jellyfin/main/setup.ps1 | iex`"" -Verb RunAs
+        }
+        exit
     }
-    exit
-}
 
-Invoke-WithTrap {
-    Show-Header "Setup"
+    Invoke-WithTrap {
+        Show-Header "Setup"
 
-    Write-Host "  What would you like to do?" -ForegroundColor White
-    Write-Host ""
-    Write-Host "   [1] Install" -ForegroundColor Green -NoNewline
-    Write-Host "        [2] Uninstall" -ForegroundColor Yellow
-    Write-Host ""
-    $choice = Read-Host "  Enter 1 or 2"
+        Write-Host "  What would you like to do?" -ForegroundColor White
+        Write-Host ""
+        Write-Host "   [1] Install" -ForegroundColor Green -NoNewline
+        Write-Host "        [2] Uninstall" -ForegroundColor Yellow
+        Write-Host ""
+        $choice = Read-Host "  Enter 1 or 2"
 
-    switch ($choice) {
-        "1" { Install-Abyss }
-        "2" { Uninstall-Abyss }
-        default { Exit-WithError "Invalid choice. Please enter 1 or 2." }
+        switch ($choice) {
+            "1" { Install-Abyss }
+            "2" { Uninstall-Abyss }
+            default { Exit-WithError "Invalid choice. Please enter 1 or 2." }
+        }
     }
 }

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Abyss Spotlight Test Harness</title>
+</head>
+<body style="margin:0;background:#080808">
+  <script>
+    localStorage.setItem('jellyfin_credentials', JSON.stringify({
+      Servers: [{
+        AccessToken: 'test-token',
+        UserId: 'test-user',
+        ManualAddress: window.location.origin
+      }]
+    }));
+  </script>
+  <iframe
+    id="spotlight"
+    title="Abyss Spotlight test fixture"
+    src="../scripts/spotlight/spotlight.html"
+    style="display:block;width:100%;height:700px;border:0"
+  ></iframe>
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "name": "abyss-jellyfin",
+  "private": true,
+  "scripts": {
+    "browser:fixture": "node tests/browser-server.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "check": "npm test && node --check docs/script.js && bash -n setup.sh && bash -n scripts/docker/abyss-spotlight.sh"
+  }
+}
