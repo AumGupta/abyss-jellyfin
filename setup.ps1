@@ -149,13 +149,7 @@ function Set-SpotlightLoader {
         $bodyEnd = [regex]::new("</body>", [Text.RegularExpressions.RegexOptions]::IgnoreCase)
         $html = $bodyEnd.Replace($html, "$tag</body>", 1)
     }
-    $tempFile = Join-Path (Split-Path $indexFile) (".abyss-index-" + [guid]::NewGuid().ToString("N"))
-    try {
-        [IO.File]::WriteAllText($tempFile, $html, (New-Object Text.UTF8Encoding($false)))
-        [IO.File]::Replace($tempFile, $indexFile, $null)
-    } finally {
-        if (Test-Path $tempFile) { Remove-Item $tempFile -Force }
-    }
+    [IO.File]::WriteAllText($indexFile, $html, (New-Object Text.UTF8Encoding($false)))
 }
 
 # Authenticate 
