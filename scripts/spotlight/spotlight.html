@@ -302,21 +302,25 @@
 			}
 
 			function buildDots() {
-				const container = $('carousel-dots');
-				container.replaceChildren();
-				container.style.display = items.length > 1 ? 'flex' : 'none';
-				items.forEach((_, index) => {
-					const dot = document.createElement('button');
-					dot.type = 'button';
-					dot.className = 'dot';
-					dot.setAttribute('aria-label', `Show item ${index + 1}`);
-					dot.addEventListener('click', event => {
-						event.stopPropagation();
-						selectItem(index);
+				try {
+					const container = $('carousel-dots');
+					while (container.firstChild) container.removeChild(container.firstChild);
+					container.style.display = items.length > 1 ? 'flex' : 'none';
+					items.forEach((_, index) => {
+						const dot = document.createElement('button');
+						dot.type = 'button';
+						dot.className = 'dot';
+						dot.setAttribute('aria-label', `Show item ${index + 1}`);
+						dot.addEventListener('click', event => {
+							event.stopPropagation();
+							selectItem(index);
+						});
+						container.appendChild(dot);
 					});
-					container.appendChild(dot);
-				});
-				updateDots();
+					updateDots();
+				} catch (error) {
+					console.error('[Abyss Spotlight] buildDots failed:', error);
+				}
 			}
 
 			function itemImageUrls(item) {
@@ -402,62 +406,98 @@
 					$('backdrop').classList.add('loaded');
 				}
 
-				if (artwork.logo) {
-					logo.src = artwork.logo;
-					logo.style.display = 'block';
-					titleElement.style.display = 'none';
-				} else {
-					logo.removeAttribute('src');
-					logo.style.display = 'none';
-					titleElement.style.display = 'block';
-					titleElement.textContent = title;
-				}
-
 				let episodePrefix = '';
-				if (isEpisode) {
-					const parts = [];
-					if (item.ParentIndexNumber != null && item.IndexNumber != null) {
-						episodePrefix = `S${item.ParentIndexNumber} E${item.IndexNumber}`;
-						parts.push(episodePrefix);
+
+				try {
+					if (artwork.logo) {
+						logo.src = artwork.logo;
+						logo.style.display = 'block';
+						titleElement.style.display = 'none';
+					} else {
+						logo.removeAttribute('src');
+						logo.style.display = 'none';
+						titleElement.style.display = 'block';
+						titleElement.textContent = title;
 					}
-					if (item.Name) parts.push(item.Name);
-					$('episode-label').textContent = parts.join('  \u2013  ');
-					$('episode-label').style.display = 'block';
-				} else {
-					$('episode-label').textContent = '';
-					$('episode-label').style.display = 'none';
+				} catch (error) {
+					console.error('[Abyss Spotlight] logo/title section failed:', error);
 				}
 
-				const isResume = item._source === 'resume';
-				const playLabel = isResume ? (isEpisode ? `Continue ${episodePrefix}` : 'Resume') : (isEpisode ? `Play ${episodePrefix}`.trim() : 'Play');
-				const playButton = document.createElement('button');
-				playButton.type = 'button';
-				playButton.className = 'btn btn-play';
-				setButtonContent(playButton, SVG_PLAY, playLabel);
-				playButton.addEventListener('click', () => triggerPlayback(item, playRoute));
+				try {
+					if (isEpisode) {
+						const parts = [];
+						if (item.ParentIndexNumber != null && item.IndexNumber != null) {
+							episodePrefix = `S${item.ParentIndexNumber} E${item.IndexNumber}`;
+							parts.push(episodePrefix);
+						}
+						if (item.Name) parts.push(item.Name);
+						$('episode-label').textContent = parts.join('  \u2013  ');
+						$('episode-label').style.display = 'block';
+					} else {
+						$('episode-label').textContent = '';
+						$('episode-label').style.display = 'none';
+					}
+				} catch (error) {
+					console.error('[Abyss Spotlight] episode label section failed:', error);
+				}
 
-				const infoButton = document.createElement('a');
-				infoButton.className = 'btn btn-info';
-				infoButton.href = `#${detailRoute}`;
-				infoButton.setAttribute('aria-label', `View details for ${title}`);
-				setButtonContent(infoButton, SVG_INFO);
-				infoButton.addEventListener('click', event => { event.preventDefault(); navigateTo(detailRoute); });
-				$('buttons').replaceChildren(playButton, infoButton);
+				try {
+					const isResume = item._source === 'resume';
+					const playLabel = isResume ? (isEpisode ? `Continue ${episodePrefix}` : 'Resume') : (isEpisode ? `Play ${episodePrefix}`.trim() : 'Play');
+					const playButton = document.createElement('button');
+					playButton.type = 'button';
+					playButton.className = 'btn btn-play';
+					setButtonContent(playButton, SVG_PLAY, playLabel);
+					playButton.addEventListener('click', () => triggerPlayback(item, playRoute));
 
-				const meta = $('meta');
-				meta.replaceChildren();
-				if (item.OfficialRating) meta.appendChild(metaPillWithIcon(SVG_RATING, item.OfficialRating));
-				const runtime = formatRuntime(item.RunTimeTicks);
-				if (runtime) meta.appendChild(metaPillWithIcon(SVG_CLOCK, runtime));
-				const rating = Number(item.CommunityRating);
-				if (Number.isFinite(rating) && rating > 0) meta.appendChild(metaPillWithIcon(SVG_STAR, rating.toFixed(1)));
+					const infoButton = document.createElement('a');
+					infoButton.className = 'btn btn-info';
+					infoButton.href = `#${detailRoute}`;
+					infoButton.setAttribute('aria-label', `View details for ${title}`);
+					setButtonContent(infoButton, SVG_INFO);
+					infoButton.addEventListener('click', event => { event.preventDefault(); navigateTo(detailRoute); });
+					const buttonsContainer = $('buttons');
+					while (buttonsContainer.firstChild) buttonsContainer.removeChild(buttonsContainer.firstChild);
+					buttonsContainer.appendChild(playButton);
+					buttonsContainer.appendChild(infoButton);
+				} catch (error) {
+					console.error('[Abyss Spotlight] buttons section failed:', error);
+				}
 
-				const played = Number(item.UserData?.PlayedPercentage);
-				$('progress-wrap').style.display = played > 0 && isResume ? 'block' : 'none';
-				$('progress-bar').style.width = `${Math.min(Math.max(played || 0, 0), 100)}%`;
-				$('plot').textContent = item.Overview || '';
-				$('clickzone').setAttribute('aria-label', `View details for ${title}`);
-				$('clickzone').onclick = () => navigateTo(detailRoute);
+				try {
+					const meta = $('meta');
+					while (meta.firstChild) meta.removeChild(meta.firstChild);
+					if (item.OfficialRating) meta.appendChild(metaPillWithIcon(SVG_RATING, item.OfficialRating));
+					const runtime = formatRuntime(item.RunTimeTicks);
+					if (runtime) meta.appendChild(metaPillWithIcon(SVG_CLOCK, runtime));
+					const rating = Number(item.CommunityRating);
+					if (Number.isFinite(rating) && rating > 0) meta.appendChild(metaPillWithIcon(SVG_STAR, rating.toFixed(1)));
+				} catch (error) {
+					console.error('[Abyss Spotlight] meta pills section failed:', error);
+				}
+
+				try {
+					const isResume = item._source === 'resume';
+					const userData = item.UserData || {};
+					const played = Number(userData.PlayedPercentage);
+					$('progress-wrap').style.display = played > 0 && isResume ? 'block' : 'none';
+					$('progress-bar').style.width = `${Math.min(Math.max(played || 0, 0), 100)}%`;
+				} catch (error) {
+					console.error('[Abyss Spotlight] progress bar section failed:', error);
+				}
+
+				try {
+					$('plot').textContent = item.Overview || '';
+				} catch (error) {
+					console.error('[Abyss Spotlight] plot section failed:', error);
+				}
+
+				try {
+					$('clickzone').setAttribute('aria-label', `View details for ${title}`);
+					$('clickzone').onclick = () => navigateTo(detailRoute);
+				} catch (error) {
+					console.error('[Abyss Spotlight] clickzone section failed:', error);
+				}
 			}
 
 			async function renderItem(index) {
@@ -475,7 +515,12 @@
 					$('backdrop').classList.remove('loaded');
 					await wait(reducedMotion.matches ? 0 : 260, signal);
 					if (signal.aborted || sequence !== renderSequence) return false;
-					updateContent(item, artwork);
+					try {
+						updateContent(item, artwork);
+					} catch (error) {
+						// A single bad field should never leave the banner stuck invisible.
+						console.error('[Abyss Spotlight] updateContent error:', error);
+					}
 					$('content').classList.add('visible');
 					queuePreload();
 					return true;

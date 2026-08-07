@@ -130,6 +130,13 @@ body {
 	gap: 6px;
 }
 
+/* Fallback for engines without flexbox `gap` support (e.g. older Qt WebEngine). */
+@supports not (gap: 1px) {
+	.meta-pill {
+		margin: 0 6px 6px 0;
+	}
+}
+
 @keyframes fadeUp {
 	from {
 		opacity: 0;
@@ -156,6 +163,12 @@ body {
 	font-weight: 600;
 	color: rgba(255, 255, 255, 0.85);
 	white-space: nowrap;
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+	.meta-pill {
+		background: rgba(30, 30, 30, 0.92);
+	}
 }
 
 .meta-pill svg {
@@ -245,6 +258,12 @@ body {
 	padding: 8px;
 }
 
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+	.btn-info {
+		background: rgba(50, 50, 50, 0.85);
+	}
+}
+
 .btn-info:hover {
 	background: rgba(255, 255, 255, 1);
 	color: rgba(0, 0, 0, 0.9);
@@ -276,47 +295,52 @@ body {
 	-webkit-backdrop-filter: blur(15px);
 }
 
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+	#carousel-dots {
+		background: rgba(30, 30, 30, 0.75);
+	}
+}
+
 .dot {
-	position: relative;
-	width: 20px;
-	height: 20px;
 	border: none;
-	background: transparent;
+	background: rgba(255, 255, 255, 0.9);
+	border-radius: 50%;
 	cursor: pointer;
 	padding: 0;
-	margin: 0;
+	margin: 0 5px;
+	transition:
+		width 0.35s var(--ease),
+		height 0.35s var(--ease),
+		opacity 0.35s var(--ease),
+		transform 0.35s var(--ease);
 	flex-shrink: 0;
 }
 
-.dot::before {
-	content: '';
-	position: absolute;
-	left: 0;
-	top: 6.5px;
+.dot-active {
 	width: 20px;
 	height: 7px;
 	border-radius: 4px;
-	background: rgba(255, 255, 255, 0.9);
-	transition: opacity 0.35s var(--ease), transform 0.35s var(--ease);
-	transform: scaleX(0.25) scaleY(0.72);
-}
-
-.dot-active::before {
-	transform: scale(1);
 	opacity: 1;
 }
 
-.dot-near::before {
-	transform: scaleX(0.35);
+.dot-near {
+	width: 7px;
+	height: 7px;
 	opacity: 0.65;
 }
 
-.dot-far::before {
-	transform: scaleX(0.3) scaleY(0.86);
+.dot-far {
+	width: 6px;
+	height: 6px;
+	margin: 0 5.5px;
 	opacity: 0.35;
 }
 
-.dot-hidden::before {
+
+.dot-hidden {
+	width: 5px;
+	height: 5px;
+	margin: 0 6px;
 	opacity: 0.15;
 }
 
