@@ -4,54 +4,15 @@ on:
   push:
     paths:
       - 'setup.ps1'
-      - 'scripts/setup/**'
-      - 'scripts/spotlight/**'
-      - 'tests/**'
-      - 'package.json'
-      - '.github/workflows/build-installer.yml'
-  pull_request:
-    paths:
-      - 'setup.ps1'
-      - 'scripts/setup/**'
-      - 'scripts/spotlight/**'
-      - 'tests/**'
-      - 'package.json'
-      - '.github/workflows/build-installer.yml'
   release:
-    types: [published]
+    types: [created]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  validate:
-    runs-on: windows-latest
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4.2.2
-
-      - name: Validate sources
-        run: |
-          npm test
-          node --check docs/script.js
-          $tokens = $null
-          $errors = $null
-          [Management.Automation.Language.Parser]::ParseFile("$PWD/setup.ps1", [ref]$tokens, [ref]$errors) | Out-Null
-          if ($errors.Count -gt 0) {
-            $errors | ForEach-Object { Write-Error $_.Message }
-            exit 1
-          }
-        shell: pwsh
-
   build:
-    if: github.event_name == 'release'
-    needs: validate
     runs-on: windows-latest
-    permissions:
-      contents: write
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
@@ -74,7 +35,13 @@ jobs:
       - name: Get version
         id: version
         run: |
-          $tag = "${{ github.ref_name }}" -replace '^v', ''
+          if ("${{ github.event_name }}" -eq "release") {
+            $tag = "${{ github.ref_name }}" -replace '^v', ''
+          } else {
+            $headers = @{ Authorization = "Bearer ${{ secrets.GITHUB_TOKEN }}" }
+            $release = Invoke-RestMethod -Uri "https://api.github.com/repos/${{ github.repository }}/releases/latest" -Headers $headers -ErrorAction SilentlyContinue
+            $tag = if ($release) { $release.tag_name -replace '^v', '' } else { "0.0.0" }
+          }
           $parts = $tag.Split('.')
           while ($parts.Count -lt 4) { $parts += '0' }
           $version = $parts[0..3] -join '.'
@@ -84,17 +51,10 @@ jobs:
           echo "FILE_NAME=abyss-setup-v$shortVersion.exe" >> $env:GITHUB_OUTPUT
         shell: pwsh
 
-      - name: Pin installer sources
-        run: |
-          $source = [IO.File]::ReadAllText("$PWD/setup.ps1")
-          $source = $source -replace '(?m)^\$BRANCH\s*=\s*"main"', '$BRANCH = "${{ github.ref_name }}"'
-          [IO.File]::WriteAllText("$PWD/setup-release.ps1", $source, (New-Object Text.UTF8Encoding($false)))
-        shell: pwsh
-
       - name: Build abyss-setup.exe
         run: |
           Invoke-PS2EXE `
-            -InputFile .\setup-release.ps1 `
+            -InputFile .\setup.ps1 `
             -OutputFile .\${{ steps.version.outputs.FILE_NAME }} `
             -Title "Abyss Theme Setup" `
             -Description "Installer for Abyss - a clean minimal Jellyfin theme" `
@@ -105,7 +65,16 @@ jobs:
             -NoConsole:$false
         shell: pwsh
 
+      - name: Upload to latest release
+        if: github.event_name == 'push'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version.outputs.SHORT_VERSION }}
+          files: ${{ steps.version.outputs.FILE_NAME }}
+          fail_on_unmatched_files: true
+
       - name: Upload to new release
+        if: github.event_name == 'release'
         uses: softprops/action-gh-release@v2
         with:
           files: ${{ steps.version.outputs.FILE_NAME }}

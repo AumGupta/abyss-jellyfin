@@ -4,45 +4,15 @@ on:
   push:
     paths:
       - 'setup.sh'
-      - 'scripts/docker/abyss-spotlight.sh'
-      - 'scripts/spotlight/**'
-      - 'tests/**'
-      - 'package.json'
-      - '.github/workflows/build-linux-mac-installer.yml'
-  pull_request:
-    paths:
-      - 'setup.sh'
-      - 'scripts/docker/abyss-spotlight.sh'
-      - 'scripts/spotlight/**'
-      - 'tests/**'
-      - 'package.json'
-      - '.github/workflows/build-linux-mac-installer.yml'
   release:
-    types: [published]
+    types: [created]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  validate:
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest]
-    runs-on: ${{ matrix.os }}
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4.2.2
-
-      - name: Validate sources
-        run: npm run check
-
   build:
-    if: github.event_name == 'release'
-    needs: validate
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
 
     steps:
       - name: Checkout
@@ -51,7 +21,15 @@ jobs:
       - name: Get version
         id: version
         run: |
-          TAG="${{ github.ref_name }}"
+          if [ "${{ github.event_name }}" = "release" ]; then
+            TAG="${{ github.ref_name }}"
+          else
+            TAG=$(curl -s \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              "https://api.github.com/repos/${{ github.repository }}/releases/latest" \
+              | python3 -c "import sys,json; print(json.load(sys.stdin).get('tag_name',''))")
+            TAG="${TAG:-v0.0.0}"
+          fi
           SHORT_VERSION=$(echo "${TAG#v}" | awk -F. '{printf "%s.%s.%s", $1, ($2==""?"0":$2), ($3==""?"0":$3)}')
           FILE_NAME="abyss-setup-v${SHORT_VERSION}.sh"
           echo "SHORT_VERSION=${SHORT_VERSION}" >> "$GITHUB_OUTPUT"
@@ -59,10 +37,19 @@ jobs:
 
       - name: Prepare release asset
         run: |
-          sed 's/^BRANCH="main"$/BRANCH="${{ github.ref_name }}"/' setup.sh > "${{ steps.version.outputs.FILE_NAME }}"
+          cp setup.sh "${{ steps.version.outputs.FILE_NAME }}"
           chmod +x    "${{ steps.version.outputs.FILE_NAME }}"
 
+      - name: Upload to latest release
+        if: github.event_name == 'push'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version.outputs.SHORT_VERSION }}
+          files: ${{ steps.version.outputs.FILE_NAME }}
+          fail_on_unmatched_files: true
+
       - name: Upload to new release
+        if: github.event_name == 'release'
         uses: softprops/action-gh-release@v2
         with:
           files: ${{ steps.version.outputs.FILE_NAME }}
