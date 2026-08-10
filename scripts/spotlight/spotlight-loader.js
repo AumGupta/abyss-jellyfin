@@ -210,11 +210,6 @@
           scheduleInstall();
         });
         observer.observe(document.body, { childList: true, subtree: true });
-        window.addEventListener("pagehide", function () {
-          safe(function () { observer.disconnect(); });
-          safe(lifecycleCleanup);
-          if (pollTimer) clearInterval(pollTimer);
-        }, { once: true });
       });
     }
 
@@ -224,7 +219,6 @@
 
     installSpotlight();
   }
-  
 
   function start() {
     safe(function () {

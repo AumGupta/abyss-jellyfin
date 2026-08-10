@@ -413,6 +413,29 @@ body {
 	border-color: rgba(255, 255, 255, 0.7);
 }
 
+#update-mute {
+	font-family: inherit;
+	font-size: 0.75rem;
+	font-weight: 600;
+	color: rgba(255, 255, 255, 0.55);
+	background: transparent;
+	border: none;
+	appearance: none;
+	-webkit-appearance: none;
+	-webkit-tap-highlight-color: transparent;
+	cursor: pointer;
+	white-space: nowrap;
+	flex-shrink: 0;
+	padding: 0;
+	text-decoration: underline;
+	text-underline-offset: 2px;
+	transition: color 0.2s ease;
+}
+
+#update-mute:hover {
+	color: rgba(255, 255, 255, 0.85);
+}
+
 #update-dismiss {
 	flex-shrink: 0;
 	width: 24px;
