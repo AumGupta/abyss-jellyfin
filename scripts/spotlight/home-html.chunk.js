@@ -69,7 +69,8 @@ function setupAbyssSpotlightLifecycle() {
   const sync = () => {
     const favoritesActive = favoritesTab?.classList.contains("is-active");
     const pageHidden = indexPage.classList.contains("hide") || indexPage.hidden;
-    const active = !document.hidden && !pageHidden && !favoritesActive;
+    const homeActive = homeTab.classList.contains("is-active");
+    const active = !document.hidden && !pageHidden && homeActive && !favoritesActive;
     const action = active ? "resume" : "pause";
     iframe.style.display = active ? "block" : "none";
     if (action !== lastAction && iframe.contentWindow) {

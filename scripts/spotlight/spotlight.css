@@ -308,6 +308,9 @@ body {
 	cursor: pointer;
 	padding: 0;
 	margin: 0 5px;
+	appearance: none;
+	-webkit-appearance: none;
+	-webkit-tap-highlight-color: transparent;
 	transition:
 		width 0.35s var(--ease),
 		height 0.35s var(--ease),
@@ -453,7 +456,11 @@ body {
 	cursor: pointer;
 	border: 0;
 	padding: 0;
+	margin: 0;
 	background: transparent;
+	appearance: none;
+	-webkit-appearance: none;
+	-webkit-tap-highlight-color: transparent;
 }
 
 #clickzone:focus-visible {
