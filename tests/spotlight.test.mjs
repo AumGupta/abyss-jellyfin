@@ -13,6 +13,11 @@ test('spotlight inline script parses', () => {
   assert.doesNotThrow(() => new vm.Script(script));
 });
 
+test('spotlight stylesheet inherits the installer cache token', () => {
+  assert.match(html, /styleUrl\.search = window\.location\.search/);
+  assert.doesNotMatch(html, /<link rel="stylesheet" href="spotlight\.css"/);
+});
+
 test('carousel renders are cancellable and self-scheduled', () => {
   assert.doesNotMatch(script, /setInterval\s*\(/);
   assert.match(script, /AbortController/);

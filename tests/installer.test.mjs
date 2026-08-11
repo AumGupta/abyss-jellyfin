@@ -18,6 +18,7 @@ test('spotlight loader parses and owns the injection seam', () => {
   assert.match(loader, /featurediframe/);
   assert.match(loader, /abyss-spotlight/);
   assert.match(loader, /postMessage/);
+  assert.match(loader, /frameUrl\.search = loaderUrl\.search/);
 });
 
 test('installers use the loader instead of replacing webpack chunks', () => {
@@ -27,6 +28,9 @@ test('installers use the loader instead of replacing webpack chunks', () => {
   }
   assert.doesNotMatch(shell, /cp -f "\$chunk_src" "\$chunk_file"/);
   assert.doesNotMatch(powershell, /Copy-Item \$chunkSrc \$chunkFile/);
+  for (const source of [shell, powershell, docker, batchInstall]) {
+    assert.match(source, /spotlight-loader\.js\?v=/);
+  }
 });
 
 test('installers preserve unrelated custom css', () => {
@@ -71,6 +75,46 @@ test('windows powershell css transform is surgical', { skip: process.platform !=
   assert.equal(transformed.Uninstalled, '.other-plugin { color: red; }');
 });
 
+test('windows installer rotates the spotlight cache token', { skip: process.platform !== 'win32' }, async () => {
+  const setupPath = fileURLToPath(new URL('../setup.ps1', import.meta.url)).replaceAll("'", "''");
+  const tempRoot = join(process.cwd(), '.tmp');
+  await mkdir(tempRoot, { recursive: true });
+  const fixture = await mkdtemp(join(tempRoot, 'windows-installer-'));
+  const uiPath = join(fixture, 'ui');
+  const loaderPath = join(uiPath, 'spotlight-loader.js');
+  const spotlightPath = join(uiPath, 'spotlight.html');
+  const cssPath = join(uiPath, 'spotlight.css');
+  const indexPath = join(fixture, 'index.html');
+  const patch = () => {
+    const fixturePath = fixture.replaceAll("'", "''");
+    const command = `$env:ABYSS_SETUP_LIB_ONLY='1'; . '${setupPath}'; Set-SpotlightLoader '${fixturePath}' $true`;
+    return spawnSync('powershell.exe', ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-Command', command], { encoding: 'utf8' });
+  };
+  try {
+    await mkdir(uiPath);
+    await writeFile(indexPath, '<!doctype html><html><body></body></html>');
+    await writeFile(loaderPath, 'loader version one');
+    await writeFile(spotlightPath, 'spotlight version one');
+    await writeFile(cssPath, 'styles version one');
+    const firstPatch = patch();
+    assert.equal(firstPatch.status, 0, firstPatch.stderr || firstPatch.stdout);
+    const firstHtml = await readFile(indexPath, 'utf8');
+    const firstToken = firstHtml.match(/spotlight-loader\.js\?v=([a-f0-9]{12})/)?.[1];
+    assert.ok(firstToken);
+
+    await writeFile(spotlightPath, 'spotlight version two');
+    const secondPatch = patch();
+    assert.equal(secondPatch.status, 0, secondPatch.stderr || secondPatch.stdout);
+    const secondHtml = await readFile(indexPath, 'utf8');
+    const secondToken = secondHtml.match(/spotlight-loader\.js\?v=([a-f0-9]{12})/)?.[1];
+    assert.ok(secondToken);
+    assert.notEqual(secondToken, firstToken);
+    assert.equal(secondHtml.match(/data-abyss-spotlight/g)?.length, 1);
+  } finally {
+    await rm(fixture, { recursive: true, force: true });
+  }
+});
+
 test('shell installer remains compatible with macos bash', () => {
   assert.doesNotMatch(shell, /\$\{[^}]+\^\^}/);
 });
@@ -81,9 +125,17 @@ test('shell index patch and legacy migration round trip safely', { skip: process
   await mkdir(tempRoot, { recursive: true });
   const fixture = await mkdtemp(join(tempRoot, 'installer-'));
   const indexPath = join(fixture, 'index.html');
+  const uiPath = join(fixture, 'ui');
+  const loaderPath = join(uiPath, 'spotlight-loader.js');
+  const spotlightPath = join(uiPath, 'spotlight.html');
+  const cssPath = join(uiPath, 'spotlight.css');
   const chunkPath = join(fixture, 'home-html.fixture.chunk.js');
   const originalHtml = '<!doctype html><html><body><main>Jellyfin</main></body></html>\n';
   try {
+    await mkdir(uiPath);
+    await writeFile(loaderPath, 'loader version one');
+    await writeFile(spotlightPath, 'spotlight version one');
+    await writeFile(cssPath, 'styles version one');
     await writeFile(indexPath, originalHtml);
     await chmod(indexPath, 0o640);
     const patch = mode => spawnSync('bash', ['-c', 'source "$1"; set_spotlight_index "$2" "$3"', 'bash', setupPath, indexPath, mode], { encoding: 'utf8' });
@@ -91,6 +143,16 @@ test('shell index patch and legacy migration round trip safely', { skip: process
     assert.equal(patch('install').status, 0);
     const installedHtml = await readFile(indexPath, 'utf8');
     assert.equal(installedHtml.match(/data-abyss-spotlight/g)?.length, 1);
+    const firstToken = installedHtml.match(/spotlight-loader\.js\?v=([a-f0-9]{12})/)?.[1];
+    assert.ok(firstToken);
+
+    await writeFile(cssPath, 'styles version two');
+    assert.equal(patch('install').status, 0);
+    const updatedHtml = await readFile(indexPath, 'utf8');
+    const secondToken = updatedHtml.match(/spotlight-loader\.js\?v=([a-f0-9]{12})/)?.[1];
+    assert.ok(secondToken);
+    assert.notEqual(secondToken, firstToken);
+    assert.equal(updatedHtml.match(/data-abyss-spotlight/g)?.length, 1);
     assert.equal((await stat(indexPath)).mode & 0o777, 0o640);
     assert.equal(patch('uninstall').status, 0);
     assert.equal(await readFile(indexPath, 'utf8'), originalHtml);

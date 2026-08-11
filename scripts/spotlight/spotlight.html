@@ -9,7 +9,14 @@
 	<link
 		href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,300..700;1,17..18,300..700&display=swap"
 		rel="stylesheet" />
-	<link rel="stylesheet" href="spotlight.css" />
+	<script data-abyss-style>
+		const styleUrl = new URL('spotlight.css', window.location.href);
+		styleUrl.search = window.location.search;
+		const styleLink = document.createElement('link');
+		styleLink.rel = 'stylesheet';
+		styleLink.href = styleUrl.href;
+		document.head.appendChild(styleLink);
+	</script>
 </head>
 
 <body>

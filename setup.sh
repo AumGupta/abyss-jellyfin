@@ -202,7 +202,7 @@ set_spotlight_index() {
         exit_error "Missing Jellyfin index: ${index_file}"
     fi
     python3 -c '
-import os, re, shutil, sys, tempfile
+import hashlib, os, re, shutil, sys, tempfile
 
 path, action = sys.argv[1:]
 metadata = os.stat(path)
@@ -210,7 +210,19 @@ with open(path, "r", encoding="utf-8") as handle:
     html = handle.read()
 html = re.sub(r"<script[^>]*\bdata-abyss-spotlight\b[^>]*></script>", "", html, flags=re.I)
 if action == "install":
-    tag = "<script src=\"ui/spotlight-loader.js\" data-abyss-spotlight></script>"
+    asset_paths = [
+        os.path.join(os.path.dirname(path), "ui", name)
+        for name in ("spotlight-loader.js", "spotlight.html", "spotlight.css")
+    ]
+    missing = next((asset_path for asset_path in asset_paths if not os.path.isfile(asset_path)), None)
+    if missing:
+        raise SystemExit("missing Spotlight asset: " + missing)
+    digest = hashlib.sha256()
+    for asset_path in asset_paths:
+        with open(asset_path, "rb") as asset_handle:
+            digest.update(asset_handle.read())
+    cache_token = digest.hexdigest()[:12]
+    tag = f"<script src=\"ui/spotlight-loader.js?v={cache_token}\" data-abyss-spotlight></script>"
     if "</body>" not in html.lower():
         raise SystemExit("index.html has no closing body tag")
     html = re.sub(r"</body>", tag + "</body>", html, count=1, flags=re.I)

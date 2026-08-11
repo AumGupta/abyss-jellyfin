@@ -8,7 +8,12 @@
   try {
     var cs = document.currentScript;
     if (cs && cs.src) {
-      spotlightUrl = new URL("spotlight.html", cs.src).href;
+      var loaderUrl = new URL(cs.src);
+      var frameUrl = new URL("spotlight.html", loaderUrl);
+      // Installers version the loader URL with a content hash. Reuse that
+      // token for the iframe so clients cannot retain stale Spotlight HTML.
+      frameUrl.search = loaderUrl.search;
+      spotlightUrl = frameUrl.href;
     }
   } catch (e) {
     // Fall back to the relative default above.

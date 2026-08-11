@@ -25,6 +25,23 @@ function Write-Fail { param($msg) Write-Host " [X] $msg" -ForegroundColor Red }
 function Write-Skip { param($msg) Write-Host " [-] $msg" -ForegroundColor DarkGray }
 function Write-Info { param($msg) Write-Host "     $msg" -ForegroundColor DarkGray }
 
+function Get-AbyssCacheToken {
+    param([string[]]$paths)
+    $combined = New-Object IO.MemoryStream
+    $sha256 = [Security.Cryptography.SHA256]::Create()
+    try {
+        foreach ($path in $paths) {
+            $stream = [IO.File]::OpenRead($path)
+            try { $stream.CopyTo($combined) } finally { $stream.Dispose() }
+        }
+        $hash = $sha256.ComputeHash($combined.ToArray())
+        return ([BitConverter]::ToString($hash)).Replace("-", "").ToLowerInvariant().Substring(0, 12)
+    } finally {
+        $sha256.Dispose()
+        $combined.Dispose()
+    }
+}
+
 function Exit-WithError {
     param($msg)
     Write-Host ""
@@ -145,7 +162,12 @@ function Set-SpotlightLoader {
     $html = [regex]::Replace($html, "<script[^>]*\bdata-abyss-spotlight\b[^>]*></script>", "", [Text.RegularExpressions.RegexOptions]::IgnoreCase)
     if ($install) {
         if ($html -notmatch "(?i)</body>") { Exit-WithError "Jellyfin index.html has no closing body tag." }
-        $tag = '<script src="ui/spotlight-loader.js" data-abyss-spotlight></script>'
+        $spotlightFiles = @("spotlight-loader.js", "spotlight.html", "spotlight.css") | ForEach-Object { Join-Path $webDir "ui\$_" }
+        foreach ($spotlightFile in $spotlightFiles) {
+            if (-not (Test-Path $spotlightFile)) { Exit-WithError "Missing Spotlight asset: $spotlightFile" }
+        }
+        $cacheToken = Get-AbyssCacheToken $spotlightFiles
+        $tag = "<script src=`"ui/spotlight-loader.js?v=$cacheToken`" data-abyss-spotlight></script>"
         $bodyEnd = [regex]::new("</body>", [Text.RegularExpressions.RegexOptions]::IgnoreCase)
         $html = $bodyEnd.Replace($html, "$tag</body>", 1)
     }
