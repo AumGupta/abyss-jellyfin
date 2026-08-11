@@ -373,20 +373,27 @@ body {
 
 #update-toast-inner {
 	display: flex;
-	align-items: center;
-	gap: 8px;
+	flex-direction: column;
+	gap: 10px;
 	background: rgba(18, 18, 18, 0.82);
 	backdrop-filter: blur(14px);
 	-webkit-backdrop-filter: blur(14px);
 	border: 1px solid rgba(255, 255, 255, 0.12);
 	border-radius: 12px;
-	padding: 9px 10px 9px 14px;
-	max-width: 340px;
+	padding: 12px;
+	max-width: 300px;
+}
+
+#update-toast-top {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
 }
 
 #update-icon {
 	flex-shrink: 0;
 	color: rgba(255, 255, 255, 0.55);
+	margin-top: 1px;
 }
 
 #update-text {
@@ -397,14 +404,20 @@ body {
 	flex: 1;
 }
 
+#update-toast-actions {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+}
+
 #update-link {
 	font-size: 0.75rem;
 	font-weight: 600;
 	color: rgba(255, 255, 255, 0.9);
 	text-decoration: none;
 	white-space: nowrap;
-	border-bottom: 1px solid rgba(255, 255, 255, 0.3);
 	flex-shrink: 0;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.3);
 	transition: color 0.2s ease, border-color 0.2s ease;
 }
 
@@ -438,8 +451,8 @@ body {
 
 #update-dismiss {
 	flex-shrink: 0;
-	width: 24px;
-	height: 24px;
+	width: 22px;
+	height: 22px;
 	background: rgba(255, 255, 255, 0.07);
 	border: none;
 	border-radius: 6px;
@@ -449,7 +462,6 @@ body {
 	justify-content: center;
 	color: rgba(255, 255, 255, 0.45);
 	transition: background 0.2s ease, color 0.2s ease;
-	margin-left: 2px;
 }
 
 #update-dismiss:hover {
