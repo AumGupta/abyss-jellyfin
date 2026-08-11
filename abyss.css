@@ -2190,10 +2190,6 @@ div[data-role="controlgroup"] a[data-role="button"]:last-child {
     background: transparent;
 }
 
-#searchPage .scrollSlider {
-    overflow: hidden !important;
-}
-
 .noItemsMessage.centerMessage {
     font-weight: 100 !important;
     font-size: 36px;
