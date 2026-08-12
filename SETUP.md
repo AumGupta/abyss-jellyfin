@@ -240,8 +240,12 @@ jellyfin-web/ui/
 Open `jellyfin-web/index.html` and add this line immediately before `</body>`:
 
 ```html
-<script src="ui/spotlight-loader.js" data-abyss-spotlight></script>
+<script src="ui/spotlight-loader.js?v=VERSION" data-abyss-spotlight></script>
 ```
+
+Replace `VERSION` with a new value whenever the Spotlight files are updated
+(for example, the Abyss release number). The automated installers generate a
+content-based value so browsers and embedded clients cannot reuse stale files.
 
 ## 5. Restart Jellyfin
 

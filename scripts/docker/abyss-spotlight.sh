@@ -72,14 +72,16 @@ for chunk_file in "$WEB_DIR"/home-html.*.chunk.js; do
 done
 
 INDEX_FILE="${WEB_DIR}/index.html"
-LOADER_TAG='<script src="ui/spotlight-loader.js" data-abyss-spotlight></script>'
 if [ ! -f "$INDEX_FILE" ]; then
     log "ERROR: Jellyfin index not found at ${INDEX_FILE}"
     exit 1
 fi
 
+LOADER_CACHE_TOKEN="$(cat "${UI_DIR}/spotlight-loader.js" "${UI_DIR}/spotlight.html" "${UI_DIR}/spotlight.css" | cksum | awk '{print $1 "-" $2}')"
+LOADER_TAG="<script src=\"ui/spotlight-loader.js?v=${LOADER_CACHE_TOKEN}\" data-abyss-spotlight></script>"
+
 html=$(<"$INDEX_FILE")
-html=${html//$LOADER_TAG/}
+html="$(printf '%s' "$html" | sed -E 's#<script[^>]*data-abyss-spotlight[^>]*></script>##Ig')"
 if [[ "$html" != *"</body>"* ]]; then
     log "ERROR: index.html has no closing body tag"
     exit 1
