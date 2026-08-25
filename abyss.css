@@ -378,7 +378,7 @@ input[type="radio"]:checked {
     filter: blur(var(--abyss-backdrop-blur)) saturate(120%) contrast(120%) brightness(25%);
 }
 
-body:has(#itemDetailPage:not(.hide)) .backdropImage {
+body:has(#itemDetailPage:not(.hide), #nowPlayingPage:not(.hide)) .backdropImage {
     -webkit-filter: blur(var(--abyss-backdrop-blur)) saturate(120%) contrast(120%) brightness(25%);
     filter: blur(var(--abyss-backdrop-blur)) saturate(120%) contrast(120%) brightness(25%);
 }
