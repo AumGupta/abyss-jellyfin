@@ -40,6 +40,7 @@
     style.id = STYLE_ID;
     style.textContent =
       "#indexPage:has(." + FRAME_CLASS + ") { padding: 0 !important; }" +
+      "#homeTab:has(." + FRAME_CLASS + ") { padding: 0 !important; margin: 0 !important; }" +
       "." + FRAME_CLASS + " { width:100%;display:block;border:0;margin:0;padding:0;height:70vh;min-height:420px;max-height:680px; }" +
       "@media (min-width:1400px) { ." + FRAME_CLASS + " { height:72vh;max-height:760px; } }" +
       "@media (min-width:1920px) { ." + FRAME_CLASS + " { height:68vh;max-height:860px; } }" +
@@ -151,13 +152,29 @@
 
   var currentSync = null;
 
+  function findVisibleById(id) {
+    var candidates = document.querySelectorAll('[id="' + id + '"]');
+    for (var i = 0; i < candidates.length; i++) {
+      var el = candidates[i];
+      if (
+        el.isConnected &&
+        !el.classList.contains("hide") &&
+        !el.hidden
+      ) {
+        return el;
+      }
+    }
+    return candidates.length ? candidates[candidates.length - 1] : null;
+  }
+
   function installSpotlight() {
     var installed = false;
     safe(function () {
-      var indexPage = document.getElementById("indexPage");
-      var homeTab = document.getElementById("homeTab");
-      if (!indexPage || !homeTab) return;
-      var favoritesTab = document.getElementById("favoritesTab");
+      var indexPage = findVisibleById("indexPage");
+      if (!indexPage) return;
+      var homeTab = indexPage.querySelector("#homeTab");
+      if (!homeTab) return;
+      var favoritesTab = indexPage.querySelector("#favoritesTab");
 
       installFrameStyle();
 
@@ -196,6 +213,7 @@
     var scheduleInstall = function () {
       var alreadyGood =
         currentIndexPage && currentIndexPage.isConnected &&
+        currentIndexPage === findVisibleById("indexPage") &&
         currentHomeTab && currentHomeTab.isConnected &&
         currentIframe && currentIframe.isConnected &&
         (!currentFavoritesTab || currentFavoritesTab.isConnected);
