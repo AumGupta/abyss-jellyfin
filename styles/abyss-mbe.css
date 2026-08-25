@@ -108,3 +108,23 @@
         display: none;
     }
 }
+
+#slides-container:focus,
+#slides-container:focus-visible {
+    outline: none !important;
+}
+
+#slides-container .pause-button,
+#slides-container .mute-button {
+    transition: top 0.25s ease;
+}
+
+#slides-container .pause-button i,
+#slides-container .mute-button i {
+    transition: font-size 0.25s ease;
+}
+@media only screen and (max-width: 767px) and (orientation: portrait) {
+    #slides-container .genre {
+        top: calc(50% + 16.5vh) !important;
+    }
+}
