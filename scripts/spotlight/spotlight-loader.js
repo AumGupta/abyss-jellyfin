@@ -39,6 +39,7 @@
     var style = document.createElement("style");
     style.id = STYLE_ID;
     style.textContent =
+      "#indexPage:has(." + FRAME_CLASS + ") { padding: 0 !important; }" +
       "." + FRAME_CLASS + " { width:100%;display:block;border:0;margin:0;padding:0;height:70vh;min-height:420px;max-height:680px; }" +
       "@media (min-width:1400px) { ." + FRAME_CLASS + " { height:72vh;max-height:760px; } }" +
       "@media (min-width:1920px) { ." + FRAME_CLASS + " { height:68vh;max-height:860px; } }" +
@@ -95,6 +96,15 @@
     });
   }
 
+  function isRouteVisible(indexPage, homeTab) {
+    if (!indexPage || !indexPage.isConnected || !homeTab || !homeTab.isConnected) return false;
+    if (document.hidden) return false;
+    if (indexPage.classList.contains("hide") || indexPage.hidden) return false;
+    var style = window.getComputedStyle(homeTab);
+    if (style.display === "none" || style.visibility === "hidden") return false;
+    return homeTab.offsetParent !== null || homeTab.getClientRects().length > 0;
+  }
+
   function connectLifecycle(indexPage, homeTab, favoritesTab, iframe) {
     safe(lifecycleCleanup);
     var lastAction = "";
@@ -102,9 +112,7 @@
     var sync = function () {
       safe(function () {
         var favoritesActive = !!(favoritesTab && favoritesTab.classList && favoritesTab.classList.contains("is-active"));
-        var pageHidden = !!((indexPage.classList && indexPage.classList.contains("hide")) || indexPage.hidden);
-        var homeActive = !!(homeTab.classList && homeTab.classList.contains("is-active"));
-        var active = !document.hidden && !pageHidden && homeActive && !favoritesActive;
+        var active = isRouteVisible(indexPage, homeTab) && !favoritesActive;
         var action = active ? "resume" : "pause";
         iframe.style.display = active ? "block" : "none";
         if (action !== lastAction) {
@@ -118,7 +126,7 @@
       safe(function () {
         lifecycleObserver = new MutationObserver(sync);
         lifecycleObserver.observe(indexPage, { attributes: true, attributeFilter: ["class", "hidden"] });
-        lifecycleObserver.observe(homeTab, { attributes: true, attributeFilter: ["class"] });
+        lifecycleObserver.observe(homeTab, { attributes: true, attributeFilter: ["class", "style"] });
         if (favoritesTab) lifecycleObserver.observe(favoritesTab, { attributes: true, attributeFilter: ["class"] });
       });
     }
@@ -137,7 +145,11 @@
     };
 
     sync();
+
+    return sync;
   }
+
+  var currentSync = null;
 
   function installSpotlight() {
     var installed = false;
@@ -169,7 +181,7 @@
         currentHomeTab = homeTab;
         currentFavoritesTab = favoritesTab;
         currentIframe = iframe;
-        connectLifecycle(indexPage, homeTab, favoritesTab, iframe);
+        currentSync = connectLifecycle(indexPage, homeTab, favoritesTab, iframe);
       }
       installed = true;
     });
@@ -180,7 +192,6 @@
     safe(forceDarkTheme);
 
     var installScheduled = false;
-    var pollTimer = null;
 
     var scheduleInstall = function () {
       var alreadyGood =
@@ -213,8 +224,13 @@
       });
     }
 
-    pollTimer = setInterval(function () {
+    // Safety-net poll: re-verifies element connectivity AND forces a fresh
+    // visibility sync every 2s, so any stale is-active/hide state left over
+    // from an SPA nav-button route change self-corrects without needing a
+    // hard refresh.
+    setInterval(function () {
       scheduleInstall();
+      if (currentSync) safe(currentSync);
     }, 2000);
 
     installSpotlight();
