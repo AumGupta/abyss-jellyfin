@@ -276,8 +276,11 @@
 			}
 
 			async function fetchItems(signal) {
+				const MIN_ITEMS = 5;
+				const MAX_ITEMS = 7;
+
 				const [resumeResult, nextUpResult] = await Promise.allSettled([
-					fetchJson(`${base}/Users/${userId}/Items/Resume?Limit=3&Recursive=true&Fields=${FIELDS}`, signal),
+					fetchJson(`${base}/Users/${userId}/Items/Resume?Limit=3&Recursive=true&IncludeItemTypes=Movie,Episode&Fields=${FIELDS}`, signal),
 					fetchJson(`${base}/Shows/NextUp?Limit=5&UserId=${userId}&Fields=${FIELDS}`, signal)
 				]);
 				if (signal.aborted) throw new DOMException('Aborted', 'AbortError');
@@ -287,16 +290,35 @@
 					...resumeItems.map(item => ({ ...item, _source: 'resume' })),
 					...nextUpItems.map(item => ({ ...item, _source: 'nextup' }))
 				];
-				let result = [...new Map(combined.map(item => [item.Id, item])).values()];
-				if (result.length === 0) {
+				const picked = new Map(combined.map(item => [item.Id, item]));
+
+				// Tier 2: top up with recently added movies if below the target minimum.
+				if (picked.size < MIN_ITEMS) {
 					try {
-						const fallback = await fetchJson(`${base}/Users/${userId}/Items?Limit=8&Recursive=true&SortBy=Random&IncludeItemTypes=Movie,Series&Fields=${FIELDS}`, signal);
-						result = (fallback.Items || []).map(item => ({ ...item, _source: 'random' }));
+						const recentMovies = await fetchJson(`${base}/Users/${userId}/Items?Limit=${MAX_ITEMS}&Recursive=true&SortBy=DateCreated&SortOrder=Descending&IncludeItemTypes=Movie&Fields=${FIELDS}`, signal);
+						for (const item of recentMovies.Items || []) {
+							if (picked.size >= MAX_ITEMS) break;
+							if (!picked.has(item.Id)) picked.set(item.Id, { ...item, _source: 'recent-movie' });
+						}
 					} catch (error) {
 						if (error.name === 'AbortError') throw error;
 					}
 				}
-				return result;
+
+				// Tier 3: still below the minimum -> top up with recently added shows.
+				if (picked.size < MIN_ITEMS) {
+					try {
+						const recentShows = await fetchJson(`${base}/Users/${userId}/Items?Limit=${MAX_ITEMS}&Recursive=true&SortBy=DateCreated&SortOrder=Descending&IncludeItemTypes=Series&Fields=${FIELDS}`, signal);
+						for (const item of recentShows.Items || []) {
+							if (picked.size >= MAX_ITEMS) break;
+							if (!picked.has(item.Id)) picked.set(item.Id, { ...item, _source: 'recent-show' });
+						}
+					} catch (error) {
+						if (error.name === 'AbortError') throw error;
+					}
+				}
+
+				return [...picked.values()].slice(0, MAX_ITEMS);
 			}
 
 			function stopAuto() {
@@ -366,11 +388,23 @@
 			async function fetchArtwork(item, signal) {
 				const urls = itemImageUrls(item);
 				const logoPromise = fetchImage(urls.logo, signal);
-				let backdrop = urls.primary ? await fetchImage(urls.primary, signal) : null;
-				let primaryBackdrop = Boolean(backdrop);
-				if (!backdrop) {
+				const preferBackdrop = localStorage.getItem('abyss-prefer-backdrop') === 'true';
+				let backdrop;
+				let primaryBackdrop;
+				if (preferBackdrop) {
 					backdrop = await fetchImage(urls.backdrop, signal);
 					primaryBackdrop = false;
+					if (!backdrop && urls.primary) {
+						backdrop = await fetchImage(urls.primary, signal);
+						primaryBackdrop = true;
+					}
+				} else {
+					backdrop = urls.primary ? await fetchImage(urls.primary, signal) : null;
+					primaryBackdrop = Boolean(backdrop);
+					if (!backdrop) {
+						backdrop = await fetchImage(urls.backdrop, signal);
+						primaryBackdrop = false;
+					}
 				}
 				return { backdrop, logo: await logoPromise, primaryBackdrop };
 			}
