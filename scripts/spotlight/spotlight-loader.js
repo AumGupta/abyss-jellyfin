@@ -39,8 +39,8 @@
     var style = document.createElement("style");
     style.id = STYLE_ID;
     style.textContent =
-      "#indexPage:has(." + FRAME_CLASS + ") { padding: 0 !important; }" +
-      "#homeTab:has(." + FRAME_CLASS + ") { padding: 0 !important; margin: 0 !important; }" +
+      "#indexPage.abyss-spotlight-active { padding: 0 !important; }" +
+      "#homeTab.abyss-spotlight-active { padding: 0 !important; margin: 0 !important; }" +
       "." + FRAME_CLASS + " { width:100%;display:block;border:0;margin:0;padding:0;height:70vh;min-height:420px;max-height:680px; }" +
       "@media (min-width:1400px) { ." + FRAME_CLASS + " { height:72vh;max-height:760px; } }" +
       "@media (min-width:1920px) { ." + FRAME_CLASS + " { height:68vh;max-height:860px; } }" +
@@ -187,6 +187,11 @@
         var sections = homeTab.querySelector ? homeTab.querySelector(".sections") : null;
         homeTab.insertBefore(iframe, sections || homeTab.firstChild);
       }
+
+      safe(function () {
+        if (indexPage.classList) indexPage.classList.add("abyss-spotlight-active");
+        if (homeTab.classList) homeTab.classList.add("abyss-spotlight-active");
+      });
 
       if (
         indexPage !== currentIndexPage ||
