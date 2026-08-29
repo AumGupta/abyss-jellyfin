@@ -373,14 +373,14 @@ input[type="radio"]:checked {
 }
 
 /* Main content */
-.withSectionTabs .backdropImage {
+.backdropImage {
     -webkit-filter: blur(var(--abyss-backdrop-blur)) saturate(120%) contrast(120%) brightness(25%);
     filter: blur(var(--abyss-backdrop-blur)) saturate(120%) contrast(120%) brightness(25%);
 }
 
-body:has(#itemDetailPage:not(.hide), #nowPlayingPage:not(.hide)) .backdropImage {
-    -webkit-filter: blur(var(--abyss-backdrop-blur)) saturate(120%) contrast(120%) brightness(25%);
-    filter: blur(var(--abyss-backdrop-blur)) saturate(120%) contrast(120%) brightness(25%);
+.hideMainDrawer .backdropImage {
+    -webkit-filter: none;
+    filter: none;
 }
 
 .backdropContainer {
@@ -480,11 +480,13 @@ body:has(#itemDetailPage:not(.hide), #nowPlayingPage:not(.hide)) .backdropImage 
 }
 
 /* Backdrop / detail ribbon */
-.itemBackdrop {
-    height: 31vh !important;
+.layout-tv .itemBackdrop,
+.layout-desktop .itemBackdrop {
+    height: 20vh !important;
     display: inherit;
 }
 
+.layout-tv .detailRibbon,
 .layout-desktop .detailRibbon {
     background: rgba(0, 0, 0, .2) !important;
     margin-top: 0;
@@ -496,11 +498,6 @@ body:has(#itemDetailPage:not(.hide), #nowPlayingPage:not(.hide)) .backdropImage 
     background: rgba(0, 0, 0, .5) !important;
 }
 
-/* Detail logo */
-.detailLogo {
-    display: none;
-}
-
 #itemDetailPage .detailLogo {
     position: static;
     margin-left: 32.5%;
@@ -509,7 +506,6 @@ body:has(#itemDetailPage:not(.hide), #nowPlayingPage:not(.hide)) .backdropImage 
     -webkit-filter: drop-shadow(0 0 10px rgba(2, 2, 2, 0.75));
     flex-shrink: 0;
     background-position: 0 50%;
-    margin-top: -18vh;
     margin-bottom: 2vh;
 }
 
@@ -641,23 +637,16 @@ a[data-role="button"]:hover {
     border-radius: var(--abyss-radius);
 }
 
-.emby-button.show-focus:focus {
-    background: rgba(var(--abyss-accent), 0.5) !important;
-}
-
-.paper-icon-button-light.show-focus:focus {
-    color: rgb(var(--abyss-accent)) !important;
-}
-
 .emby-tab-button {
     padding: 0.5em 1.5em;
     margin: 0 2.5px;
     border-radius: 50px;
+    border: 3px solid transparent;
 }
 
 .emby-tab-button-active {
-    background: rgb(var(--abyss-accent));
-    color: #121212;
+    background: rgb(var(--abyss-accent)) !important;
+    color: #121212 !important;
     border-radius: 50px;
 }
 
@@ -700,7 +689,7 @@ a[data-role="button"]:hover {
 }
 
 #itemDetailPage .button-link {
-    color: inherit !important;
+    text-align: left;
 }
 
 .ratingbutton-icon-withrating {
@@ -906,17 +895,17 @@ div[data-role="controlgroup"] a[data-role="button"] {
 }
 
 .mdl-slider::-moz-range-thumb {
-    border-radius: var(--abyss-radius);
+    border-radius: 50%;
     background: rgb(var(--abyss-accent));
 }
 
 .mdl-slider::-ms-thumb {
-    border-radius: var(--abyss-radius);
+    border-radius: 50%;
     background: rgb(var(--abyss-accent));
 }
 
 .mdl-slider::-webkit-slider-thumb {
-    border-radius: var(--abyss-radius);
+    border-radius: 50%;
     background: rgb(var(--abyss-accent));
 }
 
@@ -956,7 +945,7 @@ div[data-role="controlgroup"] a[data-role="button"] {
 /* Progress Ring */
 
 .progressring-spiner {
-    border-color: rgb(var(--abyss-accent));
+    border-color: rgb(var(--abyss-accent)) !important;
     border-width: .35em;
 }
 
@@ -1559,7 +1548,8 @@ div[data-role="controlgroup"] a[data-role="button"]:last-child {
 
 .navMenuOption-selected,
 .css-17c09up.Mui-selected {
-    color: rgb(var(--abyss-accent));
+    background: rgb(var(--abyss-accent)) !important;
+    color: #121212 !important;
 }
 
 
@@ -1569,16 +1559,8 @@ div[data-role="controlgroup"] a[data-role="button"]:last-child {
     font-size: 120%;
 }
 
-#itemDetailPage .itemName.infoText.parentNameLast {
-    display: none;
-}
-
 .hide+.detailPageWrapperContainer .itemName {
     display: block !important;
-}
-
-#itemDetailPage .button-link {
-    color: inherit !important;
 }
 
 .sectionTitleTextButton:hover {
@@ -1616,6 +1598,55 @@ div[data-role="controlgroup"] a[data-role="button"]:last-child {
     margin: .5em .8em;
 }
 
+#itemDetailPage .detailButton {
+    padding: 8px !important;
+    margin-right: 8px !important;
+}
+
+#itemDetailPage .btnPlay {
+    background: rgba(255, 255, 255, 0.95);
+    color: #111;
+    max-width: none !important;
+}
+
+#itemDetailPage .btnPlay:hover {
+    background: #fff;
+    color: #111 !important;
+    transform: scale(1.03);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.25);
+}
+
+#itemDetailPage .btnPlay .detailButton-content {
+    flex-direction: row !important;
+}
+
+#itemDetailPage .btnReplay {
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+#itemDetailPage .btnReplay:hover {
+    background: rgba(255, 255, 255, 1);
+    color: rgba(0, 0, 0, 0.9) !important;
+    transform: scale(1.05);
+}
+
+#itemDetailPage:has(.btnReplay.hide) .btnPlayTrailer {
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+#itemDetailPage:has(.btnReplay.hide) #itemDetailPage .btnPlayTrailer:hover {
+    background: rgba(255, 255, 255, 1);
+    color: rgba(0, 0, 0, 0.9) !important;
+    transform: scale(1.05);
+}
 
 /* 11. LOGIN PAGE */
 
@@ -1656,168 +1687,69 @@ div[data-role="controlgroup"] a[data-role="button"]:last-child {
 
 /* 12. CAST THUMBNAILS (responsive sizing) */
 
-@media all and (min-width: 131.25em) {
-
-    #castContent .card.overflowPortraitCard,
-    #guestCastContent .card.overflowPortraitCard {
-        width: 6.3vw !important;
-        font-size: 90% !important;
-    }
-
-    #castContent .cardScalable,
-    #guestCastContent .cardScalable {
-        width: calc(6.3vw - 0.6em) !important;
-        height: calc(6.3vw - 0.6em) !important;
-    }
+.layout-desktop #castContent .card.overflowPortraitCard,
+.layout-desktop #guestCastContent .card.overflowPortraitCard {
+    width: 10vw !important;
+    font-size: 90% !important;
 }
 
-@media all and (min-width: 120em) and (max-width: 131.25em) {
-
-    #castContent .card.overflowPortraitCard,
-    #guestCastContent .card.overflowPortraitCard {
-        width: 6.4vw !important;
-        font-size: 90% !important;
-    }
-
-    #castContent .cardScalable,
-    #guestCastContent .cardScalable {
-        width: calc(6.4vw - 0.6em) !important;
-        height: calc(6.4vw - 0.6em) !important;
-    }
+.layout-desktop #castContent .cardScalable,
+.layout-desktop #guestCastContent .cardScalable {
+    width: calc(10vw - 0.6em) !important;
+    height: calc(14vw - 0.6em) !important;
 }
 
-@media all and (min-width: 100em) and (max-width: 120em) {
-
-    #castContent .card.overflowPortraitCard,
-    #guestCastContent .card.overflowPortraitCard {
-        width: 7.6vw !important;
-        font-size: 90% !important;
-    }
-
-    #castContent .cardScalable,
-    #guestCastContent .cardScalable {
-        width: calc(7.6vw - 0.6em) !important;
-        height: calc(7.6vw - 0.6em) !important;
-    }
+.layout-tablet #castContent .card.overflowPortraitCard,
+.layout-tablet #guestCastContent .card.overflowPortraitCard {
+    width: 17vw !important;
+    font-size: 90% !important;
 }
 
-@media all and (min-width: 87.5em) and (max-width: 100em) {
-
-    #castContent .card.overflowPortraitCard,
-    #guestCastContent .card.overflowPortraitCard {
-        width: 9.3vw !important;
-        font-size: 90% !important;
-    }
-
-    #castContent .cardScalable,
-    #guestCastContent .cardScalable {
-        width: calc(9.3vw - 0.6em) !important;
-        height: calc(9.3vw - 0.6em) !important;
-    }
+.layout-tablet #castContent .cardScalable,
+.layout-tablet #guestCastContent .cardScalable {
+    width: calc(17vw - 0.6em) !important;
+    height: calc(12vw - 0.6em) !important;
 }
 
-@media all and (min-width: 75em) and (max-width: 87.5em) {
-
-    #castContent .card.overflowPortraitCard,
-    #guestCastContent .card.overflowPortraitCard {
-        width: 10.5vw !important;
-        font-size: 90% !important;
-    }
-
-    #castContent .cardScalable,
-    #guestCastContent .cardScalable {
-        width: calc(10.5vw - 0.6em) !important;
-        height: calc(10.5vw - 0.6em) !important;
-    }
+.layout-mobile #castContent .card.overflowPortraitCard,
+.layout-mobile #guestCastContent .card.overflowPortraitCard {
+    width: 35vw !important;
+    font-size: 90% !important;
 }
 
-@media all and (min-width: 50em) and (max-width: 75em) {
-
-    #castContent .card.overflowPortraitCard,
-    #guestCastContent .card.overflowPortraitCard {
-        width: 15vw !important;
-        font-size: 90% !important;
-    }
-
-    #castContent .cardScalable,
-    #guestCastContent .cardScalable {
-        width: calc(15vw - 0.6em) !important;
-        height: calc(15vw - 0.6em) !important;
-    }
+.layout-mobile #castContent .cardScalable,
+.layout-mobile #guestCastContent .cardScalable {
+    width: calc(35vw - 0.6em) !important;
+    height: calc(35vw - 0.6em) !important;
 }
 
-@media all and (min-width: 43.75em) and (max-width: 50em) {
-
-    #castContent .card.overflowPortraitCard,
-    #guestCastContent .card.overflowPortraitCard {
-        width: 20.1vw !important;
-        font-size: 90% !important;
-    }
-
-    #castContent .cardScalable,
-    #guestCastContent .cardScalable {
-        width: calc(20.1vw - 0.6em) !important;
-        height: calc(20.1vw - 0.6em) !important;
-    }
+.layout-mobile .innerCardFooterClear {
+    padding-right: 24px !important;
 }
 
-@media all and (min-width: 25em) and (max-width: 43.75em) {
+@media (orientation: landscape) and (max-height: 500px) {
 
-    #castContent .card.overflowPortraitCard,
-    #guestCastContent .card.overflowPortraitCard {
+    .layout-mobile #castContent .card.overflowPortraitCard,
+    .layout-mobile #guestCastContent .card.overflowPortraitCard {
         width: 31.2vw !important;
         font-size: 90% !important;
     }
 
-    #castContent .cardScalable,
-    #guestCastContent .cardScalable {
+    .layout-mobile #castContent .cardScalable,
+    .layout-mobile #guestCastContent .cardScalable {
         width: calc(31.2vw - 0.6em) !important;
         height: calc(31.2vw - 0.6em) !important;
     }
 
-    .innerCardFooterClear {
+    .layout-mobile .innerCardFooterClear {
         padding-right: 24px !important;
     }
 }
-
-@media (max-width: 1024px) and (orientation: landscape) and (max-height: 500px) {
-
-    #castContent .card.overflowPortraitCard,
-    #guestCastContent .card.overflowPortraitCard {
-        width: 31.2vw !important;
-        font-size: 90% !important;
-    }
-
-    #castContent .cardScalable,
-    #guestCastContent .cardScalable {
-        width: calc(31.2vw - 0.6em) !important;
-        height: calc(31.2vw - 0.6em) !important;
-    }
-
-    .innerCardFooterClear {
-        padding-right: 24px !important;
-    }
-}
-
-@media all and (max-width: 25em) {
-
-    #castContent .card.overflowPortraitCard,
-    #guestCastContent .card.overflowPortraitCard {
-        width: 40vw !important;
-        font-size: 90% !important;
-    }
-
-    #castContent .cardScalable,
-    #guestCastContent .cardScalable {
-        width: calc(40vw - 0.6em) !important;
-        height: calc(40vw - 0.6em) !important;
-    }
-}
-
 
 /* 13. RESPONSIVE / MEDIA QUERIES */
 
 /* Mobile layout tweaks */
+
 .layout-mobile .detailPagePrimaryContainer {
     background: transparent;
 }
@@ -1826,12 +1758,42 @@ div[data-role="controlgroup"] a[data-role="button"]:last-child {
     border-bottom: none;
 }
 
+.layout-mobile #itemDetailPage .parentName,
+.layout-mobile #itemDetailPage .parentNameLast,
+.layout-mobile #itemDetailPage .itemName.subtitle {
+    text-align: left;
+    justify-content: left;
+}
+
+.layout-mobile #itemDetailPage .mainDetailButtons,
+.layout-mobile #itemDetailPage .itemMiscInfo {
+    justify-content: left;
+}
+
 .layout-mobile .itemBackdrop {
-    margin-top: 4rem;
+    position: relative;
+    background-size: cover;
+    background-position: center 20%;
+    background-repeat: no-repeat;
+    margin-top: 0;
+    z-index: 0;
+    -webkit-mask-image:
+        linear-gradient(to bottom, black 40%, transparent 100%),
+        linear-gradient(to right, transparent 0%, black 25%, black 70%, transparent 100%),
+        linear-gradient(to bottom, transparent 0%, black 8%);
+    -webkit-mask-composite: source-in;
+    mask-image:
+        linear-gradient(to bottom, black 40%, transparent 100%),
+        linear-gradient(to right, transparent 0%, black 25%, black 70%, transparent 100%),
+        linear-gradient(to bottom, transparent 0%, black 8%);
+    mask-composite: intersect;
 }
 
 .layout-mobile .detailLogo {
-    display: none !important;
+    margin-top: -15vh;
+    margin-bottom: 4vh !important;
+    margin-left: 40vw !important;
+    width: 50vw !important;
 }
 
 .layout-mobile .sectionTitleTextButton>.material-icons {
@@ -1850,18 +1812,130 @@ div[data-role="controlgroup"] a[data-role="button"]:last-child {
     display: block;
 }
 
-/* Desktop layout */
-.layout-desktop .detailImageContainer .card {
-    position: fixed !important;
-    top: 10% !important;
-}
-
-.layout-mobile .detailImageContainer .card {
-    position: absolute !important;
-}
-
 .layout-mobile :not(.sectionTitleContainer-cards)>.sectionTitle-cards {
     padding-top: 0em;
+}
+
+/* TV Layout */
+
+.card:focus .cardBox.visualCardBox,
+.card:focus .cardBox:not(.visualCardBox) .cardScalable {
+    border-radius: 24px !important;
+    border: 0.3em solid rgb(var(--abyss-accent)) !important;
+    transition: all 0.5s !important;
+}
+
+.layout-tv .pageTitle,
+.layout-tv .cardText {
+    font-size: revert;
+}
+
+.layout-tv .emby-tab-button {
+    padding: 0.3em 1.2em;
+    margin: 4px;
+}
+
+.layout-tv .sliderMarker {
+    height: 24px !important;
+}
+
+.layout-tv .chapterThumbContainer {
+    transform: scale(1.5) !important;
+    top: -72px !important;
+}
+
+.emby-button.show-focus:focus,
+.headerButton.show-focus:focus,
+.actionSheetMenuItem.show-focus:focus {
+    background: rgb(var(--abyss-accent)) !important;
+    color: #121212 !important;
+}
+
+.headerButton.show-focus:focus,
+.raised.button-submit.emby-button.show-focus:focus {
+    transform: scale(1.02) !important;
+    transition: transform 0.3s !important;
+    margin-top: .4em !important;
+    margin-bottom: .4em !important;
+}
+
+.headerUserButton.show-focus:focus{
+    transform:none !important;
+}
+
+#itemDetailPage .emby-button.show-focus:focus {
+    transform: scale(1.1) !important;
+    padding: 0 .4em;
+    margin: .4em;
+    border-radius: 10px;
+    background: rgb(var(--abyss-accent)) !important;
+    color: #121212 !important;
+}
+
+.emby-tab-button.show-focus {
+    background: transparent;
+    transform: none !important;
+    color: #999;
+}
+
+.emby-button.emby-tab-button.show-focus:focus {
+    background: transparent !important;
+    transform: none !important;
+    border-color: rgb(var(--abyss-accent));
+    color: rgb(var(--abyss-accent)) !important;
+}
+
+.emby-tab-button.show-focus:focus .emby-button-foreground {
+    transform: scale(1.1) !important;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.emby-tab-button.show-focus:focus.emby-tab-button-active {
+    background: rgb(var(--abyss-accent)) !important;
+    color: #121212 !important;
+    border-color: transparent !important;
+    border-radius: 50px;
+}
+
+.emby-select-withcolor {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.libraryPage .paper-icon-button-light.show-focus:focus,
+#videoOsdPage .paper-icon-button-light.show-focus:focus {
+    background: rgb(var(--abyss-accent)) !important;
+    color: #121212 !important;
+    padding: 4px !important;
+}
+
+/* Desktop layout & TV*/
+.layout-desktop #itemDetailPage .btnPlay,
+.layout-tv #itemDetailPage .btnPlay {
+    margin-right: 12px !important;
+    padding: .4em 1.4em .4em 1em !important;
+}
+
+.layout-desktop #itemDetailPage .btnPlay .detailButton-content::after,
+.layout-tv #itemDetailPage .btnPlay .detailButton-content::after {
+    content: "Play";
+    margin-left: 0.45em;
+    font-weight: 700;
+    font-size: 0.9em;
+}
+
+.layout-desktop #itemDetailPage:has(.btnReplay:not(.hide)) .btnPlay .detailButton-content::after,
+.layout-tv #itemDetailPage:has(.btnReplay:not(.hide)) .btnPlay .detailButton-content::after {
+    content: "Resume";
+}
+
+.layout-tv .detailImageContainer .card,
+.layout-desktop .detailImageContainer .card {
+    position: fixed !important;
+    top: 15% !important;
 }
 
 .withSectionTabs .headerTop {
@@ -2320,6 +2394,7 @@ div[data-role="controlgroup"] a[data-role="button"]:last-child {
 }
 
 @media (prefers-reduced-motion: reduce) {
+
     *,
     *::before,
     *::after {

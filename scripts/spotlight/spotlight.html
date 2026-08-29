@@ -13,7 +13,6 @@
 </head>
 
 <body>
-
 	<div id="backdrop"><img id="backdrop-img" alt="" /></div>
 	<div id="content">
 		<img id="logo" alt="" />
@@ -85,6 +84,102 @@
 			const SVG_RATING = `<svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e3e3e3"><path d="M168-144q-29 0-50.5-21.5T96-216v-528q0-29.7 21.5-50.85Q139-816 168-816h624q29 0 50.5 21.15T864-744v528q0 29-21.5 50.5T792-144H168Zm337.5-154.35Q516-308.7 516-324v-168q0-15.3-10.29-25.65Q495.42-528 480.21-528t-25.71 10.35Q444-507.3 444-492v168q0 15.3 10.29 25.65Q464.58-288 479.79-288t25.71-10.35ZM480-600q14 0 25-11t11-25.5q0-14.5-11-25T479.5-672q-14.5 0-25 10.35T444-636q0 14 10.35 25T480-600ZM168-228h72v-72h-72v72Zm552 0h72v-72h-72v72ZM168-372h72v-72h-72v72Zm552 0h72v-72h-72v72ZM168-516h72v-72h-72v72Zm552 0h72v-72h-72v72ZM168-660h72v-72h-72v72Zm552 0h72v-72h-72v72Z"/></svg>`;
 			const SVG_CLOCK = `<svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e3e3e3"><path d="M516-510v-174q0-15.3-10.29-25.65Q495.42-720 480.21-720t-25.71 10.35Q444-699.3 444-684v189q0 8 3 14.5t8 11.5l133.85 133.85Q600-324 614.5-324.5 629-325 640-336t11-25.5q0-14.5-11.34-25.75L516-510ZM480-96q-79.38 0-149.19-30T208.5-208.5Q156-261 126-330.96t-30-149.5Q96-560 126-630q30-70 82.5-122t122.46-82q69.96-30 149.5-30t149.55 30.24q70 30.24 121.79 82.08 51.78 51.84 81.99 121.92Q864-559.68 864-480q0 79.38-30 149.19T752-208.5Q700-156 629.87-126T480-96Z"/></svg>`;
 			const SVG_STAR = `<svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e3e3e3"><path d="m480-285-164 98q-11 6-21.5 5t-18.5-7q-8-6-12-16.5t-1-21.5l43-183-145-123q-9-8-11-18.5t1-20.5q3-10 11-16.5t20-7.5l190-17 75-174q5-11 14-16.5t19-5.5q10 0 19 5.5t14 16.5l75 175 190 16q12 1 20 8t11 17q3 10 .5 20T798-533L654-410l43 183q3 11-1 21.5T684-189q-8 6-18.5 7t-21.5-5l-164-98Z"/></svg>`;
+
+			function isTvLayout() {
+				try {
+					return window.top.document.body.classList.contains('layout-tv');
+				} catch {
+					return false;
+				}
+			}
+
+			const tvMode = isTvLayout();
+			if (tvMode) document.body.classList.add('tv-mode');
+
+			let tvActive = false;
+			let tvFocusables = [];
+			let tvFocusIndex = 0;
+
+			function collectTvFocusables() {
+				tvFocusables = Array.prototype.slice.call(
+					document.querySelectorAll('#buttons .btn, #carousel-dots .dot')
+				);
+			}
+
+			function setTvFocus(index) {
+				if (!tvFocusables.length) return;
+				tvFocusIndex = (index + tvFocusables.length) % tvFocusables.length;
+				tvFocusables.forEach(el => el.classList.remove('tv-focused'));
+				const el = tvFocusables[tvFocusIndex];
+				el.classList.add('tv-focused');
+				try { el.focus({ preventScroll: true }); } catch { el.focus(); }
+			}
+
+			function refreshTvFocus() {
+				if (!tvMode || !tvActive) return;
+				collectTvFocusables();
+				setTvFocus(tvFocusIndex);
+			}
+
+			function leaveWidget(direction) {
+				tvFocusables.forEach(el => el.classList.remove('tv-focused'));
+				tvActive = false;
+				startAuto();
+				try {
+					window.parent.postMessage({ type: 'abyss-spotlight', action: 'leave', direction }, window.location.origin);
+				} catch { /* cross-origin parent, nothing abyss can do :) */ }
+			}
+
+			function enterTvFocus() {
+				if (!tvMode || disposed || paused || tvActive) return;
+				tvActive = true;
+				stopAuto();
+				collectTvFocusables();
+				setTvFocus(0);
+			}
+
+			window.addEventListener('focus', enterTvFocus);
+			document.addEventListener('focusin', enterTvFocus);
+
+			const BACK_KEYCODES = new Set([461, 10009]); // webOS Back, Tizen Back
+
+			document.addEventListener('keydown', event => {
+				if (!tvMode || paused || disposed) return;
+				switch (event.key) {
+					case 'ArrowRight':
+						event.preventDefault();
+						setTvFocus(tvFocusIndex + 1);
+						break;
+					case 'ArrowLeft':
+						event.preventDefault();
+						setTvFocus(tvFocusIndex - 1);
+						break;
+					case 'Enter':
+					case ' ':
+						event.preventDefault();
+						tvFocusables[tvFocusIndex]?.click();
+						break;
+					case 'ArrowDown':
+						event.preventDefault();
+						leaveWidget('down');
+						break;
+					case 'ArrowUp':
+						event.preventDefault();
+						leaveWidget('up');
+						break;
+					case 'Backspace':
+					case 'Escape':
+					case 'GoBack':
+						event.preventDefault();
+						leaveWidget('down');
+						break;
+					default:
+						if (BACK_KEYCODES.has(event.keyCode)) {
+							event.preventDefault();
+							leaveWidget('down');
+						}
+				}
+			});
 
 			function normalizeAddress(value) {
 				if (!value) return '';
@@ -329,6 +424,7 @@
 			function startAuto() {
 				stopAuto();
 				if (paused || disposed || items.length <= 1 || reducedMotion.matches) return;
+				if (tvMode && tvActive) return; // don't yank focus while the user is navigating the widget
 				autoTimer = setTimeout(async () => {
 					currentIndex = (currentIndex + 1) % items.length;
 					await renderItem(currentIndex);
@@ -370,6 +466,7 @@
 						container.appendChild(dot);
 					});
 					updateDots();
+					refreshTvFocus();
 				} catch (error) {
 					console.error('[Abyss Spotlight] buildDots failed:', error);
 				}
@@ -585,6 +682,7 @@
 						console.error('[Abyss Spotlight] updateContent error:', error);
 					}
 					$('content').classList.add('visible');
+					refreshTvFocus();
 					queuePreload();
 					return true;
 				} catch (error) {
@@ -624,6 +722,7 @@
 				refreshController?.abort();
 				zoomAnimation?.cancel();
 				zoomAnimation = null;
+				if (tvMode && tvActive) leaveWidget('down');
 			}
 
 			async function resume() {
@@ -671,6 +770,7 @@
 				const { action } = event.data;
 				if (action === 'pause') pause();
 				if (action === 'resume') resume();
+				if (action === 'tv-focus') enterTvFocus();
 			});
 			document.addEventListener('visibilitychange', () => { document.hidden ? pause() : resume(); });
 			window.addEventListener('pagehide', dispose, { once: true });

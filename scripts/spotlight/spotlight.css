@@ -127,14 +127,6 @@ body {
 	animation: fadeUp 0.8s var(--ease) both;
 	animation-delay: 0.5s;
 	flex-wrap: wrap;
-	gap: 6px;
-}
-
-/* Fallback for engines without flexbox `gap` support (e.g. older Qt WebEngine). */
-@supports not (gap: 1px) {
-	.meta-pill {
-		margin: 0 6px 6px 0;
-	}
 }
 
 @keyframes fadeUp {
@@ -152,7 +144,7 @@ body {
 .meta-pill {
 	display: inline-flex;
 	align-items: center;
-	gap: 5px;
+	margin-right: 6px;
 	background: rgba(40, 40, 40, 0.75);
 	backdrop-filter: blur(8px);
 	-webkit-backdrop-filter: blur(8px);
@@ -315,7 +307,8 @@ body {
 		width 0.35s var(--ease),
 		height 0.35s var(--ease),
 		opacity 0.35s var(--ease),
-		transform 0.35s var(--ease);
+		transform 0.35s var(--ease),
+		box-shadow 0.35s var(--ease);
 	flex-shrink: 0;
 }
 
@@ -503,6 +496,110 @@ body {
 	outline-offset: -4px;
 }
 
+
+.tv-mode #content {
+	padding: 20vh 5.5vw 8vh;
+}
+
+.tv-mode #logo {
+	max-width: 60vw;
+	max-height: 170px;
+	margin-bottom: 44px;
+}
+
+.tv-mode #title {
+	font-size: clamp(2.6rem, 5vw, 4.6rem);
+}
+
+.tv-mode #episode-label {
+	font-size: 1.7rem;
+	margin-bottom: 16px;
+}
+
+.tv-mode .meta-pill {
+	font-size: 1.05rem;
+	padding: 6px 16px;
+	border-radius: 10px;
+}
+
+.tv-mode #progress-wrap {
+	width: min(480px, 40vw);
+	height: 4px;
+}
+
+.tv-mode #plot {
+	font-size: 1.3rem;
+	max-width: min(700px, 55vw);
+	margin-bottom: 30px;
+}
+
+.tv-mode .btn {
+	font-size: 1.1rem;
+	padding: 14px 30px;
+}
+
+.tv-mode .btn-play {
+	font-size: 1.3rem;
+	margin-right: 18px;
+}
+
+.tv-mode .btn-info {
+	padding: 14px;
+}
+
+.tv-mode .btn svg {
+	width: 30px;
+	height: 30px;
+}
+
+.tv-mode #carousel-dots {
+	bottom: 14px;
+	padding: 12px 8px;
+}
+
+.tv-mode .dot-active {
+	width: 28px;
+	height: 9px;
+}
+
+.tv-mode .dot-near {
+	width: 9px;
+	height: 9px;
+}
+
+.tv-mode .dot-far {
+	width: 8px;
+	height: 8px;
+}
+
+.btn.tv-focused,
+.dot.tv-focused {
+	outline: none;
+	box-shadow: 0 0 0 4px #fff, 0 0 18px 4px rgba(255, 255, 255, 0.55);
+	transform: scale(1.08);
+}
+
+.btn-play.tv-focused,
+.btn-info.tv-focused {
+	background: #fff !important;
+	color: #111 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+	}
+
+	#backdrop img {
+		transform: none !important;
+	}
+}
+
 @media (max-width: 600px) and (orientation: portrait) {
 	#episode-label {
 		font-size: large;
@@ -559,6 +656,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+
 	*,
 	*::before,
 	*::after {
