@@ -182,7 +182,7 @@ function Connect-Jellyfin {
         $authBody    = @{ Username = $username; Pw = $password } | ConvertTo-Json
         $authHeaders = @{
             "Content-Type"         = "application/json"
-            "X-Emby-Authorization" = 'MediaBrowser Client="Abyss Setup", Device="Setup", DeviceId="abyss-setup", Version="1.0"'
+            "Authorization" = 'MediaBrowser Client="Abyss Setup", Device="Setup", DeviceId="abyss-setup", Version="1.0"'
         }
 
         try {
@@ -208,7 +208,7 @@ function Get-ApiHeaders {
     param($token)
     return @{
         "Content-Type"         = "application/json"
-        "X-Emby-Authorization" = "MediaBrowser Client=`"Abyss Setup`", Device=`"Setup`", DeviceId=`"abyss-setup`", Version=`"1.0`", Token=`"$token`""
+        "Authorization" = "MediaBrowser Client=`"Abyss Setup`", Device=`"Setup`", DeviceId=`"abyss-setup`", Version=`"1.0`", Token=`"$token`""
     }
 }
 
