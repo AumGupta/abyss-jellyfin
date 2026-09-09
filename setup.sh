@@ -267,7 +267,7 @@ print(json.dumps({'Username': u, 'Pw': p}))
         _response=$(curl -fsSL \
             -X POST "${server_url}/Users/AuthenticateByName" \
             -H "Content-Type: application/json" \
-            -H "X-Emby-Authorization: ${auth_header}" \
+            -H "Authorization: ${auth_header}" \
             -d "$body" 2>/dev/null) && break || true
 
         if ((try == max_tries)); then
@@ -303,7 +303,7 @@ restart_jellyfin() {
     # Try API restart first (works for all install methods)
     if curl -fsSL \
         -X POST "${server_url}/System/Restart" \
-        -H "X-Emby-Authorization: ${api_header}" >/dev/null 2>&1; then
+        -H "Authorization: ${api_header}" >/dev/null 2>&1; then
         ok "Restart triggered via API. Wait a few seconds then refresh."
         return
     fi
@@ -388,7 +388,7 @@ install_abyss() {
     local branding
     branding=$(curl -fsSL \
         -X GET "${server_url}/Branding/Configuration" \
-        -H "X-Emby-Authorization: ${api_header}" 2>/dev/null) || true
+        -H "Authorization: ${api_header}" 2>/dev/null) || true
 
     if [[ -n "$branding" ]]; then
         local updated_branding
@@ -397,7 +397,7 @@ install_abyss() {
         curl -fsSL \
             -X POST "${server_url}/System/Configuration/Branding" \
             -H "Content-Type: application/json" \
-            -H "X-Emby-Authorization: ${api_header}" \
+            -H "Authorization: ${api_header}" \
             -d "$updated_branding" >/dev/null 2>&1 \
             && ok "Abyss CSS applied." \
             || { fail "Failed to apply CSS."; info "Add manually: Dashboard > General > Custom CSS"; }
@@ -413,7 +413,7 @@ install_abyss() {
     local display_prefs
     display_prefs=$(curl -fsSL \
         -X GET "${server_url}/DisplayPreferences/usersettings?userId=${user_id}&client=emby" \
-        -H "X-Emby-Authorization: ${api_header}" 2>/dev/null) || true
+        -H "Authorization: ${api_header}" 2>/dev/null) || true
 
     if [[ -n "$display_prefs" ]]; then
         # Ask before reordering home sections
@@ -459,7 +459,7 @@ print(json.dumps(d))
         curl -fsSL \
             -X POST "${server_url}/DisplayPreferences/usersettings?userId=${user_id}&client=emby" \
             -H "Content-Type: application/json" \
-            -H "X-Emby-Authorization: ${api_header}" \
+            -H "Authorization: ${api_header}" \
             -d "$updated_prefs" >/dev/null 2>&1 \
             && ok "Dashboard theme set to Dark." \
             && { [[ "$reorder_sections" == true ]] && ok "Home screen sections configured." || skip "Home screen sections left unchanged."; } \
@@ -553,7 +553,7 @@ uninstall_abyss() {
     local branding
     branding=$(curl -fsSL \
         -X GET "${server_url}/Branding/Configuration" \
-        -H "X-Emby-Authorization: ${api_header}" 2>/dev/null) || true
+        -H "Authorization: ${api_header}" 2>/dev/null) || true
 
     if [[ -n "$branding" ]]; then
         local updated_branding
@@ -561,7 +561,7 @@ uninstall_abyss() {
         curl -fsSL \
             -X POST "${server_url}/System/Configuration/Branding" \
             -H "Content-Type: application/json" \
-            -H "X-Emby-Authorization: ${api_header}" \
+            -H "Authorization: ${api_header}" \
             -d "$updated_branding" >/dev/null 2>&1 \
             && ok "Abyss CSS removed." \
             || { fail "Failed to remove Abyss CSS."; info "Remove the marked Abyss block manually in Dashboard > General > Custom CSS."; }
