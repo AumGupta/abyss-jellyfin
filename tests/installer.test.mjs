@@ -12,6 +12,9 @@ const docker = await readFile(new URL('../scripts/docker/abyss-spotlight.sh', im
 const loader = await readFile(new URL('../scripts/spotlight/spotlight-loader.js', import.meta.url), 'utf8');
 const batchInstall = await readFile(new URL('../scripts/spotlight/spotlight-install.bat', import.meta.url), 'utf8');
 const batchUninstall = await readFile(new URL('../scripts/spotlight/spotlight-uninstall.bat', import.meta.url), 'utf8');
+const windowsWorkflow = await readFile(new URL('../.github/workflows/build-installer.yml', import.meta.url), 'utf8');
+const shellWorkflow = await readFile(new URL('../.github/workflows/build-linux-mac-installer.yml', import.meta.url), 'utf8');
+const purgeWorkflow = await readFile(new URL('../.github/workflows/purge-jsdelivr-cdn.yml', import.meta.url), 'utf8');
 
 test('spotlight loader parses and owns the injection seam', () => {
   assert.doesNotThrow(() => new vm.Script(loader));
@@ -34,6 +37,48 @@ test('installers preserve unrelated custom css', () => {
   assert.match(powershell, /ABYSS THEME START/);
   assert.doesNotMatch(shell, /d\['CustomCss'\]\s*=\s*''/);
   assert.doesNotMatch(powershell, /\.CustomCss\s*=\s*""/);
+});
+
+test('installers use Jellyfin 12 standard authorization headers', () => {
+  for (const source of [shell, powershell]) {
+    assert.doesNotMatch(source, /X-Emby-Authorization/i);
+    assert.match(source, /Authorization/);
+    assert.match(source, /MediaBrowser Client=/);
+  }
+  assert.equal(shell.match(/-H "Authorization:/g)?.length, 8);
+  assert.equal(powershell.match(/"Authorization"\s*=/g)?.length, 2);
+});
+
+test('installers persist the dark theme for client and dashboard', () => {
+  for (const source of [shell, powershell]) {
+    assert.match(source, /appTheme/);
+    assert.match(source, /dashboardTheme/);
+  }
+  assert.doesNotMatch(shell, /Important: Go to Settings > Display > Theme/);
+});
+
+test('installers support explicit fork and branch sources', () => {
+  for (const source of [shell, powershell]) {
+    assert.match(source, /ABYSS_REPO/);
+    assert.match(source, /ABYSS_BRANCH/);
+  }
+
+  if (process.platform !== 'win32') {
+    const setupPath = fileURLToPath(new URL('../setup.sh', import.meta.url));
+    const result = spawnSync(
+      'bash',
+      ['-c', 'export ABYSS_REPO=weedpump/abyss-jellyfin ABYSS_BRANCH=jellyfin-12-support; source "$1"; printf "%s" "$RAW"', 'bash', setupPath],
+      { encoding: 'utf8' }
+    );
+    assert.equal(result.status, 0, result.stderr);
+    assert.equal(result.stdout, 'https://raw.githubusercontent.com/weedpump/abyss-jellyfin/jellyfin-12-support');
+  }
+});
+
+test('push workflows with external side effects only run on main', () => {
+  for (const workflow of [windowsWorkflow, shellWorkflow, purgeWorkflow]) {
+    assert.match(workflow, /push:\s*\n\s+branches:\s*\[main\]/);
+  }
 });
 
 test('shell css transform is idempotent and uninstall is surgical', { skip: process.platform === 'win32' }, () => {

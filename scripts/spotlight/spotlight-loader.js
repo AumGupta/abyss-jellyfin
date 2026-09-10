@@ -52,36 +52,6 @@
     document.head.appendChild(style);
   }
 
-  function forceDarkTheme() {
-    if (typeof Storage === "undefined" || !window.localStorage) return;
-
-    var keys = [];
-    try {
-      keys = Object.keys(localStorage);
-    } catch (e) {
-      return; // localStorage inaccessible (privacy mode, sandboxed webview, etc.)
-    }
-
-    for (var i = 0; i < keys.length; i++) {
-      var key = keys[i];
-      if (key && key.indexOf("-appTheme", key.length - "-appTheme".length) !== -1) {
-        safe(function (k) {
-          localStorage.setItem(k, "dark");
-        }.bind(null, key));
-      }
-    }
-
-    safe(function () {
-      if (Storage.prototype.setItem.__abyssWrapped) return;
-      var setItem = Storage.prototype.setItem;
-      var wrapped = function (key, value) {
-        var isTheme = typeof key === "string" && key.indexOf("-appTheme", key.length - "-appTheme".length) !== -1;
-        setItem.call(this, key, isTheme ? "dark" : value);
-      };
-      wrapped.__abyssWrapped = true;
-      Storage.prototype.setItem = wrapped;
-    });
-  }
 
   function postToFrame(iframe, action) {
     if (!iframe || !iframe.contentWindow) return;
@@ -297,8 +267,6 @@
   }
 
   function boot() {
-    safe(forceDarkTheme);
-
     var installScheduled = false;
 
     var scheduleInstall = function () {

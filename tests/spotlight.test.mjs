@@ -25,8 +25,14 @@ test('spotlight lifecycle pauses hidden work', () => {
   assert.match(script, /action === 'pause'/);
   assert.match(loader, /postMessage/);
   assert.match(loader, /indexPage/);
-  assert.match(loader, /homeActive/);
+  assert.match(loader, /isRouteVisible/);
+  assert.match(loader, /favoritesActive/);
   assert.match(loader, /isConnected/);
+});
+
+test('spotlight does not override Jellyfin theme storage', () => {
+  assert.doesNotMatch(loader, /Storage\.prototype\.setItem/);
+  assert.doesNotMatch(loader, /forceDarkTheme/);
 });
 
 test('image requests are bounded and cached', () => {

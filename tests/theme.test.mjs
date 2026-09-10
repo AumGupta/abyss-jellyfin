@@ -22,6 +22,26 @@ test('theme exposes rendering-cost controls and reduced motion', () => {
   assert.match(theme, /prefers-reduced-motion/);
 });
 
+test('Jellyfin 12 modern UI uses stable MUI hooks and theme tokens', () => {
+  assert.match(theme, /html\[data-theme=["']dark["']\]/);
+  assert.match(theme, /--jf-palette-primary-main:/);
+  assert.match(theme, /--jf-palette-primary-mainChannel:/);
+  assert.match(theme, /--jf-palette-AppBar-defaultBg:/);
+  assert.match(theme, /--jf-card-borderRadius:/);
+  for (const className of [
+    'MuiAppBar-root',
+    'MuiToolbar-root',
+    'MuiButton-root',
+    'MuiIconButton-root',
+    'MuiDrawer-paper',
+    'MuiMenu-paper',
+    'MuiDialog-paper'
+  ]) {
+    assert.match(theme, new RegExp(`\\.${className}`));
+  }
+  assert.doesNotMatch(theme, /\.css-[a-z0-9]+/i);
+});
+
 test('lite override lowers rendering cost without replacing the theme', () => {
   assert.match(lite, /--abyss-backdrop-blur:/);
   assert.match(lite, /--abyss-glass-blur:/);

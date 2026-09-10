@@ -2,8 +2,8 @@ $ErrorActionPreference = "Stop"
 
 # Constants 
 
-$REPO     = "AumGupta/abyss-jellyfin"
-$BRANCH   = "main"
+$REPO     = if ($env:ABYSS_REPO) { $env:ABYSS_REPO } else { "AumGupta/abyss-jellyfin" }
+$BRANCH   = if ($env:ABYSS_BRANCH) { $env:ABYSS_BRANCH } else { "main" }
 $RAW      = "https://raw.githubusercontent.com/$REPO/$BRANCH"
 $REPO_URL = "https://github.com/$REPO"
 
@@ -280,8 +280,9 @@ function Install-Abyss {
         if (-not $displayPrefs.CustomPrefs) {
             $displayPrefs | Add-Member -NotePropertyName CustomPrefs -NotePropertyValue ([pscustomobject]@{}) -Force
         }
+        $displayPrefs.CustomPrefs | Add-Member -NotePropertyName appTheme -NotePropertyValue "dark" -Force
         $displayPrefs.CustomPrefs | Add-Member -NotePropertyName dashboardTheme -NotePropertyValue "dark" -Force
-        Write-Ok "Dashboard theme set to Dark."
+        Write-Ok "Client and dashboard themes set to Dark."
 
         # Ask before reordering home sections
         Write-Host ""

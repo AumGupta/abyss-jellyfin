@@ -6,8 +6,8 @@ set -euo pipefail
 # https://github.com/AumGupta/abyss-jellyfin
 # ==============================================================================
 
-REPO="AumGupta/abyss-jellyfin"
-BRANCH="main"
+REPO="${ABYSS_REPO:-AumGupta/abyss-jellyfin}"
+BRANCH="${ABYSS_BRANCH:-main}"
 RAW="https://raw.githubusercontent.com/${REPO}/${BRANCH}"
 REPO_URL="https://github.com/${REPO}"
 
@@ -437,6 +437,7 @@ install_abyss() {
 import sys, json
 d = json.load(sys.stdin)
 p = d.setdefault('CustomPrefs', {})
+p['appTheme']       = 'dark'
 p['dashboardTheme'] = 'dark'
 p['homesection0']   = 'resume'
 p['homesection1']   = 'nextup'
@@ -451,6 +452,7 @@ print(json.dumps(d))
 import sys, json
 d = json.load(sys.stdin)
 p = d.setdefault('CustomPrefs', {})
+p['appTheme']       = 'dark'
 p['dashboardTheme'] = 'dark'
 print(json.dumps(d))
 ")
@@ -461,7 +463,7 @@ print(json.dumps(d))
             -H "Content-Type: application/json" \
             -H "Authorization: ${api_header}" \
             -d "$updated_prefs" >/dev/null 2>&1 \
-            && ok "Dashboard theme set to Dark." \
+            && ok "Client and dashboard themes set to Dark." \
             && { [[ "$reorder_sections" == true ]] && ok "Home screen sections configured." || skip "Home screen sections left unchanged."; } \
             || warn "Could not configure theme settings. Set manually in Settings > Display."
     else
@@ -508,7 +510,7 @@ print(json.dumps(d))
     echo -e "${yellow}    2. Hard refresh your browser (Ctrl+F5)${reset}"
     echo -e "${gray}    3. Relaunch Jellyfin Media Player if using the desktop app${reset}"
     echo ""
-    echo -e "${yellow}  Important: Go to Settings > Display > Theme and set it to Dark${reset}"
+    echo -e "${green}  Dark theme configured for the client and dashboard.${reset}"
     info "Abyss requires the Dark base theme to display correctly."
     echo ""
     echo -e "${green}  Tip: Turn on 'Show Backdrops' in display settings for best experience.${reset}"

@@ -57,6 +57,19 @@ sudo ./abyss-setup-vX.X.X.sh
 > ## NOTE
 > Requires `curl` and `python3`, which are available by default on most Linux distributions.
 
+### Testing a fork or development branch
+
+The installer normally downloads its CSS and Spotlight files from the upstream `main` branch. Override the source explicitly when testing a fork or branch:
+
+```bash
+ABYSS_REPO=owner/abyss-jellyfin \
+ABYSS_BRANCH=branch-name \
+sudo -E ./setup.sh
+```
+
+PowerShell uses the same `ABYSS_REPO` and `ABYSS_BRANCH` environment variables.
+Use a branch name without `/`; jsDelivr treats the first slash after the branch as the start of the file path.
+
 </details>
 
 <!-- Docker -->
@@ -169,6 +182,7 @@ Go to:
 * Set **Theme** to **Dark**
 
 > Abyss requires the Dark base theme to display correctly.
+> Jellyfin 12's default Modern interface and the Desktop (Legacy) interface are both supported.
 
 
 ## 3. Configure Home Sections (Recommended)

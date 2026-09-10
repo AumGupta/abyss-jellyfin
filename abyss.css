@@ -38,6 +38,8 @@
     /* Primary accent colour — used for highlights, active states, progress bars.
        Format: R, G, B (no rgb() wrapper) so opacity variants work cleanly. */
     --abyss-accent: 245, 245, 247;
+    /* Space-separated twin used by Jellyfin 12's MUI channel variables. */
+    --abyss-accent-channel: 245 245 247;
 
     /* Corner rounding applied globally */
     --abyss-radius: 12px;
@@ -57,6 +59,21 @@
     /* Rendering controls used by the optional Lite override */
     --abyss-backdrop-blur: 23px;
     --abyss-glass-blur: 15px;
+}
+
+/* Jellyfin 12 exposes the built-in theme palette as CSS variables. Keep the
+   MUI and legacy surfaces on the same Abyss palette without relying on
+   generated Emotion class names. */
+html[data-theme="dark"] {
+    --jf-palette-primary-main: rgb(var(--abyss-accent));
+    --jf-palette-primary-mainChannel: var(--abyss-accent-channel);
+    --jf-palette-primary-contrastText: #121212;
+    --jf-palette-secondary-main: rgb(var(--abyss-accent));
+    --jf-palette-secondary-mainChannel: var(--abyss-accent-channel);
+    --jf-palette-secondary-contrastText: #121212;
+    --jf-palette-AppBar-defaultBg: rgba(var(--abyss-glass-tint), 0.92);
+    --jf-palette-AppBar-transparentBg: rgba(var(--abyss-glass-tint), 0.72);
+    --jf-card-borderRadius: var(--abyss-radius);
 }
 
 
@@ -372,6 +389,106 @@ input[type="radio"]:checked {
     border-radius: 50px !important;
 }
 
+/* Jellyfin 12 modern app shell (React / MUI) */
+html[data-theme="dark"] .MuiAppBar-root {
+    color: rgb(var(--abyss-accent));
+    background-color: rgba(var(--abyss-glass-tint), 0.72) !important;
+    background-image: none !important;
+    border-bottom: 1px solid rgba(var(--abyss-accent), 0.16);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.18);
+    -webkit-backdrop-filter: blur(var(--abyss-glass-blur));
+    backdrop-filter: blur(var(--abyss-glass-blur));
+}
+
+html[data-theme="dark"] .MuiToolbar-root {
+    min-height: 64px;
+    gap: 0.25rem;
+    font-family: "Google Sans", sans-serif;
+}
+
+html[data-theme="dark"] .MuiToolbar-root .MuiButton-root,
+html[data-theme="dark"] .MuiToolbar-root .MuiIconButton-root {
+    color: rgba(var(--abyss-accent), 0.78);
+    border-radius: 999px;
+    transition: background-color 0.25s var(--abyss-ease),
+        color 0.25s var(--abyss-ease),
+        transform 0.25s var(--abyss-ease);
+}
+
+html[data-theme="dark"] .MuiToolbar-root .MuiButton-root {
+    min-width: auto;
+    padding: 0.5rem 0.85rem;
+    font-family: inherit;
+    font-weight: 600;
+    line-height: 1.25;
+    text-transform: none;
+}
+
+html[data-theme="dark"] .MuiToolbar-root .MuiIconButton-root {
+    padding: 0.6rem;
+}
+
+html[data-theme="dark"] .MuiToolbar-root .MuiButton-root:hover,
+html[data-theme="dark"] .MuiToolbar-root .MuiIconButton-root:hover {
+    color: rgb(var(--abyss-accent));
+    background-color: rgba(var(--abyss-accent), 0.12);
+}
+
+html[data-theme="dark"] .MuiToolbar-root .MuiButton-root.MuiButton-colorPrimary {
+    color: #121212;
+    background-color: rgb(var(--abyss-accent));
+}
+
+html[data-theme="dark"] .MuiToolbar-root .MuiButton-root.MuiButton-colorPrimary:hover {
+    color: #121212;
+    background-color: rgba(var(--abyss-accent), 0.88);
+}
+
+html[data-theme="dark"] .MuiDrawer-paper,
+html[data-theme="dark"] .MuiMenu-paper,
+html[data-theme="dark"] .MuiDialog-paper {
+    color: rgb(var(--abyss-accent));
+    background-color: rgba(var(--abyss-glass-tint), 0.92);
+    background-image: none;
+    border: 1px solid rgba(var(--abyss-accent), 0.16);
+    box-shadow: 0 8px 36px rgba(0, 0, 0, 0.32);
+    -webkit-backdrop-filter: blur(var(--abyss-glass-blur));
+    backdrop-filter: blur(var(--abyss-glass-blur));
+}
+
+html[data-theme="dark"] .MuiDrawer-paper {
+    border-radius: 0 var(--abyss-radius) var(--abyss-radius) 0;
+}
+
+html[data-theme="dark"] .MuiMenu-paper,
+html[data-theme="dark"] .MuiDialog-paper {
+    border-radius: var(--abyss-radius);
+}
+
+html[data-theme="dark"] .MuiListItemButton-root {
+    margin: 2px 8px;
+    border-radius: var(--abyss-radius);
+    transition: background-color 0.25s var(--abyss-ease),
+        color 0.25s var(--abyss-ease);
+}
+
+html[data-theme="dark"] .MuiListItemButton-root:hover {
+    color: #121212;
+    background-color: rgba(var(--abyss-accent), 0.82);
+}
+
+html[data-theme="dark"] .MuiListItemButton-root.Mui-selected,
+html[data-theme="dark"] .MuiListItemButton-root.Mui-selected:hover {
+    color: #121212;
+    background-color: rgb(var(--abyss-accent));
+}
+
+html[data-theme="dark"] .MuiFilledInput-root,
+html[data-theme="dark"] .MuiOutlinedInput-root {
+    border-radius: var(--abyss-radius);
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
 /* Main content */
 .backdropImage {
     -webkit-filter: blur(var(--abyss-backdrop-blur)) saturate(120%) contrast(120%) brightness(25%);
@@ -605,8 +722,7 @@ a[data-role="button"]:hover {
 .fab:hover,
 .navMenuOption:hover,
 .listItem:hover,
-.actionSheetMenuItem:hover,
-.css-17c09up:hover {
+.actionSheetMenuItem:hover {
     background: rgb(var(--abyss-accent)) !important;
     color: #121212;
     font-weight: 700;
@@ -1541,13 +1657,7 @@ div[data-role="controlgroup"] a[data-role="button"]:last-child {
     background-color: rgba(var(--abyss-accent), 0.35) !important;
 }
 
-.css-4yt2of {
-    background-color: rgba(0, 0, 0, 0.2);
-    border-right: 1px solid rgba(var(--abyss-accent), 0.12);
-}
-
-.navMenuOption-selected,
-.css-17c09up.Mui-selected {
+.navMenuOption-selected {
     background: rgb(var(--abyss-accent)) !important;
     color: #121212 !important;
 }
