@@ -34,6 +34,19 @@
     }
   }
 
+  function clearSpotlightLifecycle() {
+    safe(lifecycleCleanup);
+    lifecycleCleanup = function () { };
+    lifecycleObserver = null;
+    currentIndexPage = null;
+    currentHomeTab = null;
+    currentFavoritesTab = null;
+    currentIframe = null;
+    currentSync = null;
+    spotlightFocused = false;
+    document.documentElement.classList.remove("abyss-spotlight-visible");
+  }
+
   function installFrameStyle() {
     if (document.getElementById(STYLE_ID)) return;
     var style = document.createElement("style");
@@ -166,9 +179,14 @@
 
     var sync = function () {
       safe(function () {
+        if (!iframe || !iframe.isConnected) {
+          clearSpotlightLifecycle();
+          return;
+        }
         var favoritesActive = !!(favoritesTab && favoritesTab.classList && favoritesTab.classList.contains("is-active"));
         var active = isRouteVisible(indexPage, homeTab) && !favoritesActive;
         var action = active ? "resume" : "pause";
+        document.documentElement.classList.toggle("abyss-spotlight-visible", active);
         iframe.style.display = active ? "block" : "none";
         if (action !== lastAction) {
           postToFrame(iframe, action);
@@ -183,6 +201,12 @@
         lifecycleObserver.observe(indexPage, { attributes: true, attributeFilter: ["class", "hidden"] });
         lifecycleObserver.observe(homeTab, { attributes: true, attributeFilter: ["class", "style"] });
         if (favoritesTab) lifecycleObserver.observe(favoritesTab, { attributes: true, attributeFilter: ["class"] });
+        var ancestor = indexPage.parentElement;
+        while (ancestor) {
+          lifecycleObserver.observe(ancestor, { attributes: true, attributeFilter: ["class", "hidden", "style"] });
+          if (ancestor === document.body) break;
+          ancestor = ancestor.parentElement;
+        }
       });
     }
 
@@ -225,9 +249,15 @@
     var installed = false;
     safe(function () {
       var indexPage = findVisibleById("indexPage");
-      if (!indexPage) return;
+      if (!indexPage) {
+        clearSpotlightLifecycle();
+        return;
+      }
       var homeTab = indexPage.querySelector("#homeTab");
-      if (!homeTab) return;
+      if (!homeTab) {
+        clearSpotlightLifecycle();
+        return;
+      }
       var favoritesTab = indexPage.querySelector("#favoritesTab");
 
       installFrameStyle();
@@ -301,10 +331,9 @@
       });
     }
 
-    // Safety-net poll: re-verifies element connectivity AND forces a fresh
-    // visibility sync every 2s, so any stale is-active/hide state left over
-    // from an SPA nav-button route change self-corrects without needing a
-    // hard refresh.
+    // Safety-net poll: re-verifies element connectivity and forces a fresh
+    // visibility sync every 2s, so stale SPA navigation state self-corrects
+    // without needing a hard refresh.
     setInterval(function () {
       scheduleInstall();
       if (currentSync) safe(currentSync);

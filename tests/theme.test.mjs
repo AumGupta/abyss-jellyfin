@@ -42,6 +42,13 @@ test('Jellyfin 12 modern UI uses stable MUI hooks and theme tokens', () => {
   assert.doesNotMatch(theme, /\.css-[a-z0-9]+/i);
 });
 
+test('Jellyfin 12 app bar overlays an active Spotlight', () => {
+  assert.match(theme, /html\.abyss-spotlight-visible\[data-theme=["']dark["']\]\s+\.MuiAppBar-root/);
+  assert.match(theme, /\.MuiAppBar-root\s*\+\s*div\[aria-hidden=["']true["']\]/);
+  assert.match(theme, /height:\s*0\s*!important/);
+  assert.match(theme, /linear-gradient\(to bottom/);
+});
+
 test('lite override lowers rendering cost without replacing the theme', () => {
   assert.match(lite, /--abyss-backdrop-blur:/);
   assert.match(lite, /--abyss-glass-blur:/);

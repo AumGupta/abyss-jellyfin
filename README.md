@@ -193,7 +193,7 @@ Lite mode keeps the same colours, typography, spacing, and component styling whi
 
 | Jellyfin version | Status |
 |---|---|
-| 12.0.x | Supported (Modern and Legacy web UI) |
+| 12.0.x | Tested (Modern and Legacy web UI) |
 | 10.11.x | Tested |
 | 10.10.x | Should work |
 | Earlier | Untested |
