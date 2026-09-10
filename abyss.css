@@ -492,12 +492,9 @@ html[data-theme="dark"] .MuiOutlinedInput-root {
 /* Let the Modern app bar float over Spotlight instead of reserving an opaque
    strip above it. The loader owns this state so other routes keep their
    normal app-bar spacing. */
-html.abyss-spotlight-visible[data-theme="dark"] .MuiAppBar-root:has(+div[aria-hidden="true"]) {
+html.abyss-spotlight-visible[data-theme="dark"] .MuiAppBar-root.MuiAppBar-colorTransparent:has(+div[aria-hidden="true"]) {
     background-color: transparent !important;
-    background-image: linear-gradient(to bottom,
-            rgba(0, 0, 0, 0.72) 0%,
-            rgba(0, 0, 0, 0.34) 62%,
-            transparent 100%) !important;
+    background-image: none !important;
     border-bottom-color: transparent;
     box-shadow: none;
     -webkit-backdrop-filter: none;
@@ -716,6 +713,23 @@ html.abyss-spotlight-visible[data-theme="dark"] .MuiAppBar-root+div[aria-hidden=
     opacity: 0.4 !important;
 }
 
+html[data-theme="dark"] #displayPreferencesPage .MuiFormControl-root:has(input[name="theme"]),
+html[data-theme="dark"] #displayPreferencesPage .MuiFormControl-root:has(input[name="dashboardTheme"]) {
+    cursor: not-allowed !important;
+}
+
+html[data-theme="dark"] #displayPreferencesPage .MuiFormControl-root:has(input[name="theme"]) .MuiInputLabel-root,
+html[data-theme="dark"] #displayPreferencesPage .MuiFormControl-root:has(input[name="theme"]) .MuiInputBase-root,
+html[data-theme="dark"] #displayPreferencesPage .MuiFormControl-root:has(input[name="dashboardTheme"]) .MuiInputLabel-root,
+html[data-theme="dark"] #displayPreferencesPage .MuiFormControl-root:has(input[name="dashboardTheme"]) .MuiInputBase-root {
+    opacity: 0.4 !important;
+}
+
+html[data-theme="dark"] #displayPreferencesPage .MuiFormControl-root:has(input[name="theme"]) .MuiInputBase-root,
+html[data-theme="dark"] #displayPreferencesPage .MuiFormControl-root:has(input[name="dashboardTheme"]) .MuiInputBase-root {
+    pointer-events: none !important;
+}
+
 
 /* 6. COMPONENTS */
 
@@ -805,6 +819,20 @@ a[data-role="button"]:hover {
     margin-top: 48px !important;
     box-shadow: 0 0 24px 2px rgba(var(--abyss-accent), 0.2);
     z-index: 2;
+}
+
+html[data-theme="dark"] #displayPreferencesPage form button[type="submit"].MuiButton-root {
+    min-height: 3.25rem;
+    border-radius: var(--abyss-radius);
+    color: #121212;
+    background-color: rgb(var(--abyss-accent)) !important;
+    box-shadow: 0 0 24px 2px rgba(var(--abyss-accent), 0.2);
+    font-weight: 700;
+}
+
+html[data-theme="dark"] #displayPreferencesPage form button[type="submit"].MuiButton-root:hover {
+    color: #121212;
+    background-color: rgba(var(--abyss-accent), 0.88) !important;
 }
 
 /* Active / played / link states */

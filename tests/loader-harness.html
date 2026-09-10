@@ -10,7 +10,7 @@
   </style>
 </head>
 <body style="margin:0;background:#080808;color:#fff">
-  <header class="MuiAppBar-root" style="position:fixed;inset:0 0 auto;z-index:10">
+  <header class="MuiAppBar-root MuiAppBar-colorTransparent" style="position:fixed;inset:0 0 auto;z-index:10">
     <nav class="MuiToolbar-root" aria-label="Fixture controls">
       <button id="show-home" class="MuiButton-root MuiButton-colorPrimary" type="button">Show home</button>
       <button id="show-favorites" class="MuiButton-root" type="button">Show favorites</button>
@@ -30,7 +30,23 @@
     </div>
   </main>
   <aside id="nested-app-bar" class="MuiAppBar-root" aria-label="Nested fixture app bar"></aside>
+  <section id="displayPreferencesPage">
+    <form>
+      <div id="modern-theme-control" class="MuiFormControl-root">
+        <label class="MuiInputLabel-root">Theme</label>
+        <div class="MuiInputBase-root">
+          <div class="MuiSelect-select">Dark</div>
+          <input name="theme" value="dark">
+        </div>
+      </div>
+      <button class="MuiButton-root" type="submit">Save</button>
+    </form>
+  </section>
   <script>
+    const initialHarnessParams = new URLSearchParams(location.search);
+    if (initialHarnessParams.has('scrolled')) {
+      document.querySelector('header.MuiAppBar-root').classList.replace('MuiAppBar-colorTransparent', 'MuiAppBar-colorDefault');
+    }
     localStorage.setItem('jellyfin_credentials', JSON.stringify({
       Servers: [{
         AccessToken: 'test-token',
@@ -75,6 +91,9 @@
       setTimeout(() => {
         const appBar = getComputedStyle(document.querySelector('.MuiAppBar-root'));
         const nestedAppBar = getComputedStyle(document.getElementById('nested-app-bar'));
+        const themeControl = getComputedStyle(document.getElementById('modern-theme-control'));
+        const themeInput = getComputedStyle(document.querySelector('#modern-theme-control .MuiInputBase-root'));
+        const saveButton = getComputedStyle(document.querySelector('#displayPreferencesPage button[type="submit"]'));
         const spacer = getComputedStyle(document.querySelector('.MuiAppBar-root + div[aria-hidden="true"]'));
         const output = document.createElement('pre');
         output.id = 'computed-styles';
@@ -83,6 +102,11 @@
           appBarBackground: appBar.backgroundImage,
           appBarColor: appBar.backgroundColor,
           nestedAppBarColor: nestedAppBar.backgroundColor,
+          themeCursor: themeControl.cursor,
+          themeOpacity: themeInput.opacity,
+          themePointerEvents: themeInput.pointerEvents,
+          saveBackground: saveButton.backgroundColor,
+          saveColor: saveButton.color,
           spacerHeight: spacer.height
         });
         document.body.appendChild(output);

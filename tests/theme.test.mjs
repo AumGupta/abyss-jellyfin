@@ -43,10 +43,21 @@ test('Jellyfin 12 modern UI uses stable MUI hooks and theme tokens', () => {
 });
 
 test('Jellyfin 12 app bar overlays an active Spotlight', () => {
-  assert.match(theme, /html\.abyss-spotlight-visible\[data-theme=["']dark["']\]\s+\.MuiAppBar-root:has\(/);
+  assert.match(theme, /\.MuiAppBar-root\.MuiAppBar-colorTransparent:has\(/);
   assert.match(theme, /\.MuiAppBar-root\s*\+\s*div\[aria-hidden=["']true["']\]/);
   assert.match(theme, /height:\s*0\s*!important/);
-  assert.match(theme, /linear-gradient\(to bottom/);
+  assert.match(theme, /background-image:\s*none\s*!important/);
+});
+
+test('Jellyfin 12 modern display settings keep Abyss theme locked', () => {
+  assert.match(theme, /#displayPreferencesPage[^\n]*input\[name=["']theme["']\]/);
+  assert.match(theme, /#displayPreferencesPage[^\n]*input\[name=["']dashboardTheme["']\]/);
+  assert.match(theme, /pointer-events:\s*none\s*!important/);
+});
+
+test('Jellyfin 12 modern display settings use an Abyss submit button', () => {
+  assert.match(theme, /#displayPreferencesPage\s+form\s+button\[type=["']submit["']\]\.MuiButton-root/);
+  assert.match(theme, /background(?:-color)?:\s*rgb\(var\(--abyss-accent\)\)\s*!important/);
 });
 
 test('lite override lowers rendering cost without replacing the theme', () => {

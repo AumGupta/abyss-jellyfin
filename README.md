@@ -42,7 +42,7 @@ A clean and minimal theme for Jellyfin with frosted glass surfaces, refined typo
 
 ## Features
 
-- **One-click installer**: `abyss-setup-vX.X.X.exe` (Windows) and `abyss-setup-vX.X.X.sh` (Linux) configure your entire Jellyfin instance, CSS, client and dashboard themes, home section order, and Spotlight, all automatically.
+- **One-click installer**: `abyss-setup-vX.X.X.exe` (Windows) and `abyss-setup-vX.X.X.sh` (Linux) configure your entire Jellyfin instance, CSS, client and dashboard themes, home section order, and Spotlight, all automatically. The theme selectors are intentionally locked to Dark after installation.
 - **Jellyfin 12 support**: styles both the Modern React/MUI interface and the Desktop (Legacy) interface using stable component classes and Jellyfin theme variables.
 - **Spotlight home banner**: a cinematic banner on your home screen showing your current Continue Watching item, complete with backdrop image, metadata pills (rating, runtime, score), and a resume play button.
 - **Frosted glass UI**: header, drawer, dialogs, toasts, and footer all use `backdrop-filter` blur for a layered, depth-rich interface
@@ -206,7 +206,7 @@ Lite mode keeps the same colours, typography, spacing, and component styling whi
 
 - The **Jellyfin admin dashboard** (`/dashboard`) is a separate React app and does not load Custom CSS. Abyss styles the main client only (home, libraries, detail pages, player).
 - Backdrop blur requires `backdrop-filter` support: Chrome, Edge, Safari, and Firefox 103+.
-- The installer selects the Dark base theme for the client and dashboard. Abyss requires Dark to display correctly; selecting another base theme is unsupported.
+- The installer selects the Dark base theme for the client and dashboard. Abyss requires Dark to display correctly, so the corresponding theme selectors in both Modern and Legacy web UI are intentionally shown as locked while Dark is active. Selecting another base theme is unsupported.
 
 </details>
 
