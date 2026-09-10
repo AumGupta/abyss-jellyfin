@@ -29,6 +29,7 @@
       </div>
     </div>
   </main>
+  <aside id="nested-app-bar" class="MuiAppBar-root" aria-label="Nested fixture app bar"></aside>
   <script>
     localStorage.setItem('jellyfin_credentials', JSON.stringify({
       Servers: [{
@@ -73,6 +74,7 @@
     if (harnessParams.has('inspect')) {
       setTimeout(() => {
         const appBar = getComputedStyle(document.querySelector('.MuiAppBar-root'));
+        const nestedAppBar = getComputedStyle(document.getElementById('nested-app-bar'));
         const spacer = getComputedStyle(document.querySelector('.MuiAppBar-root + div[aria-hidden="true"]'));
         const output = document.createElement('pre');
         output.id = 'computed-styles';
@@ -80,6 +82,7 @@
           spotlightVisible: document.documentElement.classList.contains('abyss-spotlight-visible'),
           appBarBackground: appBar.backgroundImage,
           appBarColor: appBar.backgroundColor,
+          nestedAppBarColor: nestedAppBar.backgroundColor,
           spacerHeight: spacer.height
         });
         document.body.appendChild(output);

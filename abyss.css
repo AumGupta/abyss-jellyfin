@@ -492,7 +492,7 @@ html[data-theme="dark"] .MuiOutlinedInput-root {
 /* Let the Modern app bar float over Spotlight instead of reserving an opaque
    strip above it. The loader owns this state so other routes keep their
    normal app-bar spacing. */
-html.abyss-spotlight-visible[data-theme="dark"] .MuiAppBar-root {
+html.abyss-spotlight-visible[data-theme="dark"] .MuiAppBar-root:has(+div[aria-hidden="true"]) {
     background-color: transparent !important;
     background-image: linear-gradient(to bottom,
             rgba(0, 0, 0, 0.72) 0%,
