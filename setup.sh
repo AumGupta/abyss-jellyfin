@@ -6,8 +6,8 @@ set -euo pipefail
 # https://github.com/AumGupta/abyss-jellyfin
 # ==============================================================================
 
-REPO="AumGupta/abyss-jellyfin"
-BRANCH="main"
+REPO="${ABYSS_REPO:-AumGupta/abyss-jellyfin}"
+BRANCH="${ABYSS_BRANCH:-main}"
 RAW="https://raw.githubusercontent.com/${REPO}/${BRANCH}"
 REPO_URL="https://github.com/${REPO}"
 
@@ -267,7 +267,7 @@ print(json.dumps({'Username': u, 'Pw': p}))
         _response=$(curl -fsSL \
             -X POST "${server_url}/Users/AuthenticateByName" \
             -H "Content-Type: application/json" \
-            -H "X-Emby-Authorization: ${auth_header}" \
+            -H "Authorization: ${auth_header}" \
             -d "$body" 2>/dev/null) && break || true
 
         if ((try == max_tries)); then
@@ -303,7 +303,7 @@ restart_jellyfin() {
     # Try API restart first (works for all install methods)
     if curl -fsSL \
         -X POST "${server_url}/System/Restart" \
-        -H "X-Emby-Authorization: ${api_header}" >/dev/null 2>&1; then
+        -H "Authorization: ${api_header}" >/dev/null 2>&1; then
         ok "Restart triggered via API. Wait a few seconds then refresh."
         return
     fi
@@ -388,7 +388,7 @@ install_abyss() {
     local branding
     branding=$(curl -fsSL \
         -X GET "${server_url}/Branding/Configuration" \
-        -H "X-Emby-Authorization: ${api_header}" 2>/dev/null) || true
+        -H "Authorization: ${api_header}" 2>/dev/null) || true
 
     if [[ -n "$branding" ]]; then
         local updated_branding
@@ -397,7 +397,7 @@ install_abyss() {
         curl -fsSL \
             -X POST "${server_url}/System/Configuration/Branding" \
             -H "Content-Type: application/json" \
-            -H "X-Emby-Authorization: ${api_header}" \
+            -H "Authorization: ${api_header}" \
             -d "$updated_branding" >/dev/null 2>&1 \
             && ok "Abyss CSS applied." \
             || { fail "Failed to apply CSS."; info "Add manually: Dashboard > General > Custom CSS"; }
@@ -413,7 +413,7 @@ install_abyss() {
     local display_prefs
     display_prefs=$(curl -fsSL \
         -X GET "${server_url}/DisplayPreferences/usersettings?userId=${user_id}&client=emby" \
-        -H "X-Emby-Authorization: ${api_header}" 2>/dev/null) || true
+        -H "Authorization: ${api_header}" 2>/dev/null) || true
 
     if [[ -n "$display_prefs" ]]; then
         # Ask before reordering home sections
@@ -437,6 +437,7 @@ install_abyss() {
 import sys, json
 d = json.load(sys.stdin)
 p = d.setdefault('CustomPrefs', {})
+p['appTheme']       = 'dark'
 p['dashboardTheme'] = 'dark'
 p['homesection0']   = 'resume'
 p['homesection1']   = 'nextup'
@@ -451,6 +452,7 @@ print(json.dumps(d))
 import sys, json
 d = json.load(sys.stdin)
 p = d.setdefault('CustomPrefs', {})
+p['appTheme']       = 'dark'
 p['dashboardTheme'] = 'dark'
 print(json.dumps(d))
 ")
@@ -459,9 +461,9 @@ print(json.dumps(d))
         curl -fsSL \
             -X POST "${server_url}/DisplayPreferences/usersettings?userId=${user_id}&client=emby" \
             -H "Content-Type: application/json" \
-            -H "X-Emby-Authorization: ${api_header}" \
+            -H "Authorization: ${api_header}" \
             -d "$updated_prefs" >/dev/null 2>&1 \
-            && ok "Dashboard theme set to Dark." \
+            && ok "Client and dashboard themes set to Dark." \
             && { [[ "$reorder_sections" == true ]] && ok "Home screen sections configured." || skip "Home screen sections left unchanged."; } \
             || warn "Could not configure theme settings. Set manually in Settings > Display."
     else
@@ -508,7 +510,7 @@ print(json.dumps(d))
     echo -e "${yellow}    2. Hard refresh your browser (Ctrl+F5)${reset}"
     echo -e "${gray}    3. Relaunch Jellyfin Media Player if using the desktop app${reset}"
     echo ""
-    echo -e "${yellow}  Important: Go to Settings > Display > Theme and set it to Dark${reset}"
+    echo -e "${green}  Dark theme configured for the client and dashboard.${reset}"
     info "Abyss requires the Dark base theme to display correctly."
     echo ""
     echo -e "${green}  Tip: Turn on 'Show Backdrops' in display settings for best experience.${reset}"
@@ -553,7 +555,7 @@ uninstall_abyss() {
     local branding
     branding=$(curl -fsSL \
         -X GET "${server_url}/Branding/Configuration" \
-        -H "X-Emby-Authorization: ${api_header}" 2>/dev/null) || true
+        -H "Authorization: ${api_header}" 2>/dev/null) || true
 
     if [[ -n "$branding" ]]; then
         local updated_branding
@@ -561,7 +563,7 @@ uninstall_abyss() {
         curl -fsSL \
             -X POST "${server_url}/System/Configuration/Branding" \
             -H "Content-Type: application/json" \
-            -H "X-Emby-Authorization: ${api_header}" \
+            -H "Authorization: ${api_header}" \
             -d "$updated_branding" >/dev/null 2>&1 \
             && ok "Abyss CSS removed." \
             || { fail "Failed to remove Abyss CSS."; info "Remove the marked Abyss block manually in Dashboard > General > Custom CSS."; }

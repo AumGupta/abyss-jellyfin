@@ -34,6 +34,19 @@
     }
   }
 
+  function clearSpotlightLifecycle() {
+    safe(lifecycleCleanup);
+    lifecycleCleanup = function () { };
+    lifecycleObserver = null;
+    currentIndexPage = null;
+    currentHomeTab = null;
+    currentFavoritesTab = null;
+    currentIframe = null;
+    currentSync = null;
+    spotlightFocused = false;
+    document.documentElement.classList.remove("abyss-spotlight-visible");
+  }
+
   function installFrameStyle() {
     if (document.getElementById(STYLE_ID)) return;
     var style = document.createElement("style");
@@ -52,36 +65,6 @@
     document.head.appendChild(style);
   }
 
-  function forceDarkTheme() {
-    if (typeof Storage === "undefined" || !window.localStorage) return;
-
-    var keys = [];
-    try {
-      keys = Object.keys(localStorage);
-    } catch (e) {
-      return; // localStorage inaccessible (privacy mode, sandboxed webview, etc.)
-    }
-
-    for (var i = 0; i < keys.length; i++) {
-      var key = keys[i];
-      if (key && key.indexOf("-appTheme", key.length - "-appTheme".length) !== -1) {
-        safe(function (k) {
-          localStorage.setItem(k, "dark");
-        }.bind(null, key));
-      }
-    }
-
-    safe(function () {
-      if (Storage.prototype.setItem.__abyssWrapped) return;
-      var setItem = Storage.prototype.setItem;
-      var wrapped = function (key, value) {
-        var isTheme = typeof key === "string" && key.indexOf("-appTheme", key.length - "-appTheme".length) !== -1;
-        setItem.call(this, key, isTheme ? "dark" : value);
-      };
-      wrapped.__abyssWrapped = true;
-      Storage.prototype.setItem = wrapped;
-    });
-  }
 
   function postToFrame(iframe, action) {
     if (!iframe || !iframe.contentWindow) return;
@@ -196,9 +179,14 @@
 
     var sync = function () {
       safe(function () {
+        if (!iframe || !iframe.isConnected) {
+          clearSpotlightLifecycle();
+          return;
+        }
         var favoritesActive = !!(favoritesTab && favoritesTab.classList && favoritesTab.classList.contains("is-active"));
         var active = isRouteVisible(indexPage, homeTab) && !favoritesActive;
         var action = active ? "resume" : "pause";
+        document.documentElement.classList.toggle("abyss-spotlight-visible", active);
         iframe.style.display = active ? "block" : "none";
         if (action !== lastAction) {
           postToFrame(iframe, action);
@@ -213,6 +201,12 @@
         lifecycleObserver.observe(indexPage, { attributes: true, attributeFilter: ["class", "hidden"] });
         lifecycleObserver.observe(homeTab, { attributes: true, attributeFilter: ["class", "style"] });
         if (favoritesTab) lifecycleObserver.observe(favoritesTab, { attributes: true, attributeFilter: ["class"] });
+        var ancestor = indexPage.parentElement;
+        while (ancestor) {
+          lifecycleObserver.observe(ancestor, { attributes: true, attributeFilter: ["class", "hidden", "style"] });
+          if (ancestor === document.body) break;
+          ancestor = ancestor.parentElement;
+        }
       });
     }
 
@@ -255,9 +249,15 @@
     var installed = false;
     safe(function () {
       var indexPage = findVisibleById("indexPage");
-      if (!indexPage) return;
+      if (!indexPage) {
+        clearSpotlightLifecycle();
+        return;
+      }
       var homeTab = indexPage.querySelector("#homeTab");
-      if (!homeTab) return;
+      if (!homeTab) {
+        clearSpotlightLifecycle();
+        return;
+      }
       var favoritesTab = indexPage.querySelector("#favoritesTab");
 
       installFrameStyle();
@@ -297,8 +297,6 @@
   }
 
   function boot() {
-    safe(forceDarkTheme);
-
     var installScheduled = false;
 
     var scheduleInstall = function () {
@@ -333,10 +331,9 @@
       });
     }
 
-    // Safety-net poll: re-verifies element connectivity AND forces a fresh
-    // visibility sync every 2s, so any stale is-active/hide state left over
-    // from an SPA nav-button route change self-corrects without needing a
-    // hard refresh.
+    // Safety-net poll: re-verifies element connectivity and forces a fresh
+    // visibility sync every 2s, so stale SPA navigation state self-corrects
+    // without needing a hard refresh.
     setInterval(function () {
       scheduleInstall();
       if (currentSync) safe(currentSync);

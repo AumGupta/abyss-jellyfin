@@ -2,8 +2,8 @@ $ErrorActionPreference = "Stop"
 
 # Constants 
 
-$REPO     = "AumGupta/abyss-jellyfin"
-$BRANCH   = "main"
+$REPO     = if ($env:ABYSS_REPO) { $env:ABYSS_REPO } else { "AumGupta/abyss-jellyfin" }
+$BRANCH   = if ($env:ABYSS_BRANCH) { $env:ABYSS_BRANCH } else { "main" }
 $RAW      = "https://raw.githubusercontent.com/$REPO/$BRANCH"
 $REPO_URL = "https://github.com/$REPO"
 
@@ -182,7 +182,7 @@ function Connect-Jellyfin {
         $authBody    = @{ Username = $username; Pw = $password } | ConvertTo-Json
         $authHeaders = @{
             "Content-Type"         = "application/json"
-            "X-Emby-Authorization" = 'MediaBrowser Client="Abyss Setup", Device="Setup", DeviceId="abyss-setup", Version="1.0"'
+            "Authorization" = 'MediaBrowser Client="Abyss Setup", Device="Setup", DeviceId="abyss-setup", Version="1.0"'
         }
 
         try {
@@ -208,7 +208,7 @@ function Get-ApiHeaders {
     param($token)
     return @{
         "Content-Type"         = "application/json"
-        "X-Emby-Authorization" = "MediaBrowser Client=`"Abyss Setup`", Device=`"Setup`", DeviceId=`"abyss-setup`", Version=`"1.0`", Token=`"$token`""
+        "Authorization" = "MediaBrowser Client=`"Abyss Setup`", Device=`"Setup`", DeviceId=`"abyss-setup`", Version=`"1.0`", Token=`"$token`""
     }
 }
 
@@ -280,8 +280,9 @@ function Install-Abyss {
         if (-not $displayPrefs.CustomPrefs) {
             $displayPrefs | Add-Member -NotePropertyName CustomPrefs -NotePropertyValue ([pscustomobject]@{}) -Force
         }
+        $displayPrefs.CustomPrefs | Add-Member -NotePropertyName appTheme -NotePropertyValue "dark" -Force
         $displayPrefs.CustomPrefs | Add-Member -NotePropertyName dashboardTheme -NotePropertyValue "dark" -Force
-        Write-Ok "Dashboard theme set to Dark."
+        Write-Ok "Client and dashboard themes set to Dark."
 
         # Ask before reordering home sections
         Write-Host ""

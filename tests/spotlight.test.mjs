@@ -25,8 +25,19 @@ test('spotlight lifecycle pauses hidden work', () => {
   assert.match(script, /action === 'pause'/);
   assert.match(loader, /postMessage/);
   assert.match(loader, /indexPage/);
-  assert.match(loader, /homeActive/);
+  assert.match(loader, /isRouteVisible/);
+  assert.match(loader, /favoritesActive/);
   assert.match(loader, /isConnected/);
+  assert.match(loader, /abyss-spotlight-visible/);
+  assert.match(loader, /if \(!iframe \|\| !iframe\.isConnected\) \{\s*clearSpotlightLifecycle\(\)/);
+  assert.match(loader, /var ancestor = indexPage\.parentElement/);
+  assert.match(loader, /function clearSpotlightLifecycle\(\)/);
+  assert.match(loader, /if \(!indexPage\) \{\s*clearSpotlightLifecycle\(\)/);
+});
+
+test('spotlight does not override Jellyfin theme storage', () => {
+  assert.doesNotMatch(loader, /Storage\.prototype\.setItem/);
+  assert.doesNotMatch(loader, /forceDarkTheme/);
 });
 
 test('image requests are bounded and cached', () => {

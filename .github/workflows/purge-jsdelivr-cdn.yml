@@ -2,6 +2,7 @@ name: purge-jsdelivr-cdn
 
 on:
   push:
+    branches: [main]
     paths:
       - 'abyss.css'
       - 'styles/abyss-je.css'

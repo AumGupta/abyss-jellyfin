@@ -2,6 +2,7 @@ name: build-installer
 
 on:
   push:
+    branches: [main]
     paths:
       - 'setup.ps1'
   release:

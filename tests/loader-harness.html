@@ -1,26 +1,52 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Abyss Loader Test Harness</title>
+  <link rel="stylesheet" href="../abyss.css">
+  <style>
+    .tabContent:not(.is-active) { display: none; }
+  </style>
 </head>
 <body style="margin:0;background:#080808;color:#fff">
-  <nav aria-label="Fixture controls">
-    <button id="show-home" type="button">Show home</button>
-    <button id="show-favorites" type="button">Show favorites</button>
-    <button id="show-other" type="button">Show other</button>
-    <button id="remount-home" type="button">Remount home</button>
-  </nav>
-  <div id="indexPage" data-role="page">
-    <div id="homeTab" class="tabContent is-active">
-      <div class="sections" data-test="original-sections"></div>
+  <header class="MuiAppBar-root MuiAppBar-colorTransparent" style="position:fixed;inset:0 0 auto;z-index:10">
+    <nav class="MuiToolbar-root" aria-label="Fixture controls">
+      <button id="show-home" class="MuiButton-root MuiButton-colorPrimary" type="button">Show home</button>
+      <button id="show-favorites" class="MuiButton-root" type="button">Show favorites</button>
+      <button id="show-other" class="MuiButton-root" type="button">Show other</button>
+      <button id="remount-home" class="MuiButton-root" type="button">Remount home</button>
+    </nav>
+  </header>
+  <div aria-hidden="true" style="height:48px;width:100%;flex-shrink:0"></div>
+  <main id="route-container">
+    <div id="indexPage" data-role="page">
+      <div id="homeTab" class="tabContent is-active">
+        <div class="sections" data-test="original-sections"></div>
+      </div>
+      <div id="favoritesTab" class="tabContent">
+        <div class="sections"></div>
+      </div>
     </div>
-    <div id="favoritesTab" class="tabContent">
-      <div class="sections"></div>
-    </div>
-  </div>
+  </main>
+  <aside id="nested-app-bar" class="MuiAppBar-root" aria-label="Nested fixture app bar"></aside>
+  <section id="displayPreferencesPage">
+    <form>
+      <div id="modern-theme-control" class="MuiFormControl-root">
+        <label class="MuiInputLabel-root">Theme</label>
+        <div class="MuiInputBase-root">
+          <div class="MuiSelect-select">Dark</div>
+          <input name="theme" value="dark">
+        </div>
+      </div>
+      <button class="MuiButton-root" type="submit">Save</button>
+    </form>
+  </section>
   <script>
+    const initialHarnessParams = new URLSearchParams(location.search);
+    if (initialHarnessParams.has('scrolled')) {
+      document.querySelector('header.MuiAppBar-root').classList.replace('MuiAppBar-colorTransparent', 'MuiAppBar-colorDefault');
+    }
     localStorage.setItem('jellyfin_credentials', JSON.stringify({
       Servers: [{
         AccessToken: 'test-token',
@@ -48,7 +74,44 @@
       document.getElementById('homeTab').replaceWith(replacement);
       document.getElementById('favoritesTab').classList.remove('is-active');
     });
+    if (new URLSearchParams(location.search).has('favorites')) {
+      document.getElementById('show-favorites').click();
+    }
   </script>
   <script src="../scripts/spotlight/spotlight-loader.js" data-abyss-spotlight></script>
+  <script>
+    const harnessParams = new URLSearchParams(location.search);
+    if (harnessParams.has('remove-home')) {
+      setTimeout(() => document.getElementById('indexPage').remove(), 20);
+    }
+    if (harnessParams.has('hide-parent')) {
+      setTimeout(() => { document.getElementById('route-container').style.display = 'none'; }, 20);
+    }
+    if (harnessParams.has('inspect')) {
+      setTimeout(() => {
+        const appBar = getComputedStyle(document.querySelector('.MuiAppBar-root'));
+        const nestedAppBar = getComputedStyle(document.getElementById('nested-app-bar'));
+        const themeControl = getComputedStyle(document.getElementById('modern-theme-control'));
+        const themeInput = getComputedStyle(document.querySelector('#modern-theme-control .MuiInputBase-root'));
+        const saveButton = getComputedStyle(document.querySelector('#displayPreferencesPage button[type="submit"]'));
+        const spacer = getComputedStyle(document.querySelector('.MuiAppBar-root + div[aria-hidden="true"]'));
+        const output = document.createElement('pre');
+        output.id = 'computed-styles';
+        output.textContent = JSON.stringify({
+          spotlightVisible: document.documentElement.classList.contains('abyss-spotlight-visible'),
+          appBarBackground: appBar.backgroundImage,
+          appBarColor: appBar.backgroundColor,
+          nestedAppBarColor: nestedAppBar.backgroundColor,
+          themeCursor: themeControl.cursor,
+          themeOpacity: themeInput.opacity,
+          themePointerEvents: themeInput.pointerEvents,
+          saveBackground: saveButton.backgroundColor,
+          saveColor: saveButton.color,
+          spacerHeight: spacer.height
+        });
+        document.body.appendChild(output);
+      }, 100);
+    }
+  </script>
 </body>
 </html>

@@ -2,6 +2,7 @@ name: build-linux-mac-installer
 
 on:
   push:
+    branches: [main]
     paths:
       - 'setup.sh'
   release:
