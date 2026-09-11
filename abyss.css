@@ -46,9 +46,6 @@
 
     /* Fixed defaults */
 
-    /* Indicator pill background (episode count, etc.) */
-    --abyss-indicator: 55, 55, 55;
-
     /* Backgorund for drawers and dialogs */
     --abyss-glass-tint: 42, 42, 42;
 
@@ -389,15 +386,44 @@ input[type="radio"]:checked {
     border-radius: 50px !important;
 }
 
-/* Jellyfin 12 modern app shell (React / MUI) */
+/* Jellyfin 12 modern app shell (React / MUI) [BETA] */
+
+/*
+.mainAnimatedPage, 
+.skinBody {
+   margin-top: 6%;
+}
+*/
+
 html[data-theme="dark"] .MuiAppBar-root {
     color: rgb(var(--abyss-accent));
     background-color: rgba(var(--abyss-glass-tint), 0.72) !important;
     background-image: none !important;
+    border: none;
     border-bottom: 1px solid rgba(var(--abyss-accent), 0.16);
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.18);
     -webkit-backdrop-filter: blur(var(--abyss-glass-blur));
     backdrop-filter: blur(var(--abyss-glass-blur));
+}
+
+/*
+html[data-theme="dark"] .MuiAppBar-root.MuiAppBar-positionFixed {
+    top: 24px !important;
+    left: 24px !important;
+    right: 24px !important;
+    width: auto !important;
+    border-radius: var(--abyss-radius) !important;
+    border: none;
+    border-bottom: 1px solid rgba(var(--abyss-accent), 0.16);
+}
+*/
+
+html[data-theme="dark"] .MuiToolbar-root.MuiToolbar-gutters.MuiToolbar-dense.padded-left {
+   padding-left: 1.8% !important;
+}
+
+html[data-theme="dark"] .MuiToolbar-root.MuiToolbar-gutters.MuiToolbar-dense.padded-right {
+   padding-right: 1.8% !important;
 }
 
 html[data-theme="dark"] .MuiToolbar-root {
@@ -406,10 +432,14 @@ html[data-theme="dark"] .MuiToolbar-root {
     font-family: "Google Sans", sans-serif;
 }
 
+html[data-theme="dark"] .MuiButtonGroup-root {
+    gap: 0.25rem;
+}
+
 html[data-theme="dark"] .MuiToolbar-root .MuiButton-root,
 html[data-theme="dark"] .MuiToolbar-root .MuiIconButton-root {
     color: rgba(var(--abyss-accent), 0.78);
-    border-radius: 999px;
+    border-radius: var(--abyss-radius);
     transition: background-color 0.25s var(--abyss-ease),
         color 0.25s var(--abyss-ease),
         transform 0.25s var(--abyss-ease);
@@ -819,6 +849,7 @@ a[data-role="button"]:hover {
     margin-top: 48px !important;
     box-shadow: 0 0 24px 2px rgba(var(--abyss-accent), 0.2);
     z-index: 2;
+    color: rgba(245, 245, 247);
 }
 
 html[data-theme="dark"] #displayPreferencesPage form button[type="submit"].MuiButton-root {
@@ -1004,7 +1035,7 @@ div[data-role="controlgroup"] a[data-role="button"] {
 }
 
 .countIndicator {
-    background: rgba(var(--abyss-indicator), 0.8);
+    background: rgba(var(--abyss-accent), 0.8);
     box-shadow: none;
     border-radius: 10px !important;
     padding: 4px;
@@ -2094,6 +2125,12 @@ div[data-role="controlgroup"] a[data-role="button"]:last-child {
     position: fixed !important;
     top: 15% !important;
 }
+
+.detailPageSecondaryContainer.padded-left {
+    padding-left: max(env(safe-area-inset-left), 32.9%);
+}
+
+
 
 .withSectionTabs .headerTop {
     width: 100% !important;
