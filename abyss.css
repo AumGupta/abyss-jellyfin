@@ -419,11 +419,11 @@ html[data-theme="dark"] .MuiAppBar-root.MuiAppBar-positionFixed {
 */
 
 html[data-theme="dark"] .MuiToolbar-root.MuiToolbar-gutters.MuiToolbar-dense.padded-left {
-   padding-left: 1.8% !important;
+    padding-left: 1.8% !important;
 }
 
 html[data-theme="dark"] .MuiToolbar-root.MuiToolbar-gutters.MuiToolbar-dense.padded-right {
-   padding-right: 1.8% !important;
+    padding-right: 1.8% !important;
 }
 
 html[data-theme="dark"] .MuiToolbar-root {
@@ -2047,8 +2047,8 @@ div[data-role="controlgroup"] a[data-role="button"]:last-child {
     margin-bottom: .4em !important;
 }
 
-.headerUserButton.show-focus:focus{
-    transform:none !important;
+.headerUserButton.show-focus:focus {
+    transform: none !important;
 }
 
 #itemDetailPage .emby-button.show-focus:focus {
@@ -2126,7 +2126,8 @@ div[data-role="controlgroup"] a[data-role="button"]:last-child {
     top: 15% !important;
 }
 
-.detailPageSecondaryContainer.padded-left {
+.layout-tv .detailPageSecondaryContainer.padded-left,
+.layout-desktop .detailPageSecondaryContainer.padded-left {
     padding-left: max(env(safe-area-inset-left), 32.9%);
 }
 
