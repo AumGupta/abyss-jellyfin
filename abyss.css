@@ -1048,6 +1048,7 @@ div[data-role="controlgroup"] a[data-role="button"] {
     border-radius: 10px !important;
     padding: 4px;
     font-weight: bolder;
+    color: var(--abyss-accent);
 }
 
 .cardOverlayButton-br.cardIndicators {
@@ -2128,7 +2129,7 @@ div[data-role="controlgroup"] a[data-role="button"]:last-child {
 
 .layout-tv .detailPageSecondaryContainer.padded-left,
 .layout-desktop .detailPageSecondaryContainer.padded-left {
-    padding-left: max(env(safe-area-inset-left), 32.9%);
+    padding-left: 28.45vw !important;
 }
 
 
@@ -2397,6 +2398,10 @@ div[data-role="controlgroup"] a[data-role="button"]:last-child {
 }
 
 /* 14. SEARCH PAGE */
+
+#searchPage {
+    padding-top: 7em !important;
+}
 
 .searchSuggestionsList .emby-button {
     color: rgba(var(--abyss-accent), 0.6);
