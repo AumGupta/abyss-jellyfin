@@ -1049,7 +1049,7 @@ div[data-role="controlgroup"] a[data-role="button"] {
     padding: 4px;
     font-weight: bolder;
     color: rgb(var(--abyss-accent));
-}s
+}
 
 .playedIndicator > svg {
     fill: rgb(var(--abyss-accent));
