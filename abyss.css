@@ -519,10 +519,8 @@ html[data-theme="dark"] .MuiOutlinedInput-root {
     background-color: rgba(255, 255, 255, 0.08);
 }
 
-/* Let the Modern app bar float over Spotlight instead of reserving an opaque
-   strip above it. The loader owns this state so other routes keep their
-   normal app-bar spacing. */
-html.abyss-spotlight-visible[data-theme="dark"] .MuiAppBar-root.MuiAppBar-colorTransparent:has(+div[aria-hidden="true"]) {
+html.abyss-spotlight-visible[data-theme="dark"] .MuiAppBar-root.MuiAppBar-colorTransparent:has(+div[aria-hidden="true"]),
+html[data-theme="dark"]:has(#itemDetailPage:not(.hide)) .MuiAppBar-root.MuiAppBar-colorTransparent:has(+div[aria-hidden="true"]) {
     background-color: transparent !important;
     background-image: none !important;
     border-bottom-color: transparent;
@@ -531,7 +529,8 @@ html.abyss-spotlight-visible[data-theme="dark"] .MuiAppBar-root.MuiAppBar-colorT
     backdrop-filter: none;
 }
 
-html.abyss-spotlight-visible[data-theme="dark"] .MuiAppBar-root+div[aria-hidden="true"] {
+html.abyss-spotlight-visible[data-theme="dark"] .MuiAppBar-root+div[aria-hidden="true"],
+html[data-theme="dark"]:has(#itemDetailPage:not(.hide)) .MuiAppBar-root+div[aria-hidden="true"] {
     height: 0 !important;
 }
 
