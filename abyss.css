@@ -1048,7 +1048,11 @@ div[data-role="controlgroup"] a[data-role="button"] {
     border-radius: 10px !important;
     padding: 4px;
     font-weight: bolder;
-    color: var(--abyss-accent);
+    color: rgb(var(--abyss-accent));
+}s
+
+.playedIndicator > svg {
+    fill: rgb(var(--abyss-accent));
 }
 
 .cardOverlayButton-br.cardIndicators {
