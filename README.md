@@ -193,10 +193,13 @@ Lite mode keeps the same colours, typography, spacing, and component styling whi
 
 | Jellyfin version | Status |
 |---|---|
-| 12.0.x | Tested (Modern and Legacy web UI) |
+| 12.1.x | Tested (Modern and Legacy web UI) |
 | 10.11.x | Tested |
 | 10.10.x | Should work |
 | Earlier | Untested |
+
+> [!NOTE] 
+> Jellyfin 12 features a new Material UI (MUI), implemented by *default* via `Settings`>`Display`>`Display Mode`>`Auto`. Since, this is a new interface, changes to Abyss are being constantly made to keep it at par with changes in Jellyfin versions. In case you want to keep the previous look of jellyfin (before versoin 12), they have provide a way to do so by `Settings`>`Display`>`Display Mode`>`Desktop (Legacy)`. Changes will take effect after manually reloading the web client.
 
 > [!IMPORTANT]
 > Abyss is built and tested for the **Jellyfin web client** accessed via a desktop browser. The mobile web experience includes layout tweaks but is not the primary focus. The Jellyfin desktop app (Jellyfin Media Player) and TV clients may work but are not specifically targeted and results may vary.
