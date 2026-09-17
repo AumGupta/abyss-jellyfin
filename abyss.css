@@ -399,7 +399,7 @@ input[type="radio"]:checked {
 
 /* Jellyfin 12 modern app shell (React / MUI) [BETA] */
 html[data-theme="dark"] .MuiBox-root .tabContent.pageTabContent.is-active.abyss-spotlight-active .featurediframe.focusable {
-    margin-top: 56px;
+    margin-top: 52px;
 }
 
 html[data-theme="dark"] header.MuiAppBar-root {
@@ -424,7 +424,7 @@ html[data-theme="dark"] .MuiButton-icon img[src*="icon-transparent"] {
     filter: brightness(0) invert(1);
 }
 
-html[data-theme="dark"] header.MuiAppBar-root > .MuiToolbar-root:nth-of-type(2) .MuiButtonBase-root {
+html[data-theme="dark"] header.MuiAppBar-root>.MuiToolbar-root:nth-of-type(2) .MuiButtonBase-root {
     -webkit-backdrop-filter: blur(var(--abyss-glass-blur));
     backdrop-filter: blur(var(--abyss-glass-blur));
 }
@@ -486,6 +486,10 @@ html[data-theme="dark"] header.MuiAppBar-root .MuiButtonBase-root.MuiIconButton-
     margin-left: 0.48rem
 }
 
+html[data-theme="dark"] header.MuiAppBar-root button[aria-label="Open Menu"].MuiButtonBase-root {
+    margin-right: 8px !important;
+}
+
 html[data-theme="dark"] header.MuiAppBar-root .MuiBox-root {
     gap: 0.48rem;
 }
@@ -527,8 +531,8 @@ html[data-theme="dark"] .MuiToolbar-root .MuiButtonGroup-root {
     box-shadow: none;
 }
 
-.MuiToolbar-root .MuiButtonGroup-root .MuiButtonBase-root{
-    border:none;
+.MuiToolbar-root .MuiButtonGroup-root .MuiButtonBase-root {
+    border: none;
 }
 
 .MuiButtonGroup-root .MuiButtonGroup-firstButton {
@@ -561,7 +565,7 @@ html[data-theme="dark"] .MuiDrawer-paper,
 html[data-theme="dark"] .MuiMenu-paper,
 html[data-theme="dark"] .MuiDialog-paper {
     color: rgb(var(--abyss-accent));
-    background-color: rgba(var(--abyss-glass-tint), 0.92);
+    background-color: rgba(var(--abyss-glass-tint), 0.72);
     background-image: none;
     border: 1px solid rgba(var(--abyss-accent), 0.16);
     box-shadow: 0 8px 36px rgba(0, 0, 0, 0.32);
@@ -577,25 +581,89 @@ html[data-theme="dark"] .MuiDrawer-paper {
     left: 24px;
     top: 24px;
     bottom: 24px;
+    padding: 24px 0;
     max-height: stretch;
-    width: max(30vw, max-content);
+    min-width: fit-content;
+    width: 42vw;
 }
 
-html[data-theme="dark"] .MuiMenu-paper,
+html[data-theme="dark"] .MuiDrawer-paper .MuiDivider-root {
+    display: none;
+}
+
+html[data-theme="dark"] .MuiDrawer-paper .MuiListItemIcon-root {
+    background: #cccccf69;
+    border-radius: 50px;
+    padding: 10px;
+    min-width: auto;
+    margin-right: 0.75em;
+}
+
+html[data-theme="dark"] .MuiDrawer-paper .MuiListItemIcon-root img[src*="icon-transparent"] {
+    max-height: 24px !important;
+    max-width: 24px !important;
+    opacity: 0.85;
+    filter: brightness(0) invert(1);
+}
+
+html[data-theme="dark"] .MuiDrawer-paper .MuiListItemButton-root:hover .MuiListItemIcon-root img[src*="icon-transparent"],
+html[data-theme="dark"] .MuiDrawer-paper .MuiListItemButton-root.Mui-selected .MuiListItemIcon-root img[src*="icon-transparent"] {
+    filter: brightness(0) invert(0);
+}
+
+html[data-theme="dark"] .MuiDrawer-paper .MuiListItemText-root .MuiTypography-root {
+    font-weight: 500;
+    font-size: large;
+}
+
+html[data-theme="dark"] .MuiListItemButton-root:hover .MuiListItemText-root .MuiTypography-root,
+html[data-theme="dark"] .MuiListItemButton-root.Mui-selected .MuiListItemText-root .MuiTypography-root {
+    font-weight: 700;
+    color: #121212;
+}
+
+html[data-theme="dark"] .MuiDrawer-paper .MuiListSubheader-root {
+    margin: 0.9em 0 0.2em;
+    letter-spacing: 0.02em;
+    opacity: 0.5;
+    font-weight: 600;
+    font-size: medium;
+}
+
+html[data-theme="dark"] .MuiMenu-paper {
+    border-radius: 24px;
+    padding: 0 8px;
+}
+
+html[data-theme="dark"] .MuiMenu-paper .MuiButtonBase-root {
+    border-radius: 16px;
+    padding: 12px 16px;
+}
+
 html[data-theme="dark"] .MuiDialog-paper {
     border-radius: var(--abyss-radius);
 }
 
 html[data-theme="dark"] .MuiListItemButton-root {
     margin: 2px 8px;
-    border-radius: var(--abyss-radius);
+    padding: 0.5em 0.9em !important;
+    margin-bottom: 2px !important;
+    border-radius: 12px !important;
     transition: background-color 0.25s var(--abyss-ease),
         color 0.25s var(--abyss-ease);
 }
 
-html[data-theme="dark"] .MuiListItemButton-root:hover {
+html[data-theme="dark"] .MuiListItemButton-root:hover,
+html[data-theme="dark"] .MuiMenu-paper .MuiButtonBase-root:hover {
+    background: rgb(var(--abyss-accent)) !important;
     color: #121212;
-    background-color: rgba(var(--abyss-accent), 0.82);
+}
+
+html[data-theme="dark"] .MuiListItemButton-root:hover .MuiSvgIcon-root,
+html[data-theme="dark"] .MuiListItemButton-root.Mui-selected .MuiSvgIcon-root,
+html[data-theme="dark"] .MuiMenu-paper .MuiButtonBase-root:hover .MuiSvgIcon-root,
+html[data-theme="dark"] .MuiMenu-paper .MuiButtonBase-root:hover .MuiSvgIcon-root {
+    color: #121212 !important;
 }
 
 html[data-theme="dark"] .MuiListItemButton-root.Mui-selected,
@@ -1143,11 +1211,17 @@ div[data-role="controlgroup"] a[data-role="button"] {
 }
 
 .playedIndicator {
-    background: rgba(0, 0, 0, 0.4);
+    background: rgb(var(--abyss-accent));
     box-shadow: none;
     border-radius: 10px !important;
     padding: 4px;
     font-weight: bolder;
+}
+
+.cardOverlayButton-br button[title="Watched"] .MuiSvgIcon-root[data-testid="CheckIcon"] {
+    border-radius: 8px;
+    background: rgb(var(--abyss-accent));
+    color: black;
 }
 
 .cardOverlayButton-br.cardIndicators {
@@ -1479,7 +1553,7 @@ input[type="checkbox"]:focus+.checkboxOutline {
 .subtitleAppearanceSection,
 .homeScreenSettingsContainer .perLibrarySettings,
 .homeScreenSettingsContainer .verticalSection-extrabottompadding,
-.settingsContainer .MuiStack-root .MuiStack-root  {
+.settingsContainer .MuiStack-root .MuiStack-root {
     padding: 16px;
     background-color: rgba(var(--abyss-glass-tint), 0.69);
     border-radius: 32px;
@@ -1791,6 +1865,15 @@ div[data-role="controlgroup"] a[data-role="button"]:last-child {
     margin-left: 8px;
 }
 
+body:has(#videoOsdPage) .skinHeader .MuiTypography-root.MuiTypography-body1 {
+    font-size: large;
+    font-weight: 500;
+    -webkit-backdrop-filter: blur(var(--abyss-glass-blur));
+    backdrop-filter: blur(var(--abyss-glass-blur));
+    padding: 4px 12px;
+    border-radius: 12px;
+}
+
 .videoOsdBottom {
     padding: 0 !important;
     margin: 24px !important;
@@ -2030,7 +2113,7 @@ div[data-role="controlgroup"] a[data-role="button"]:last-child {
 }
 
 .layout-mobile .centerMessage {
-    width: 90% !important; 
+    width: 90% !important;
 }
 
 @media (orientation: landscape) and (max-height: 500px) {
@@ -2165,8 +2248,8 @@ div[data-role="controlgroup"] a[data-role="button"]:last-child {
     margin-bottom: .4em !important;
 }
 
-.headerUserButton.show-focus:focus{
-    transform:none !important;
+.headerUserButton.show-focus:focus {
+    transform: none !important;
 }
 
 #itemDetailPage .emby-button.show-focus:focus {
@@ -2246,7 +2329,7 @@ div[data-role="controlgroup"] a[data-role="button"]:last-child {
 
 .layout-tv .detailPageSecondaryContainer.padded-left,
 .layout-desktop .detailPageSecondaryContainer.padded-left {
-padding-left: max(env(safe-area-inset-left), 32.9%);
+    padding-left: max(env(safe-area-inset-left), 32.9%);
 }
 
 
@@ -2350,6 +2433,10 @@ padding-left: max(env(safe-area-inset-left), 32.9%);
         transform: translateY(-45vh);
         font-size: 2em;
     }
+
+    .MuiDrawer-paper {
+        width: 60vw;
+    }
 }
 
 @media screen and (max-height: 26em) and (orientation: landscape) {
@@ -2451,6 +2538,7 @@ padding-left: max(env(safe-area-inset-left), 32.9%);
 /* Backdrop filter support */
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
 
+    html[data-theme="dark"] .MuiDialog-paper,
     .manualLoginForm,
     .dialog,
     .iconOsd,
@@ -2605,6 +2693,7 @@ padding-left: max(env(safe-area-inset-left), 32.9%);
 
 /* 15. ANIMATIONS & KEYFRAMES */
 
+html[data-theme="dark"] .MuiDrawer-root *,
 .playstatebutton-icon-played::before,
 .cardOverlayContainer,
 .cardOverlayButtonIcon,
