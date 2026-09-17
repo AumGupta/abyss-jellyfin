@@ -257,14 +257,25 @@ input[type="radio"]:checked {
     display: flex !important;
 }
 
+.settingsContainer .MuiTypography-h2,
 .sectionTitle {
     font-weight: 600;
 }
 
+.settingsContainer .MuiTypography-h2,
 .homeScreenSettingsContainer .sectionTitle,
 #quickConnectPreferencesPage .sectionTitle,
 .settingsContainer .sectionTitle {
     font-size: xx-large;
+}
+
+.settingsContainer .MuiTypography-h2 {
+    margin-block-start: 0.83em;
+}
+
+.settingsContainer .MuiInputBase-root.MuiFilledInput-underline::after,
+.settingsContainer .MuiInputBase-root.MuiFilledInput-underline::before {
+    border-bottom: none !important;
 }
 
 #favoritesTab .sectionTitle,
@@ -387,53 +398,105 @@ input[type="radio"]:checked {
 }
 
 /* Jellyfin 12 modern app shell (React / MUI) [BETA] */
-
-/*
-.mainAnimatedPage, 
-.skinBody {
-   margin-top: 6%;
+html[data-theme="dark"] .MuiBox-root .tabContent.pageTabContent.is-active.abyss-spotlight-active .featurediframe.focusable {
+    margin-top: 56px;
 }
-*/
 
-html[data-theme="dark"] .MuiAppBar-root {
+html[data-theme="dark"] header.MuiAppBar-root {
     color: rgb(var(--abyss-accent));
-    background-color: rgba(var(--abyss-glass-tint), 0.72) !important;
+    background-color: transparent !important;
+    background: transparent !important;
     background-image: none !important;
-    border: none;
-    border-bottom: 1px solid rgba(var(--abyss-accent), 0.16);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.18);
+    box-shadow: none !important;
+    --Paper-shadow: none;
+    --Paper-overlay: none;
+}
+
+html[data-theme="dark"] header.MuiAppBar-root {
+    background: transparent !important;
+    overflow: visible;
+}
+
+html[data-theme="dark"] .MuiButton-icon img[src*="icon-transparent"] {
+    max-height: 0.85em !important;
+    max-width: 0.85em !important;
+    opacity: 0.85;
+    filter: brightness(0) invert(1);
+}
+
+html[data-theme="dark"] header.MuiAppBar-root > .MuiToolbar-root:nth-of-type(2) .MuiButtonBase-root {
     -webkit-backdrop-filter: blur(var(--abyss-glass-blur));
     backdrop-filter: blur(var(--abyss-glass-blur));
 }
 
-/*
-html[data-theme="dark"] .MuiAppBar-root.MuiAppBar-positionFixed {
-    top: 24px !important;
-    left: 24px !important;
-    right: 24px !important;
-    width: auto !important;
-    border-radius: var(--abyss-radius) !important;
+html[data-theme="dark"] header.MuiAppBar-root:has(> .MuiToolbar-root + .MuiToolbar-root)::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 10rem;
+    z-index: -1;
+    pointer-events: none;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.28) 55%, rgba(0, 0, 0, 0) 100%);
+    -webkit-backdrop-filter: blur(var(--abyss-glass-blur));
+    backdrop-filter: blur(var(--abyss-glass-blur));
+    -webkit-mask-image: linear-gradient(to bottom, black 0%, black 55%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 0%, black 55%, transparent 100%);
+}
+
+html[data-theme="dark"] header.MuiAppBar-root.MuiAppBar-positionFixed {
     border: none;
-    border-bottom: 1px solid rgba(var(--abyss-accent), 0.16);
-}
-*/
-
-html[data-theme="dark"] .MuiToolbar-root.MuiToolbar-gutters.MuiToolbar-dense.padded-left {
-    padding-left: 1.8% !important;
+    --Paper-shadow: none !important;
 }
 
-html[data-theme="dark"] .MuiToolbar-root.MuiToolbar-gutters.MuiToolbar-dense.padded-right {
-    padding-right: 1.8% !important;
+html[data-theme="dark"] header.MuiAppBar-root .MuiStack-root:first-of-type {
+    border-radius: 50px;
+    padding: 4px;
+    overflow: auto;
+    scrollbar-width: none;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(87, 87, 87, 0);
+    -webkit-backdrop-filter: blur(var(--abyss-glass-blur)) !important;
+    backdrop-filter: blur(var(--abyss-glass-blur)) !important;
+    background-color: transparent;
+    transition: all 0.45s var(--abyss-ease)
 }
+
+html[data-theme="dark"] header.MuiAppBar-root.MuiPaper-elevation1 .MuiStack-root:first-of-type {
+    border: 1px solid rgba(87, 87, 87, 0.18);
+    background-color: rgba(var(--abyss-glass-tint), 0.69) !important;
+    transition: all 0.45s var(--abyss-ease)
+}
+
+html[data-theme="dark"] header.MuiAppBar-root .MuiToolbar-root:first-of-type .MuiButtonBase-root {
+    border-radius: 50px;
+}
+
+html[data-theme="dark"] header.MuiAppBar-root .MuiButtonBase-root.MuiIconButton-root {
+    border-radius: var(--abyss-radius) !important;
+    background: transparent !important;
+    -webkit-backdrop-filter: blur(var(--abyss-glass-blur)) !important;
+    backdrop-filter: blur(var(--abyss-glass-blur)) !important;
+}
+
+html[data-theme="dark"] header.MuiAppBar-root .MuiButtonBase-root.MuiIconButton-root:has(.MuiAvatar-root) {
+    border-radius: 50px !important;
+    padding: 0 !important;
+    margin-left: 0.48rem
+}
+
+html[data-theme="dark"] header.MuiAppBar-root .MuiBox-root {
+    gap: 0.48rem;
+}
+
 
 html[data-theme="dark"] .MuiToolbar-root {
     min-height: 64px;
-    gap: 0.25rem;
-    font-family: "Google Sans", sans-serif;
 }
 
-html[data-theme="dark"] .MuiButtonGroup-root {
-    gap: 0.25rem;
+html[data-theme="dark"] .MuiTypography-root {
+    font-family: "Google Sans", sans-serif !important;
 }
 
 html[data-theme="dark"] .MuiToolbar-root .MuiButton-root,
@@ -447,7 +510,7 @@ html[data-theme="dark"] .MuiToolbar-root .MuiIconButton-root {
 
 html[data-theme="dark"] .MuiToolbar-root .MuiButton-root {
     min-width: auto;
-    padding: 0.5rem 0.85rem;
+    padding: 0.56rem 1.2rem;
     font-family: inherit;
     font-weight: 600;
     line-height: 1.25;
@@ -456,6 +519,26 @@ html[data-theme="dark"] .MuiToolbar-root .MuiButton-root {
 
 html[data-theme="dark"] .MuiToolbar-root .MuiIconButton-root {
     padding: 0.6rem;
+}
+
+html[data-theme="dark"] .MuiToolbar-root .MuiButtonGroup-root {
+    border-radius: 50px;
+    gap: 0.1rem;
+    box-shadow: none;
+}
+
+.MuiToolbar-root .MuiButtonGroup-root .MuiButtonBase-root{
+    border:none;
+}
+
+.MuiButtonGroup-root .MuiButtonGroup-firstButton {
+    border-top-left-radius: 50px !important;
+    border-bottom-left-radius: 50px !important;
+}
+
+.MuiButtonGroup-root .MuiButtonGroup-lastButton {
+    border-top-right-radius: 50px !important;
+    border-bottom-right-radius: 50px !important;
 }
 
 html[data-theme="dark"] .MuiToolbar-root .MuiButton-root:hover,
@@ -487,7 +570,15 @@ html[data-theme="dark"] .MuiDialog-paper {
 }
 
 html[data-theme="dark"] .MuiDrawer-paper {
-    border-radius: 0 var(--abyss-radius) var(--abyss-radius) 0;
+    background-color: rgba(var(--abyss-glass-tint), 0.69);
+    border-radius: 32px !important;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    border: solid 1px rgba(245, 245, 247, 0.2) !important;
+    left: 24px;
+    top: 24px;
+    bottom: 24px;
+    max-height: stretch;
+    width: max(30vw, max-content);
 }
 
 html[data-theme="dark"] .MuiMenu-paper,
@@ -853,16 +944,24 @@ a[data-role="button"]:hover {
 }
 
 html[data-theme="dark"] #displayPreferencesPage form button[type="submit"].MuiButton-root {
+    position: sticky;
+    bottom: 48px;
+    width: 97%;
+    align-self: center;
+    margin-top: 48px !important;
+    box-shadow: 0 0 24px 2px rgba(var(--abyss-accent), 0.2);
+    z-index: 2;
     min-height: 3.25rem;
     border-radius: var(--abyss-radius);
-    color: #121212;
-    background-color: rgb(var(--abyss-accent)) !important;
-    box-shadow: 0 0 24px 2px rgba(var(--abyss-accent), 0.2);
-    font-weight: 700;
+    color: rgb(var(--abyss-accent)) !important;
+    font-weight: 500;
+    font-family: "Google Sans", sans-serif;
+    border: solid 1px rgba(245, 245, 247, 0.2) !important;
 }
 
 html[data-theme="dark"] #displayPreferencesPage form button[type="submit"].MuiButton-root:hover {
-    color: #121212;
+    font-weight: 700;
+    color: #121212 !important;
     background-color: rgba(var(--abyss-accent), 0.88) !important;
 }
 
@@ -986,6 +1085,7 @@ div[data-role="controlgroup"] a[data-role="button"] {
     border: solid 1px rgba(var(--abyss-accent), 0.0) !important;
     transition: border-color 0.15s var(--abyss-ease) !important;
 }
+
 
 .button-submit,
 .cardOverlayContainer:hover,
@@ -1378,12 +1478,22 @@ input[type="checkbox"]:focus+.checkboxOutline {
 #languagePreferencesPage .settingsContainer .verticalSection,
 .subtitleAppearanceSection,
 .homeScreenSettingsContainer .perLibrarySettings,
-.homeScreenSettingsContainer .verticalSection-extrabottompadding {
+.homeScreenSettingsContainer .verticalSection-extrabottompadding,
+.settingsContainer .MuiStack-root .MuiStack-root  {
     padding: 16px;
     background-color: rgba(var(--abyss-glass-tint), 0.69);
     border-radius: 32px;
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
     border: solid 1px rgba(245, 245, 247, 0.2) !important;
+}
+
+.settingsContainer .MuiStack-root .MuiStack-root .MuiStack-root {
+    border-radius: 12px !important;
+    padding: 0 !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    margin: 8px !important;
 }
 
 .homeScreenSettingsContainer .verticalSection-extrabottompadding .verticalSection {
@@ -1915,6 +2025,14 @@ div[data-role="controlgroup"] a[data-role="button"]:last-child {
     padding-right: 24px !important;
 }
 
+.layout-mobile .noItemsMessage.centerMessage {
+    font-size: 28px;
+}
+
+.layout-mobile .centerMessage {
+    width: 90% !important; 
+}
+
 @media (orientation: landscape) and (max-height: 500px) {
 
     .layout-mobile #castContent .card.overflowPortraitCard,
@@ -2047,8 +2165,8 @@ div[data-role="controlgroup"] a[data-role="button"]:last-child {
     margin-bottom: .4em !important;
 }
 
-.headerUserButton.show-focus:focus {
-    transform: none !important;
+.headerUserButton.show-focus:focus{
+    transform:none !important;
 }
 
 #itemDetailPage .emby-button.show-focus:focus {
@@ -2128,7 +2246,7 @@ div[data-role="controlgroup"] a[data-role="button"]:last-child {
 
 .layout-tv .detailPageSecondaryContainer.padded-left,
 .layout-desktop .detailPageSecondaryContainer.padded-left {
-    padding-left: max(env(safe-area-inset-left), 32.9%);
+padding-left: max(env(safe-area-inset-left), 32.9%);
 }
 
 
@@ -2177,6 +2295,13 @@ div[data-role="controlgroup"] a[data-role="button"]:last-child {
 
     .cardOverlayButton {
         padding: 0.25em;
+    }
+}
+
+/* ipad minish */
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+    .layout-mobile .detailRibbon {
+        padding-left: 12% !important;
     }
 }
 
@@ -2338,7 +2463,8 @@ div[data-role="controlgroup"] a[data-role="button"]:last-child {
     .upNextContainer,
     .selectionCommandsPanel,
     .playerStats-stats,
-    .appfooter {
+    .appfooter,
+    html[data-theme="dark"] #displayPreferencesPage form button[type="submit"].MuiButton-root {
         -webkit-backdrop-filter: blur(var(--abyss-glass-blur)) !important;
         backdrop-filter: blur(var(--abyss-glass-blur)) !important;
         background-color: rgba(var(--abyss-glass-tint), 0.69) !important;

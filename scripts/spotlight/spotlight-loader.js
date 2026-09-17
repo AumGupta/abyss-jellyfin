@@ -20,6 +20,10 @@
   var currentHomeTab = null;
   var currentFavoritesTab = null;
   var currentIframe = null;
+  var backdropOverlay = null;
+  var backdropLayerA = null;
+  var backdropLayerB = null;
+  var activeBackdropLayer = null;
 
   function safe(fn) {
     // Runs fn and swallows/reports any error so one failure never kills the loader.
@@ -34,6 +38,30 @@
     }
   }
 
+  var BACKDROP_SELECTOR = ".backdropContainer .backdropImage";
+  var BACKDROP_MARK_ATTR = "data-abyss-spotlight-backdrop";
+
+  function applySpotlightBackdrop(url) {
+    if (!url) { clearSpotlightBackdrop(); return; }
+    safe(function () {
+      var els = document.querySelectorAll(BACKDROP_SELECTOR);
+      for (var i = 0; i < els.length; i++) {
+        els[i].setAttribute(BACKDROP_MARK_ATTR, "true");
+        els[i].style.backgroundImage = 'url("' + url + '")';
+      }
+    });
+  }
+
+  function clearSpotlightBackdrop() {
+    safe(function () {
+      var els = document.querySelectorAll(BACKDROP_SELECTOR + "[" + BACKDROP_MARK_ATTR + "]");
+      for (var i = 0; i < els.length; i++) {
+        els[i].style.backgroundImage = "";
+        els[i].removeAttribute(BACKDROP_MARK_ATTR);
+      }
+    });
+  }
+
   function clearSpotlightLifecycle() {
     safe(lifecycleCleanup);
     lifecycleCleanup = function () { };
@@ -45,6 +73,7 @@
     currentSync = null;
     spotlightFocused = false;
     document.documentElement.classList.remove("abyss-spotlight-visible");
+    clearSpotlightBackdrop();
   }
 
   function installFrameStyle() {
@@ -65,6 +94,57 @@
     document.head.appendChild(style);
   }
 
+  function installBackdropOverlay() {
+    if (backdropOverlay) return;
+    var container = document.querySelector(".backdropContainer");
+    if (!container || !container.parentNode) return;
+
+    backdropOverlay = document.createElement("div");
+    backdropOverlay.id = "abyss-spotlight-backdrop";
+    backdropLayerA = document.createElement("div");
+    backdropLayerB = document.createElement("div");
+    backdropLayerA.className = "abyss-spotlight-backdrop-layer";
+    backdropLayerB.className = "abyss-spotlight-backdrop-layer";
+    backdropOverlay.appendChild(backdropLayerA);
+    backdropOverlay.appendChild(backdropLayerB);
+
+    container.parentNode.insertBefore(backdropOverlay, container.nextSibling);
+
+    var style = document.createElement("style");
+    style.id = "abyss-spotlight-backdrop-style";
+    style.textContent =
+      "#abyss-spotlight-backdrop{position:fixed;inset:0;pointer-events:none;opacity:0;transition:opacity .6s ease;}" +
+      "html.abyss-spotlight-visible #abyss-spotlight-backdrop{opacity:1;}" +
+      ".abyss-spotlight-backdrop-layer{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;" +
+      "transition:opacity .9s ease;filter:blur(var(--abyss-backdrop-blur,23px)) saturate(120%) contrast(120%) brightness(25%);}" +
+      ".abyss-spotlight-backdrop-layer.is-active{opacity:1;}";
+    document.head.appendChild(style);
+  }
+
+  function setSpotlightBackdrop(url) {
+    if (!url || !backdropOverlay) return;
+    safe(function () {
+      var incoming = activeBackdropLayer === backdropLayerA ? backdropLayerB : backdropLayerA;
+      var outgoing = activeBackdropLayer;
+
+      var img = new Image();
+      img.onload = function () {
+        safe(function () {
+          incoming.style.backgroundImage = 'url("' + url + '")';
+          requestAnimationFrame(function () {
+            incoming.classList.add("is-active");
+            if (outgoing && outgoing !== incoming) {
+              setTimeout(function () {
+                outgoing.classList.remove("is-active");
+              }, 50);
+            }
+          });
+          activeBackdropLayer = incoming;
+        });
+      };
+      img.src = url;
+    });
+  }
 
   function postToFrame(iframe, action) {
     if (!iframe || !iframe.contentWindow) return;
@@ -161,6 +241,13 @@
       safe(function () {
         focusNearestOutside(currentIframe, event.data.direction || "down");
       });
+      return;
+    }
+    if (event.data.action === "backdrop-sync") {
+      if (document.documentElement.classList.contains("abyss-spotlight-visible")) {
+        setSpotlightBackdrop(event.data.url);
+      }
+      return;
     }
   });
 
@@ -191,6 +278,7 @@
         if (action !== lastAction) {
           postToFrame(iframe, action);
           lastAction = action;
+          if (action === "pause") clearSpotlightBackdrop();
         }
       });
     };
@@ -261,6 +349,7 @@
       var favoritesTab = indexPage.querySelector("#favoritesTab");
 
       installFrameStyle();
+      installBackdropOverlay();
 
       var iframe = homeTab.querySelector ? homeTab.querySelector("." + FRAME_CLASS) : null;
       if (!iframe) {
