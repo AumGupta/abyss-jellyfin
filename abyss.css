@@ -398,6 +398,30 @@ input[type="radio"]:checked {
 }
 
 /* Jellyfin 12 modern app shell (React / MUI) [BETA] */
+
+.MuiToolbar-root {
+    position: relative;
+}
+
+.MuiToolbar-root > .MuiStack-root:first-of-type {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.MuiToolbar-root > .MuiBox-root:last-child {
+    order: -1;
+    margin-right: auto;
+}
+
+.MuiToolbar-root:has(
+    button[aria-label="Open Menu"],
+    button[aria-label="Close Menu"]
+) > .MuiBox-root:last-child {
+    order: initial;
+    margin-right: initial;
+}
+
 html[data-theme="dark"] .MuiBox-root .tabContent.pageTabContent.is-active.abyss-spotlight-active .featurediframe.focusable {
     margin-top: 52px;
 }
@@ -487,7 +511,7 @@ html[data-theme="dark"] header.MuiAppBar-root .MuiButtonBase-root.MuiIconButton-
 }
 
 html[data-theme="dark"] header.MuiAppBar-root button[aria-label="Open Menu"].MuiButtonBase-root {
-    margin-right: 8px !important;
+    margin: 0 8px !important;
 }
 
 html[data-theme="dark"] header.MuiAppBar-root .MuiBox-root {
