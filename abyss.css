@@ -71,6 +71,9 @@ html[data-theme="dark"] {
     --jf-palette-AppBar-defaultBg: rgba(var(--abyss-glass-tint), 0.92);
     --jf-palette-AppBar-transparentBg: rgba(var(--abyss-glass-tint), 0.72);
     --jf-card-borderRadius: var(--abyss-radius);
+    --jf-palette-error-main: #f92672;
+    --jf-palette-error-light: rgb(249, 38, 114);
+    --jf-palette-error-dark: rgb(172, 26, 78);
 }
 
 
@@ -399,14 +402,18 @@ input[type="radio"]:checked {
 
 /* Jellyfin 12 modern app shell (React / MUI) [BETA] */
 
+.MuiTouchRipple-root {
+    color: rgb(var(--abyss-accent));
+}
+
 .MuiToolbar-root {
     position: relative;
 }
 
 .MuiToolbar-root > .MuiStack-root:first-of-type {
     position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 45%;
+    transform: translateX(-45%);
 }
 
 .MuiToolbar-root > .MuiBox-root:last-child {
@@ -417,7 +424,8 @@ input[type="radio"]:checked {
 .MuiToolbar-root:has(
     button[aria-label="Open Menu"],
     button[aria-label="Close Menu"]
-) > .MuiBox-root:last-child {
+) > .MuiBox-root:last-child,
+body:has(#videoOsdPage:not(.hide)) .MuiToolbar-root > .MuiBox-root:last-child {
     order: initial;
     margin-right: initial;
 }
@@ -1204,6 +1212,9 @@ div[data-role="controlgroup"] a[data-role="button"] {
 
 
 /* Card Indicators */
+.indicator {
+    border: 0.5px solid rgba(0,0,0,0.1)
+}
 
 .cardIndicators,
 .listItemIndicators {
@@ -1652,6 +1663,10 @@ input[type="checkbox"]:focus+.checkboxOutline {
 
 .selectionCommandsPanel {
     padding: 1.5em 24px !important;
+}
+
+.selectionCommandsPanel *{
+    color: rgb(var(--abyss-accent));
 }
 
 [dir=ltr] .playerStats-stats {
@@ -2791,6 +2806,7 @@ html[data-theme="dark"] .MuiDrawer-root *,
     }
 }
 
+.settingsContainer .MuiStack-root .MuiStack-root,
 .verticalSection:nth-child(1) {
     animation: abyss-section-fade-up 0.7s var(--abyss-ease) both 0.05s;
 }
