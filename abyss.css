@@ -2133,7 +2133,21 @@ div[data-role="controlgroup"] a[data-role="button"]:last-child {
 
 .layout-tv .detailPageSecondaryContainer.padded-left,
 .layout-desktop .detailPageSecondaryContainer.padded-left {
-    padding-left: 28.45vw !important;
+    padding-left: max(env(safe-area-inset-left), 32.45vw);
+}
+
+@media (min-aspect-ratio: 1.98/1) {
+    .layout-tv .detailPageSecondaryContainer.padded-left,
+    .layout-desktop .detailPageSecondaryContainer.padded-left {
+        padding-left: 28.45vw !important;
+    }
+}
+
+@media (min-aspect-ratio: 2.7/1) {
+    .layout-tv .detailPageSecondaryContainer.padded-left,
+    .layout-desktop .detailPageSecondaryContainer.padded-left {
+        padding-left: 23.45vw !important;
+    }
 }
 
 
