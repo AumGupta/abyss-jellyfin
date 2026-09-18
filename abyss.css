@@ -406,26 +406,60 @@ input[type="radio"]:checked {
     color: rgb(var(--abyss-accent));
 }
 
-.MuiToolbar-root {
+header.MuiAppBar-root > .MuiToolbar-root {
     position: relative;
 }
 
-.MuiToolbar-root > .MuiStack-root:first-of-type {
+header.MuiAppBar-root > .MuiToolbar-root > .MuiStack-root:first-of-type {
     position: absolute;
     left: 45%;
     transform: translateX(-45%);
 }
 
-.MuiToolbar-root > .MuiBox-root:last-child {
+html[data-theme="dark"] header.MuiAppBar-root>.MuiToolbar-root:nth-of-type(2) .MuiButtonBase-root {
+    -webkit-backdrop-filter: blur(var(--abyss-glass-blur));
+    backdrop-filter: blur(var(--abyss-glass-blur));
+}
+
+header.MuiAppBar-root > .MuiToolbar-root > .MuiBox-root:last-child {
     order: -1;
     margin-right: auto;
 }
 
-.MuiToolbar-root:has(
+header.MuiAppBar-root > .MuiToolbar-root > .MuiStack-root:last-child {
+    overflow: scroll;
+    scrollbar-width: none;
+}
+
+
+/*Filter button Group buttons*/
+header.MuiAppBar-root > .MuiToolbar-root > .MuiStack-root:last-child .MuiButtonGroup-root:nth-last-child(2) .MuiButtonBase-root {
+    border-radius: 12px !important;
+    padding: 0.56rem !important;
+}
+
+/*Counter Chip*/
+header.MuiAppBar-root > .MuiToolbar-root:nth-child(2) > .MuiBox-root > .MuiChip-root{
+    font-family: "Google Sans", sans-serif !important;
+    font-size: medium;
+    font-weight: 500;
+    padding: 0.75rem 0 ;
+    height: auto;
+    background-color: transparent !important;
+    color: rgba(var(--abyss-accent), 0.78);
+    border-radius: var(--abyss-radius) !important;
+    margin: 0;
+    transition: background-color 0.25s var(--abyss-ease), color 0.25s var(--abyss-ease), transform 0.25s var(--abyss-ease);
+    -webkit-backdrop-filter: blur(var(--abyss-glass-blur));
+    backdrop-filter: blur(var(--abyss-glass-blur));
+}
+
+
+header.MuiAppBar-root > .MuiToolbar-root:has(
     button[aria-label="Open Menu"],
     button[aria-label="Close Menu"]
 ) > .MuiBox-root:last-child,
-body:has(#videoOsdPage:not(.hide)) .MuiToolbar-root > .MuiBox-root:last-child {
+body:has(#videoOsdPage:not(.hide)) header.MuiAppBar-root > .MuiToolbar-root > .MuiBox-root:last-child {
     order: initial;
     margin-right: initial;
 }
@@ -456,10 +490,6 @@ html[data-theme="dark"] .MuiButton-icon img[src*="icon-transparent"] {
     filter: brightness(0) invert(1);
 }
 
-html[data-theme="dark"] header.MuiAppBar-root>.MuiToolbar-root:nth-of-type(2) .MuiButtonBase-root {
-    -webkit-backdrop-filter: blur(var(--abyss-glass-blur));
-    backdrop-filter: blur(var(--abyss-glass-blur));
-}
 
 html[data-theme="dark"] header.MuiAppBar-root:has(> .MuiToolbar-root + .MuiToolbar-root)::after {
     content: '';
@@ -546,7 +576,7 @@ html[data-theme="dark"] .MuiToolbar-root .MuiIconButton-root {
 
 html[data-theme="dark"] .MuiToolbar-root .MuiButton-root {
     min-width: auto;
-    padding: 0.56rem 1.2rem;
+    padding: 0.56rem 1rem;
     font-family: inherit;
     font-weight: 600;
     line-height: 1.25;
