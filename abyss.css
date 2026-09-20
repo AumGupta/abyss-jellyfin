@@ -402,6 +402,25 @@ input[type="radio"]:checked {
 
 /* Jellyfin 12 modern app shell (React / MUI) [BETA] */
 
+.alphaPicker-fixed-right {
+    align-self: center; 
+}
+
+.alphaPicker-fixed-right .MuiPaper-root {
+    background: rgba(var(--abyss-glass-tint), 0.2);  
+    -webkit-backdrop-filter: blur(var(--abyss-glass-blur));
+    backdrop-filter: blur(var(--abyss-glass-blur)); 
+    padding: 2px !important;
+    border-radius: 50px !important;
+}
+
+.alphaPicker-fixed-right .MuiPaper-root .MuiButtonBase-root {
+    border-radius: 50px !important;
+    font-family: monospace;
+    padding: 0 7.5px;
+    margin: 1px 0;
+}
+
 .MuiTouchRipple-root {
     color: rgb(var(--abyss-accent));
 }
