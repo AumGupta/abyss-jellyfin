@@ -441,8 +441,8 @@ html[data-theme="dark"] header.MuiAppBar-root>.MuiToolbar-root:nth-of-type(2) .M
 }
 
 header.MuiAppBar-root > .MuiToolbar-root > .MuiBox-root:last-child {
-    order: -1;
-    margin-right: auto;
+    order: initial;
+    margin-right: initial;
 }
 
 header.MuiAppBar-root > .MuiToolbar-root > .MuiStack-root:last-child {
@@ -474,10 +474,11 @@ header.MuiAppBar-root > .MuiToolbar-root:nth-child(2) > .MuiBox-root > .MuiChip-
 }
 
 
-header.MuiAppBar-root > .MuiToolbar-root:has(
-    button[aria-label="Open Menu"],
-    button[aria-label="Close Menu"]
-) > .MuiBox-root:last-child,
+header.MuiAppBar-root > .MuiToolbar-root:has(> .MuiStack-root:first-of-type) > .MuiBox-root:last-child {
+    order: -1;
+    margin-right: auto;
+}
+
 body:has(#videoOsdPage:not(.hide)) header.MuiAppBar-root > .MuiToolbar-root > .MuiBox-root:last-child {
     order: initial;
     margin-right: initial;
@@ -567,7 +568,7 @@ html[data-theme="dark"] header.MuiAppBar-root .MuiButtonBase-root.MuiIconButton-
     margin-left: 0.48rem
 }
 
-html[data-theme="dark"] header.MuiAppBar-root button[aria-label="Open Menu"].MuiButtonBase-root {
+html[data-theme="dark"] header.MuiAppBar-root > .MuiToolbar-root:not(:has(> .MuiStack-root:first-of-type)) > .MuiButtonBase-root:first-child {
     margin: 0 8px !important;
 }
 
