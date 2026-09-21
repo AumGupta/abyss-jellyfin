@@ -2417,7 +2417,7 @@ body:has(#videoOsdPage) .skinHeader .MuiTypography-root.MuiTypography-body1 {
 
 .layout-tv .detailPageSecondaryContainer.padded-left,
 .layout-desktop .detailPageSecondaryContainer.padded-left {
-    padding-left: max(env(safe-area-inset-left), 32.9%);
+    padding-left: max(env(safe-area-inset-left), 32.45vw);
 }
 
 
@@ -2596,7 +2596,9 @@ body:has(#videoOsdPage) .skinHeader .MuiTypography-root.MuiTypography-body1 {
         padding-left: 28.45vw !important;
     }
 
-    .detailPagePrimaryContent {
+    .detailPagePrimaryContent,
+    .layout-tv .detailPageSecondaryContainer.padded-left,
+    .layout-desktop .detailPageSecondaryContainer.padded-left {
         padding-left: 28.45vw !important;
     }
 
@@ -2614,7 +2616,9 @@ body:has(#videoOsdPage) .skinHeader .MuiTypography-root.MuiTypography-body1 {
         padding-left: 23.45vw !important;
     }
 
-    .detailPagePrimaryContent {
+    .detailPagePrimaryContent,
+    .layout-tv .detailPageSecondaryContainer.padded-left,
+    .layout-desktop .detailPageSecondaryContainer.padded-left {
         padding-left: 23.45vw !important;
     }
 
