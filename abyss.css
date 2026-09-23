@@ -403,13 +403,13 @@ input[type="radio"]:checked {
 /* Jellyfin 12 modern app shell (React / MUI) [BETA] */
 
 .alphaPicker-fixed-right {
-    align-self: center; 
+    align-self: center;
 }
 
 .alphaPicker-fixed-right .MuiPaper-root {
-    background: rgba(var(--abyss-glass-tint), 0.2);  
+    background: rgba(var(--abyss-glass-tint), 0.2);
     -webkit-backdrop-filter: blur(var(--abyss-glass-blur));
-    backdrop-filter: blur(var(--abyss-glass-blur)); 
+    backdrop-filter: blur(var(--abyss-glass-blur));
     padding: 2px !important;
     border-radius: 50px !important;
 }
@@ -425,11 +425,11 @@ input[type="radio"]:checked {
     color: rgb(var(--abyss-accent));
 }
 
-header.MuiAppBar-root > .MuiToolbar-root {
+header.MuiAppBar-root>.MuiToolbar-root {
     position: relative;
 }
 
-header.MuiAppBar-root > .MuiToolbar-root > .MuiStack-root:first-of-type {
+header.MuiAppBar-root>.MuiToolbar-root>.MuiStack-root:first-of-type {
     position: absolute;
     left: 45%;
     transform: translateX(-45%);
@@ -440,29 +440,29 @@ html[data-theme="dark"] header.MuiAppBar-root>.MuiToolbar-root:nth-of-type(2) .M
     backdrop-filter: blur(var(--abyss-glass-blur));
 }
 
-header.MuiAppBar-root > .MuiToolbar-root > .MuiBox-root:last-child {
+header.MuiAppBar-root>.MuiToolbar-root>.MuiBox-root:last-child {
     order: initial;
     margin-right: initial;
 }
 
-header.MuiAppBar-root > .MuiToolbar-root > .MuiStack-root:last-child {
+header.MuiAppBar-root>.MuiToolbar-root>.MuiStack-root:last-child {
     overflow: scroll;
     scrollbar-width: none;
 }
 
 
 /*Filter button Group buttons*/
-header.MuiAppBar-root > .MuiToolbar-root > .MuiStack-root:last-child .MuiButtonGroup-root:nth-last-child(2) .MuiButtonBase-root {
+header.MuiAppBar-root>.MuiToolbar-root>.MuiStack-root:last-child .MuiButtonGroup-root:nth-last-child(2) .MuiButtonBase-root {
     border-radius: 12px !important;
     padding: 0.56rem !important;
 }
 
 /*Counter Chip*/
-header.MuiAppBar-root > .MuiToolbar-root:nth-child(2) > .MuiBox-root > .MuiChip-root{
+header.MuiAppBar-root>.MuiToolbar-root:nth-child(2)>.MuiBox-root>.MuiChip-root {
     font-family: "Google Sans", sans-serif !important;
     font-size: medium;
     font-weight: 500;
-    padding: 0.75rem 0 ;
+    padding: 0.75rem 0;
     height: auto;
     background-color: transparent !important;
     color: rgba(var(--abyss-accent), 0.78);
@@ -474,12 +474,12 @@ header.MuiAppBar-root > .MuiToolbar-root:nth-child(2) > .MuiBox-root > .MuiChip-
 }
 
 
-header.MuiAppBar-root > .MuiToolbar-root:has(> .MuiStack-root:first-of-type) > .MuiBox-root:last-child {
+header.MuiAppBar-root>.MuiToolbar-root:has(> .MuiStack-root:first-of-type)>.MuiBox-root:last-child {
     order: -1;
     margin-right: auto;
 }
 
-body:has(#videoOsdPage:not(.hide)) header.MuiAppBar-root > .MuiToolbar-root > .MuiBox-root:last-child {
+body:has(#videoOsdPage:not(.hide)) header.MuiAppBar-root>.MuiToolbar-root>.MuiBox-root:last-child {
     order: initial;
     margin-right: initial;
 }
@@ -568,7 +568,7 @@ html[data-theme="dark"] header.MuiAppBar-root .MuiButtonBase-root.MuiIconButton-
     margin-left: 0.48rem
 }
 
-html[data-theme="dark"] header.MuiAppBar-root > .MuiToolbar-root:not(:has(> .MuiStack-root:first-of-type)) > .MuiButtonBase-root:first-child {
+html[data-theme="dark"] header.MuiAppBar-root>.MuiToolbar-root:not(:has(> .MuiStack-root:first-of-type))>.MuiButtonBase-root:first-child {
     margin: 0 8px !important;
 }
 
@@ -1263,7 +1263,7 @@ div[data-role="controlgroup"] a[data-role="button"] {
 
 /* Card Indicators */
 .indicator {
-    border: 0.5px solid rgba(0,0,0,0.1)
+    border: 0.5px solid rgba(0, 0, 0, 0.1);
 }
 
 .cardIndicators,
@@ -1496,7 +1496,7 @@ div[data-role="controlgroup"] a[data-role="button"] {
 
 .listItem:hover .countIndicator,
 .listItem:hover .playedIndicator {
-    background: rgba(0, 0, 0, 0.15) !important;
+    background: rgba(0, 0, 0, 0.15);
     color: #121212 !important;
 }
 
@@ -1715,7 +1715,7 @@ input[type="checkbox"]:focus+.checkboxOutline {
     padding: 1.5em 24px !important;
 }
 
-.selectionCommandsPanel *{
+.selectionCommandsPanel * {
     color: rgb(var(--abyss-accent));
 }
 
@@ -1762,6 +1762,17 @@ input[type="checkbox"]:focus+.checkboxOutline {
     border-radius: 8px;
     color: #000;
 }
+
+.listItem-content:hover .playstatebutton-icon-played::before {
+    background-color: #000;
+    color: rgba(var(--abyss-accent), 0.8);
+}
+
+.listItem-content:hover .playedIndicator {
+    background: rgba(var(--abyss-accent));
+    color: #121212 !important;
+}
+
 
 /* 7. ROUNDED CORNERS */
 
