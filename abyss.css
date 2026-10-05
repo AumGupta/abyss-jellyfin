@@ -2481,10 +2481,14 @@ body:has(#videoOsdPage) .skinHeader .MuiTypography-root.MuiTypography-body1 {
     }
 }
 
-/* ipad minish */
-@media screen and (min-width: 768px) and (max-width: 1024px) {
+/* Tablets (mobile layout): clear the absolutely positioned detail image (left 5% + max-width 30vw) */
+@media screen and (min-width: 768px) {
     .layout-mobile .detailRibbon {
-        padding-left: 12% !important;
+        padding-left: calc(35vw + 1.5rem) !important;
+    }
+
+    .layout-mobile #itemDetailPage .itemName.originalTitle {
+        text-align: left;
     }
 }
 
