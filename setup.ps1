@@ -268,7 +268,7 @@ function Install-Abyss {
         Write-Ok "Abyss CSS applied."
     } catch {
         Write-Fail "Failed to apply CSS."
-        Write-Info "Add this manually in Dashboard > General > Custom CSS:"
+        Write-Info "Add this manually in Dashboard > Branding > Custom CSS:"
         Write-Info "@import url('https://cdn.jsdelivr.net/gh/$REPO@$BRANCH/abyss.css');"
     }
     Write-Host ""
@@ -418,7 +418,7 @@ function Uninstall-Abyss {
         Write-Ok "Abyss CSS removed."
     } catch {
         Write-Fail "Failed to remove Abyss CSS."
-        Write-Info "Remove the marked Abyss block manually in Dashboard > General > Custom CSS."
+        Write-Info "Remove the marked Abyss block manually in Dashboard > Branding > Custom CSS."
     }
     Write-Host ""
 
