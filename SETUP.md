@@ -110,7 +110,7 @@ services:
 
 **3. Apply the CSS & Restart**
 
-  * Go to your Jellyfin **Dashboard \> General \> Custom CSS** and add the import URL:
+  * Go to your Jellyfin **Dashboard \> Branding \> Custom CSS** and add the import URL:
 ```
 @import url('https://cdn.jsdelivr.net/gh/AumGupta/abyss-jellyfin@main/abyss.css');
 ```

@@ -400,10 +400,10 @@ install_abyss() {
             -H "Authorization: ${api_header}" \
             -d "$updated_branding" >/dev/null 2>&1 \
             && ok "Abyss CSS applied." \
-            || { fail "Failed to apply CSS."; info "Add manually: Dashboard > General > Custom CSS"; }
+            || { fail "Failed to apply CSS."; info "Add manually: Dashboard > Branding > Custom CSS"; }
     else
         fail "Could not fetch branding config."
-        info "Add manually in Dashboard > General > Custom CSS:"
+        info "Add manually in Dashboard > Branding > Custom CSS:"
         info "@import url('https://cdn.jsdelivr.net/gh/${REPO}@${BRANCH}/abyss.css');"
     fi
     echo ""
@@ -566,7 +566,7 @@ uninstall_abyss() {
             -H "Authorization: ${api_header}" \
             -d "$updated_branding" >/dev/null 2>&1 \
             && ok "Abyss CSS removed." \
-            || { fail "Failed to remove Abyss CSS."; info "Remove the marked Abyss block manually in Dashboard > General > Custom CSS."; }
+            || { fail "Failed to remove Abyss CSS."; info "Remove the marked Abyss block manually in Dashboard > Branding > Custom CSS."; }
     fi
     echo ""
 
